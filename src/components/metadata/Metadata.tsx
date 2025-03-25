@@ -1,4 +1,4 @@
-import MetadataInterface from "./interfaces/MetadataInterface";
+import MetadataInterface from "./MetadataInterface";
 
 export default function Metadata({ title, description, url, image, icon} : MetadataInterface) {
     const domain = new URL(url).hostname;
