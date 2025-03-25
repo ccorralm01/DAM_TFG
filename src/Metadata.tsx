@@ -1,12 +1,6 @@
-interface MetadataProps {
-    title: string;
-    description: string;
-    url: string;
-    image: string;
-    icon: string;
-}
+import MetadataInterface from "./interfaces/MetadataInterface";
 
-export default function Metadata({ title, description, url, image, icon} : MetadataProps) {
+export default function Metadata({ title, description, url, image, icon} : MetadataInterface) {
     const domain = new URL(url).hostname;
     return (
         <>
