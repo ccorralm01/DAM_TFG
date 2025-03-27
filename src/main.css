@@ -3,6 +3,10 @@
     padding: 0px;
 }
 
+body{
+    background-color: #121212 ;
+}
+
 .primary-color-text{
-    color: #16a085;
+    color: #00A878;
 }
