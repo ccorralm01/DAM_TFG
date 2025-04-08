@@ -63,27 +63,41 @@
   <!-- Sección de Autenticación -->
   <section id="auth-section">
     <h2>Autenticación</h2>
-    
+  
     <div class="form-group">
       <label for="email">Email:</label>
       <input type="email" id="email" placeholder="test@example.com" value="test@example.com" />
     </div>
-    
+  
     <div class="form-group">
       <label for="password">Contraseña:</label>
       <input type="password" id="password" placeholder="hashedpassword" value="hashedpassword" />
     </div>
-    
+  
     <button onclick="login()">Login</button>
     <button onclick="checkAuth()">Verificar Autenticación</button>
     <button onclick="logout()">Logout</button>
     <button onclick="getProfile()">Obtener Perfil</button>
-    
+  
+    <hr />
+  
+    <div class="form-group">
+      <label for="checkEmail">Verificar Email:</label>
+      <input type="email" id="checkEmail" placeholder="nuevo@example.com" />
+      <button onclick="checkEmail()">Comprobar Email</button>
+    </div>
+  
+    <div class="form-group">
+      <label for="checkUsername">Verificar Usuario:</label>
+      <input type="text" id="checkUsername" placeholder="nombre_usuario" />
+      <button onclick="checkUsername()">Comprobar Usuario</button>
+    </div>
+  
     <div class="form-group">
       <label>Resultado:</label>
       <pre id="authResult"></pre>
     </div>
-  </section>
+  </section>  
 
   <!-- Sección de Configuración de Usuario -->
   <section id="settings-section">
@@ -286,6 +300,18 @@
         currentUser = data;
       }
     }
+
+    async function checkEmail() {
+      const email = document.getElementById('checkEmail').value;
+      const data = await apiCall('/check-email', 'POST', { email }, false);
+      displayResult('authResult', data, !data.error);
+    }
+    
+    async function checkUsername() {
+      const username = document.getElementById('checkUsername').value;
+      const data = await apiCall('/check-username', 'POST', { username }, false);
+      displayResult('authResult', data, !data.error);
+    }    
 
     // User settings functions
     async function getSettings() {
