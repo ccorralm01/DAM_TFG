@@ -8,6 +8,7 @@ from components.settings import UserSettingsController
 from components.category import CategoryController
 from components.transaction import TransactionController
 from components.history import HistoryController
+from models import Base, engine
 
 class TriruleAPI:
     def __init__(self):
@@ -15,6 +16,7 @@ class TriruleAPI:
         self._configure_app()
         self._initialize_extensions()
         self._register_controllers()
+        self._create_tables()
         
     def _configure_app(self):
         self.app.config['JWT_SECRET_KEY'] = 'supersecret-key'
@@ -27,6 +29,9 @@ class TriruleAPI:
     def _initialize_extensions(self):
         CORS(self.app, supports_credentials=True)
         self.jwt = JWTManager(self.app)
+        
+    def _create_tables(self):
+        Base.metadata.create_all(engine)
     
     def _register_controllers(self):
         self.app.add_url_rule('/', view_func=lambda: jsonify({'msg': 'API Trirule funcionando'}))
