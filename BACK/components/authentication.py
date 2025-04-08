@@ -1,4 +1,5 @@
 from flask import jsonify, request
+from sqlalchemy.sql import exists
 from flask_jwt_extended import ( 
     create_access_token, set_access_cookies,
     jwt_required, get_jwt_identity, unset_jwt_cookies
@@ -17,7 +18,9 @@ class AuthController:
         self.app.add_url_rule('/logout', view_func=self.logout, methods=['POST'])
         self.app.add_url_rule('/profile', view_func=self.profile, methods=['GET'])
         self.app.add_url_rule('/check-auth', view_func=self.check_auth, methods=['GET'])
-    
+        self.app.add_url_rule('/check-email', view_func=self.check_email, methods=['POST'])
+        self.app.add_url_rule('/check-username', view_func=self.check_username, methods=['POST'])
+
     def login(self):
         data = request.get_json()
         email = data.get('email')
@@ -65,3 +68,21 @@ class AuthController:
         if user_id:
             return jsonify({'logged_in': True, 'user_id': user_id})
         return jsonify({'logged_in': False})
+    
+    def check_email(self):
+        data = request.get_json()
+        email = data.get("email")
+        if not email:
+            return jsonify({"msg": "El campo 'email' es requerido"}), 400
+        
+        exists_email = session.query(exists().where(User.email == email)).scalar()
+        return jsonify({"exists": exists_email})
+    
+    def check_username(self):
+        data = request.get_json()
+        username = data.get("username")
+        if not username:
+            return jsonify({"msg": "El campo 'username' es requerido"}), 400
+        
+        exists_username = session.query(exists().where(User.username == username)).scalar()
+        return jsonify({"exists": exists_username})
