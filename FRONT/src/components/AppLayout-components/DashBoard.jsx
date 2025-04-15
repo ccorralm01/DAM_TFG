@@ -1,16 +1,15 @@
 import "./styles/DashBoard.css"
-import GradientBackground from "../GradientBackground";
 import OverviewMiniCard from "../Dashboard-components/OverviewMiniCard";
 import OverviewMidCard from "../Dashboard-components/OverviewMidCard";
 import OverviewBigCard from "../Dashboard-components/OverviewBigCard"
+
 const DashBoard = () => {
     return (
         <>
-            <GradientBackground colorDegradado="#10b981" />
             <header>
                 <div className="welcome">
                     <div className="welcome-container container d-flex flex-md-row flex-column justify-content-between align-items-center py-3">
-                        <span className="welcome-text">¡BIENVENVIDO! César</span>
+                        <span className="welcome-text">¡Bienvenido, César!</span>
                         <div className="d-flex gap-2 gap-md-4 mt-2 mt-md-0">
                             <button className="boton-ingreso px-2 px-md-3">NUEVO INGRESO 🤑</button>
                             <button className="boton-gasto px-2 px-md-3">NUEVO GASTO 😤</button>
