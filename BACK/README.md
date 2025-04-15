@@ -18,6 +18,24 @@
 
 ### Autenticación
 
+-  `POST /register`
+
+-  **Descripción**: Registra al usuario en la base de datos.
+
+-  **Cuerpo de la solicitud**: JSON con `username`, `email` y `password`.
+
+-  **Respuesta**: 
+	```json
+	{
+		"msg": "Registro exitoso",
+		"user": {
+			"id": 1,
+			"username": "testuser",
+			"email": "test@example.com"
+		}
+	}
+	```
+
 -  `POST /login`
 
 -  **Descripción**: Autentica a un usuario y devuelve un token JWT en una cookie.
