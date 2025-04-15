@@ -1,0 +1,86 @@
+.msg-1{
+    font-size: 1.1em;
+    font-weight: bold;
+    text-align: center;
+}
+.msg-2{
+    font-size: 1em;
+    color: rgb(161, 161, 170);
+    text-align: center;
+}
+
+.history{
+    font-size: 2.3em;
+    font-weight: bold;
+    color: #fff;
+}
+
+@media (max-width: 768px) {
+    .history {
+        font-size: 1.8em;
+    }
+}
+
+.big-card{
+    min-height: 490px;
+    background-color: rgb(9, 9, 11);
+    border: 1px solid rgb(39, 39, 42);
+    color: #fff;
+    border-radius: 10px;
+}
+
+@media (max-width: 992px) {
+    .big-card {
+        min-height: 400px;
+    }
+}
+
+.big-card select{
+    color: #fff;
+    min-width: 200px;
+    background-color: black;
+    border: 1px solid rgb(39, 39, 42);
+}
+
+@media (max-width: 768px) {
+    .big-card select {
+        min-width: 120px;
+    }
+}
+
+.big-card-body{
+    background-color: #000;
+    border-radius: 10px;
+    flex: 1;
+    min-height: 0;
+}
+
+.leyend span{
+    border: 1px solid rgb(39, 39, 42);
+    border-radius: 25px;
+    font-size: 0.9em;
+}
+
+@media (max-width: 768px) {
+    .leyend {
+        flex-direction: column;
+        gap: 0.5rem !important;
+    }
+    .leyend span {
+        padding: 0.25rem 0.5rem !important;
+    }
+}
+
+.icon-red, .icon-green{
+    min-height: 17px;
+    min-width: 17px;
+    border-radius: 100%;
+}
+
+.icon-green{
+    background-color: rgb(16, 185, 129);
+}
+
+.icon-red{
+    background-color: rgb(239, 68, 68);
+}

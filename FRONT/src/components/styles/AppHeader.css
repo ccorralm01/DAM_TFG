@@ -1,0 +1,9 @@
+.navegacion{
+    min-height: 90px;
+    color: #fff;
+}
+
+.lista-navegacion{
+    list-style: none;
+    font-size: 1.3em;
+}

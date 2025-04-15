@@ -1,0 +1,35 @@
+.overview-icon svg{
+    min-height: 60px;
+    min-width: 60px;
+    border-radius: 10px;
+}
+
+@media (max-width: 576px) {
+    .overview-icon svg {
+        min-height: 40px;
+        min-width: 40px;
+    }
+}
+
+.mini-card-text{
+    color: rgb(161, 161, 170);
+    font-size: 1.1em;
+}
+
+.mini-card-amount{
+    font-size: 2em;
+}
+
+@media (max-width: 768px) {
+    .mini-card-amount {
+        font-size: 1.5em;
+    }
+}
+
+.mini-card{
+    background-color: rgb(9, 9, 11);
+    border: 1px solid rgb(39, 39, 42);
+    min-height: 110px;
+    border-radius: 10px;
+    color: #fff;
+}

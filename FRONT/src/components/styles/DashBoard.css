@@ -1,0 +1,68 @@
+.welcome{
+    background-color: rgb(9, 9, 11);
+    color: #fff;
+    border-top: 1px solid rgb(39, 39, 42);
+    border-bottom: 1px solid rgb(39, 39, 42);
+}
+
+.welcome, .welcome-container{
+    min-height: 115px;
+}
+
+.welcome-text{
+    font-size: 2em;
+    font-weight: 700;
+}
+
+@media (max-width: 768px) {
+    .welcome-text {
+        font-size: 1.5em;
+    }
+}
+
+.boton-ingreso, .boton-gasto{
+    color: #fff;
+    border-radius: 5px;
+    min-height: 40px;
+    white-space: nowrap;
+}
+
+.boton-ingreso{
+    background-color: rgb(2, 44, 34);
+    border: 1px solid rgb(16, 185, 129);
+}
+
+.boton-gasto{
+    background-color: rgb(76, 5, 25);
+    border: 1px solid rgb(244, 63, 94);
+}
+
+
+.panel-title{
+    min-height: 80px;
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
+
+.panel-title-text{
+    font-size: 2.3em;
+    font-weight: bold;
+    color: #fff;
+}
+
+@media (max-width: 768px) {
+    .panel-title-text {
+        font-size: 1.8em;
+    }
+}
+
+.panel-title select{
+    color: #fff;
+    min-width: 200px;
+    background-color: black;
+    border: 1px solid rgb(39, 39, 42);
+}
+
+.panel-title select option{
+    background-color: rgb(9, 9, 11);
+}

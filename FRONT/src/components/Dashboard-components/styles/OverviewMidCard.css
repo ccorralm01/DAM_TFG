@@ -1,0 +1,47 @@
+.middle-card{
+    background-color: rgb(9, 9, 11);
+    border: 1px solid rgb(39, 39, 42);
+    min-height: 350px;
+    border-radius: 10px;
+    color: #fff;
+}
+
+.middle-card-body{
+    background-color: #000;
+    border-radius: 10px;
+    flex: 1;
+    min-height: 0;
+}
+
+@media (max-width: 992px) {
+    .middle-card {
+        min-height: 300px;
+    }
+}
+
+.middle-card header{
+    font-size: 1.7em;
+    color: rgb(161, 161, 170);
+    font-weight: bold;
+}
+
+@media (max-width: 768px) {
+    .middle-card header {
+        font-size: 1.4em;
+    }
+}
+
+.middle-card-body{
+    font-size: 1.2em;
+}
+
+.msg-1{
+    font-size: 1.1em;
+    font-weight: bold;
+    text-align: center;
+}
+.msg-2{
+    font-size: 1em;
+    color: rgb(161, 161, 170);
+    text-align: center;
+}

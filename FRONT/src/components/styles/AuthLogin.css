@@ -1,0 +1,33 @@
+.card {
+    border: none;
+    border-radius: 12px;
+    overflow: hidden;
+    background-color: rgb(9, 9, 11);
+    border: 1px solid rgb(39, 39, 42);
+    color: #fff;
+}
+
+.btn-primary{
+    border: 0;
+}
+
+.btn-primary:hover {
+    filter: brightness(1.1);
+    transform: translateY(-2px);
+}
+
+input {
+    background-color: rgb(24, 24, 27) !important;
+    border-color: rgb(39, 39, 42) !important;
+    color: white !important;
+}
+
+input::placeholder {
+    opacity: 0.5 !important;
+    color: white !important;
+}
+
+.inputFocus:focus {
+    border-color: var(--mainColor) !important;
+    box-shadow: 0 0 0 0.15rem var(--mainColor) !important;
+}
