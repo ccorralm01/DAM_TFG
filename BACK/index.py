@@ -53,6 +53,7 @@ if __name__ == '__main__':
 
 """
     self.app.add_url_rule('/', view_func=self.index)
+    self.app.add_url_rule('/register', view_func=self.register, methods=['POST'])
     self.app.add_url_rule('/login', view_func=self.login, methods=['POST'])
     self.app.add_url_rule('/logout', view_func=self.logout, methods=['POST'])
     self.app.add_url_rule('/profile', view_func=self.profile, methods=['GET'])
