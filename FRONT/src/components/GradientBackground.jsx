@@ -6,8 +6,8 @@ const routeColors = {
     '/': '#29f',
     '/signup': '#63e',
     '/dashboard': '#10b981',
-    '/transactions': '#f43f5e',
-    '/manage': '#cef43f'
+    '/transactions': '#cef43f',
+    '/manage': '#f43fdb'
 };
 
 const GradientBackground = ({ children }) => {
