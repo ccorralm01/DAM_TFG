@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate, useLocation } from 'react-router-dom';
 import './styles/AuthLogin.css';
 import apiService from '../services/apiService';
+import { toast } from 'react-toastify';
 
 const AuthForm = ({ authMode, onToggleAuthMode }) => {
     const location = useLocation();
@@ -26,9 +27,9 @@ const AuthForm = ({ authMode, onToggleAuthMode }) => {
     // Animaciones
     const containerVariants = {
         hidden: { opacity: 0 },
-        visible: { 
+        visible: {
             opacity: 1,
-            transition: { 
+            transition: {
                 staggerChildren: 0.1,
                 delayChildren: 0.2
             }
@@ -37,8 +38,8 @@ const AuthForm = ({ authMode, onToggleAuthMode }) => {
 
     const itemVariants = {
         hidden: { opacity: 0, y: 10 },
-        visible: { 
-            opacity: 1, 
+        visible: {
+            opacity: 1,
             y: 0,
             transition: { type: 'spring', stiffness: 200 }
         }
@@ -52,13 +53,14 @@ const AuthForm = ({ authMode, onToggleAuthMode }) => {
         }));
     };
 
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         setLoading(true);
         setError(null);
 
         if (!isLogin && formData.password !== formData.confirmPassword) {
-            setError('Las contraseñas no coinciden');
+            toast.error('Las contraseñas no coinciden');
             setLoading(false);
             return;
         }
@@ -70,7 +72,10 @@ const AuthForm = ({ authMode, onToggleAuthMode }) => {
                     password: formData.password
                 };
                 await apiService.login(credentials);
-                navigate('/dashboard');
+                toast.success('Inicio de sesión exitoso!', {
+                    autoClose: 1500,
+                });
+                navigate('/dashboard')
             } else {
                 const newUser = {
                     username: formData.username,
@@ -78,9 +83,21 @@ const AuthForm = ({ authMode, onToggleAuthMode }) => {
                     password: formData.password
                 };
                 await apiService.register(newUser);
+
+                toast.success('¡Registro exitoso!', {
+                    autoClose: 2000,
+                    onClose: () => navigate('/')
+                });
+
+                setFormData({
+                    email: '',
+                    password: '',
+                    username: '',
+                    confirmPassword: ''
+                });
             }
         } catch (err) {
-            setError(err.message || 'Error en la autenticación');
+            toast.error(err.message || 'Error en la autenticación');
         } finally {
             setLoading(false);
         }
@@ -90,7 +107,7 @@ const AuthForm = ({ authMode, onToggleAuthMode }) => {
         <main className="position-relative d-flex justify-content-center align-items-center min-vh-100">
             <div className="card shadow-lg col-md-6 col-lg-4 col-11">
                 <div className="card-body p-4">
-                    <motion.div 
+                    <motion.div
                         className="text-center mb-4"
                         key={isLogin ? "login-header" : "signup-header"}
                         initial={{ opacity: 0 }}
@@ -114,7 +131,7 @@ const AuthForm = ({ authMode, onToggleAuthMode }) => {
                                 d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8zm8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1z"
                             />
                         </motion.svg>
-                        <motion.h2 
+                        <motion.h2
                             className="mt-3"
                             initial={{ y: -10 }}
                             animate={{ y: 0 }}
@@ -125,7 +142,7 @@ const AuthForm = ({ authMode, onToggleAuthMode }) => {
                     </motion.div>
 
                     {error && (
-                        <motion.div 
+                        <motion.div
                             className="alert alert-danger"
                             initial={{ opacity: 0, y: -20 }}
                             animate={{ opacity: 1, y: 0 }}
@@ -148,11 +165,11 @@ const AuthForm = ({ authMode, onToggleAuthMode }) => {
                                 {!isLogin && (
                                     <motion.div className="mb-3" variants={itemVariants}>
                                         <label htmlFor="username" className="form-label">Nombre de Usuario</label>
-                                        <input 
-                                            type="text" 
-                                            className="form-control" 
-                                            id="username" 
-                                            placeholder="Usuario" 
+                                        <input
+                                            type="text"
+                                            className="form-control"
+                                            id="username"
+                                            placeholder="Usuario"
                                             required
                                             value={formData.username}
                                             onChange={handleChange}
@@ -162,12 +179,12 @@ const AuthForm = ({ authMode, onToggleAuthMode }) => {
 
                                 <motion.div className="mb-3" variants={itemVariants}>
                                     <label htmlFor="email" className="form-label">Correo Electrónico</label>
-                                    <input 
-                                        type="email" 
-                                        className="form-control" 
-                                        id="email" 
-                                        placeholder="tu@email.com" 
-                                        required 
+                                    <input
+                                        type="email"
+                                        className="form-control"
+                                        id="email"
+                                        placeholder="tu@email.com"
+                                        required
                                         value={formData.email}
                                         onChange={handleChange}
                                     />
@@ -175,12 +192,12 @@ const AuthForm = ({ authMode, onToggleAuthMode }) => {
 
                                 <motion.div className="mb-3" variants={itemVariants}>
                                     <label htmlFor="password" className="form-label">Contraseña</label>
-                                    <input 
-                                        type="password" 
-                                        className="form-control" 
-                                        id="password" 
-                                        placeholder="••••••••" 
-                                        required 
+                                    <input
+                                        type="password"
+                                        className="form-control"
+                                        id="password"
+                                        placeholder="••••••••"
+                                        required
                                         value={formData.password}
                                         onChange={handleChange}
                                     />
@@ -189,12 +206,12 @@ const AuthForm = ({ authMode, onToggleAuthMode }) => {
                                 {!isLogin && (
                                     <motion.div className="mb-3" variants={itemVariants}>
                                         <label htmlFor="confirmPassword" className="form-label">Confirmar Contraseña</label>
-                                        <input 
-                                            type="password" 
-                                            className="form-control" 
+                                        <input
+                                            type="password"
+                                            className="form-control"
                                             id="confirmPassword"
-                                            placeholder="••••••••" 
-                                            required 
+                                            placeholder="••••••••"
+                                            required
                                             value={formData.confirmPassword}
                                             onChange={handleChange}
                                         />
@@ -202,9 +219,9 @@ const AuthForm = ({ authMode, onToggleAuthMode }) => {
                                 )}
 
                                 <motion.div className="d-grid mb-3" variants={itemVariants}>
-                                    <motion.button 
-                                        type="submit" 
-                                        className="btn btn-primary py-2" 
+                                    <motion.button
+                                        type="submit"
+                                        className="btn btn-primary py-2"
                                         style={{ backgroundColor: mainColor }}
                                         whileHover={{ scale: 1.02 }}
                                         whileTap={{ scale: 0.98 }}
@@ -219,7 +236,7 @@ const AuthForm = ({ authMode, onToggleAuthMode }) => {
                         </motion.div>
                     </AnimatePresence>
 
-                    <motion.div 
+                    <motion.div
                         className="d-flex align-items-center my-3"
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
@@ -229,8 +246,8 @@ const AuthForm = ({ authMode, onToggleAuthMode }) => {
                         <span className="px-2 text-muted">o</span>
                         <hr className="flex-grow-1" />
                     </motion.div>
-                    
-                    <motion.div 
+
+                    <motion.div
                         className="text-center"
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}

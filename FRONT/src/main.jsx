@@ -7,10 +7,12 @@ import AppLayout from './components/AppLayout.jsx';
 import Dashboard from './components/Dashboard.jsx';
 import Transactions from './components/Transactions.jsx';
 import Manage from './components/Manage.jsx';
+import NotificationProvider from './components/NotificationProvider.jsx';
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
     <BrowserRouter>
+    <NotificationProvider>
       <GradientBackground>
         <Routes>
           <Route path="/" element={<AuthForm />} />
@@ -22,6 +24,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
           </Route>
         </Routes>
       </GradientBackground>
+      </NotificationProvider>
     </BrowserRouter>
   </React.StrictMode>
 );
