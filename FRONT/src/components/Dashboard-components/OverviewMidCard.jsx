@@ -1,11 +1,22 @@
 import { motion } from "framer-motion";
 import "./styles/OverviewMidCard.css";
+import CustomBarChart from "./BarChart";
 
 const OverviewMidCard = ({
-    title = "Ingresos por categoría",
-    bodyCard = "",
-    isEmpty = true // Nuevo prop para controlar estado
+    type = "income"
 }) => {
+    // Colores según el tipo
+    const colors = {
+        income: {
+            border: "rgb(16, 185, 129)",
+            fill: "rgb(2, 44, 34)"
+        },
+        expense: {
+            border: "rgb(244, 63, 94)",
+            fill: "rgb(76, 5, 25)"
+        }
+    };
+
     // Animaciones
     const cardVariants = {
         hidden: { opacity: 0, y: 20 },
@@ -57,6 +68,17 @@ const OverviewMidCard = ({
         visible: { opacity: 1, y: 0 }
     };
 
+    // Datos de ejemplo (deberías reemplazarlos con tus datos reales)
+    const sampleData = [
+        { name: 'Categoría 1', uv: type === 'income' ? 4000 : 3000 },
+        { name: 'Categoría 2', uv: type === 'income' ? 3000 : 2000 },
+        { name: 'Categoría 3', uv: type === 'income' ? 2000 : 1500 },
+    ];
+
+    const isEmpty = sampleData.length === 0;
+
+    const title = type === 'income' ? 'Ingresos por categoría' : 'Gastos por categoría';
+
     return (
         <motion.article
             className="col-12 col-md-6"
@@ -74,9 +96,9 @@ const OverviewMidCard = ({
                 >
                     {title}
                 </motion.header>
-
                 <motion.div
-                    className="middle-card-body p-4 d-flex flex-column h-100 w-100 justify-content-center align-items-center"
+                    className={`middle-card-body d-flex flex-column py-4 h-100 w-100 align-items-center ${isEmpty ? 'justify-content-center' : 'justify-content-start'
+                        }`}
                     variants={bodyVariants}
                 >
                     {isEmpty ? (
@@ -91,15 +113,15 @@ const OverviewMidCard = ({
                                 className="msg-2 text-center"
                                 variants={textVariants}
                             >
-                                Prueba seleccionando un periodo diferente o añade ingresos
+                                Prueba seleccionando un periodo diferente o añade {type === 'income' ? 'ingresos' : 'gastos'}
                             </motion.span>
                         </>
                     ) : (
-                        <motion.div
-                            variants={textVariants}
-                        >
-                            {bodyCard}
-                        </motion.div>
+                        <CustomBarChart
+                            data={sampleData}
+                            barColor={colors[type].fill}
+                            borderColor={colors[type].border}
+                        />
                     )}
                 </motion.div>
             </motion.div>

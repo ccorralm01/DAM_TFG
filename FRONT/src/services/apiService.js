@@ -68,8 +68,8 @@ class ApiService {
     getTransactionsSummary = () => this._fetch('/transactions/summary', 'GET');
 
     // ==================== HISTORY ====================
-    getMonthlyHistory = () => this._fetch('/history/monthly', 'GET');
-    getYearlyHistory = () => this._fetch('/history/yearly', 'GET');
+    getMonthlyHistoryByDate = (year, month) => this._fetch(`/history/monthly?year=${year}&month=${month}`, 'GET');
+    getYearlyHistoryByDate = (year) => this._fetch(`/history/yearly?year=${year}`, 'GET');
 }
 
 export default new ApiService();

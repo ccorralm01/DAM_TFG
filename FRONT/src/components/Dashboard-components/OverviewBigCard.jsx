@@ -1,12 +1,78 @@
 import { motion } from "framer-motion";
 import "./styles/OverviewBigCard.css";
-
+import { useState, useEffect } from "react";
+import apiService from "../../services/apiService";
+import IncomeExpenseChart from "./IncomeExpenseChart";
 const OverviewBigCard = ({
     title = "Ingresos por categoría",
     bodyCard = "",
-    isEmpty = true
+    isEmpty = false
 }) => {
-    // Animaciones
+    const [timeRange, setTimeRange] = useState("monthly");
+    const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
+    const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth() + 1);
+    const [loading, setLoading] = useState(false);
+    const [historyData, setHistoryData] = useState(null);
+
+    // Generar opciones de años (últimos 5 años)
+    const generateYearOptions = () => {
+        const currentYear = new Date().getFullYear();
+        return Array.from({ length: 5 }, (_, i) => currentYear - i);
+    };
+
+    // Efecto para resetar mes cuando cambia el rango de tiempo
+    useEffect(() => {
+        if (timeRange === "annual") {
+            setSelectedMonth(new Date().getMonth() + 1);
+        }
+    }, [timeRange]);
+
+    // Efecto para cargar datos cuando cambian los filtros
+    useEffect(() => {
+        const fetchData = async () => {
+            setLoading(true);
+            try {
+                let response;
+
+                if (timeRange === "monthly") {
+                    // Llamada para datos mensuales con parámetros
+                    response = await apiService.getMonthlyHistoryByDate(selectedYear, selectedMonth);
+                    console.log("Datos mensuales:", response);
+                    setHistoryData(response);
+                } else {
+                    // Llamada para datos anuales con parámetro
+                    response = await apiService.getYearlyHistoryByDate(selectedYear);
+                    console.log("Datos anuales:", response);
+                    setHistoryData(response);
+                }
+            } catch (error) {
+                console.error("Error fetching history data:", error);
+                setHistoryData(null);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchData();
+    }, [timeRange, selectedYear, selectedMonth]);
+
+    // Generar opciones de meses
+    const months = [
+        { value: 1, label: "Enero" },
+        { value: 2, label: "Febrero" },
+        { value: 3, label: "Marzo" },
+        { value: 4, label: "Abril" },
+        { value: 5, label: "Mayo" },
+        { value: 6, label: "Junio" },
+        { value: 7, label: "Julio" },
+        { value: 8, label: "Agosto" },
+        { value: 9, label: "Septiembre" },
+        { value: 10, label: "Octubre" },
+        { value: 11, label: "Noviembre" },
+        { value: 12, label: "Diciembre" }
+    ];
+
+    // Animaciones (se mantienen igual)
     const containerVariants = {
         hidden: { opacity: 0 },
         visible: {
@@ -73,6 +139,16 @@ const OverviewBigCard = ({
             animate="visible"
             variants={containerVariants}
         >
+            {loading && (
+                <motion.div
+                    className="loading-overlay"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                >
+                    Cargando datos...
+                </motion.div>
+            )}
+
             <motion.span
                 className="history"
                 variants={itemVariants}
@@ -93,25 +169,57 @@ const OverviewBigCard = ({
                         className="d-flex row flex-md-row flex-column justify-content-between align-items-start gap-3"
                         variants={containerVariants}
                     >
-                        <motion.div
-                            className="d-flex col gap-3"
-                            variants={containerVariants}
-                        >
-                            {[0, 1, 2].map((i) => (
-                                <motion.select
-                                    key={i}
-                                    className="form-select"
-                                    custom={i}
-                                    variants={selectVariants}
-                                    whileHover="hover"
-                                    initial="hidden"
-                                    animate="visible"
+                        <motion.div className="d-flex col gap-3">
+                            {/* Switch Mensual/Anual */}
+                            <motion.div
+                                className="time-range-switch"
+                                whileHover={{ scale: 1.05 }}
+                            >
+                                <button
+                                    className={`switch-option ${timeRange === "monthly" ? "active" : ""}`}
+                                    onClick={() => setTimeRange("monthly")}
                                 >
-                                    <option selected>
-                                        {i === 0 ? "2025" : i === 1 ? "2025" : "abril"}
-                                    </option>
+                                    Mes
+                                </button>
+                                <button
+                                    className={`switch-option ${timeRange === "annual" ? "active" : ""}`}
+                                    onClick={() => setTimeRange("annual")}
+                                >
+                                    Año
+                                </button>
+                            </motion.div>
+
+                            {/* Select de Año */}
+                            <motion.select
+                                className="form-select"
+                                value={selectedYear}
+                                onChange={(e) => setSelectedYear(parseInt(e.target.value))}
+                                whileHover="hover"
+                            >
+                                {generateYearOptions().map(year => (
+                                    <option key={year} value={year}>{year}</option>
+                                ))}
+                            </motion.select>
+
+                            {/* Select de Mes (solo visible en modo mensual) */}
+                            {timeRange === "monthly" && (
+                                <motion.select
+                                    className="form-select"
+                                    value={selectedMonth}
+                                    onChange={(e) => setSelectedMonth(parseInt(e.target.value))}
+                                    whileHover="hover"
+                                    initial={{ opacity: 0, x: -10 }}
+                                    animate={{ opacity: 1, x: 0 }}
+                                    exit={{ opacity: 0, x: -10 }}
+                                    transition={{ duration: 0.3 }}
+                                >
+                                    {months.map(month => (
+                                        <option key={month.value} value={month.value}>
+                                            {month.label}
+                                        </option>
+                                    ))}
                                 </motion.select>
-                            ))}
+                            )}
                         </motion.div>
 
                         <motion.div
@@ -138,7 +246,9 @@ const OverviewBigCard = ({
                         className="big-card-body d-flex flex-column h-100 w-100 justify-content-center align-items-center p-4"
                         variants={containerVariants}
                     >
-                        {isEmpty ? (
+                        {loading ? (
+                            <div>Cargando datos...</div>
+                        ) : isEmpty || !historyData ? (
                             <>
                                 <motion.span
                                     className="msg-1 mb-2 fs-5"
@@ -150,13 +260,15 @@ const OverviewBigCard = ({
                                     className="msg-2 text-center"
                                     variants={itemVariants}
                                 >
-                                    Prueba seleccionando un periodo diferente o añade ingresos
+                                    Prueba seleccionando un periodo diferente
                                 </motion.span>
                             </>
                         ) : (
-                            <motion.div variants={itemVariants}>
-                                {bodyCard}
-                            </motion.div>
+                            <IncomeExpenseChart
+                                data={historyData}
+                                selectedMonth={selectedMonth}  // Número de mes (1-12)
+                                selectedYear={selectedYear}   // Año completo (ej. 2023)
+                            />
                         )}
                     </motion.div>
                 </motion.div>
