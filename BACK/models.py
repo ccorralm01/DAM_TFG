@@ -2,12 +2,19 @@ from sqlalchemy import (
     Column, Integer, String, ForeignKey, DateTime, Date, Float,
     UniqueConstraint, Enum, create_engine
 )
-from sqlalchemy.orm import relationship, declarative_base, sessionmaker
+from sqlalchemy.orm import relationship, declarative_base, sessionmaker, scoped_session
 import enum
 from datetime import datetime
 
-engine = create_engine('mysql+pymysql://root:@localhost/trirule', echo=False)
+engine = create_engine('mysql+pymysql://root:@localhost/trirule',
+        pool_pre_ping=True,  # Verifica conexiones antes de usarlas
+        pool_recycle=3600,   # Recicla conexiones cada 1 hora
+        echo=False
+    )
+
 Base = declarative_base()
+SessionFactory = sessionmaker(bind=engine)
+session = scoped_session(SessionFactory)
 
 # Enum para el tipo de categoría
 class CategoryType(enum.Enum):
@@ -84,11 +91,12 @@ class Transaction(Base):
 # -------------------- MONTH HISTORY --------------------
 class MonthHistory(Base):
     __tablename__ = 'month_history'
-    __table_args__ = (UniqueConstraint('user_id', 'month', 'year'),)
+    __table_args__ = (UniqueConstraint('user_id', 'day', 'month', 'year'),)
 
     id = Column(Integer, primary_key=True)
     user_id = Column(Integer, ForeignKey('user.id'), nullable=False)
-    month = Column(Integer, nullable=False)  # 1-12
+    day = Column(Integer, nullable=False)
+    month = Column(Integer, nullable=False)
     year = Column(Integer, nullable=False)
     income = Column(Float, default=0)
     expense = Column(Float, default=0)
@@ -98,15 +106,14 @@ class MonthHistory(Base):
 # -------------------- YEAR HISTORY --------------------
 class YearHistory(Base):
     __tablename__ = 'year_history'
-    __table_args__ = (UniqueConstraint('user_id', 'year'),)
+    __table_args__ = (UniqueConstraint('user_id', 'month', 'year'),)
 
     id = Column(Integer, primary_key=True)
     user_id = Column(Integer, ForeignKey('user.id'), nullable=False)
+    month = Column(Integer, nullable=False) 
     year = Column(Integer, nullable=False)
     income = Column(Float, default=0)
     expense = Column(Float, default=0)
 
     user = relationship("User", back_populates="year_history")
 
-Session = sessionmaker(engine)
-session = Session()

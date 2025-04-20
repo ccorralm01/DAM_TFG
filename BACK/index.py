@@ -82,3 +82,4 @@ if __name__ == '__main__':
     self.app.add_url_rule('/history/monthly', view_func=self.get_monthly_history, methods=['GET'])
     self.app.add_url_rule('/history/yearly', view_func=self.get_yearly_history, methods=['GET'])
 """
+
