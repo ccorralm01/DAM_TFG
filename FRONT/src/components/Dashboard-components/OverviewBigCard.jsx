@@ -8,7 +8,7 @@ const OverviewBigCard = ({
     bodyCard = "",
     isEmpty = false
 }) => {
-    const [timeRange, setTimeRange] = useState("monthly");
+    const [timeRange, setTimeRange] = useState("annual");
     const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
     const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth() + 1);
     const [loading, setLoading] = useState(false);
@@ -226,7 +226,7 @@ const OverviewBigCard = ({
                             className="leyend d-flex col gap-3 align-items-center justify-content-end w-100"
                             variants={containerVariants}
                         >
-                            {["income", "outcome"].map((item, i) => (
+                            {["ingreso", "gasto"].map((item, i) => (
                                 <motion.span
                                     key={item}
                                     className="d-flex align-items-center p-2"
@@ -235,7 +235,7 @@ const OverviewBigCard = ({
                                     whileHover={{ scale: 1.05 }}
                                     whileTap={{ scale: 0.95 }}
                                 >
-                                    <div className={`icon-${item === 'income' ? 'green' : 'red'} mx-1`} />
+                                    <div className={`icon-${item === 'ingreso' ? 'green' : 'red'} mx-1`} />
                                     {item}
                                 </motion.span>
                             ))}
