@@ -3,3 +3,5 @@ https://cursoreact.dev/
 https://www.youtube.com/watch?v=6u1RHUoXIPI
 https://www.youtube.com/watch?v=8-W2O_R95Pk
 https://www.youtube.com/watch?v=XYpadB4VadY&list=PLUofhDIg_38q4D0xNWp7FEHOTcZhjWJ29&index=3
+https://www.youtube.com/watch?v=xl5XZsOTvzY&t=150s
+https://recharts.org/en-US/examples/PositiveAndNegativeBarChart
