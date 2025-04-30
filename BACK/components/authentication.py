@@ -45,8 +45,9 @@ class AuthController:
             return jsonify({"msg": "Todos los campos son requeridos"}), 400
 
         try:
-            with self._session_scope():
-                # Verificar si ya existen
+            user_id = None
+            with self._session_scope() as session:
+                # Verificar si el usuario o email ya existen
                 if session.query(exists().where(User.email == email)).scalar():
                     return jsonify({"msg": "El email ya está registrado"}), 409
 
@@ -62,22 +63,25 @@ class AuthController:
                     password=hashed_password.decode('utf-8')
                 )
                 session.add(new_user)
+                session.flush()  # Asegurarse de que el ID se genere antes de cerrar la sesión
+                user_id = new_user.id 
 
-            access_token = create_access_token(identity=str(new_user.id))
+            access_token = create_access_token(identity=str(user_id))
 
             response = jsonify({
                 "msg": "Registro exitoso",
                 "user": {
-                    "id": new_user.id,
-                    "username": new_user.username,
-                    "email": new_user.email
+                    "id": user_id,
+                    "username": username,
+                    "email": email
                 }
             })
             set_access_cookies(response, access_token)
             return response, 201
 
         except Exception as e:
-            return jsonify({"msg": "Error en el servidor"}), 500
+            print(f"Error en el registro: {str(e)}")
+            return jsonify({"msg": f"Error en el servidor: {str(e)}"}), 500
 
     def login(self):
         data = request.get_json()
@@ -108,6 +112,7 @@ class AuthController:
                 return response
 
         except Exception as e:
+            print(f"Error en el login: {str(e)}")
             return jsonify({"msg": "Error en el servidor"}), 500
 
     def logout(self):
@@ -131,6 +136,7 @@ class AuthController:
                     'created_at': user.created_at.isoformat()
                 })
         except Exception as e:
+            print(f"Error al obtener el perfil: {str(e)}")
             return jsonify({"msg": "Error en el servidor"}), 500
     
     @jwt_required(optional=True)
