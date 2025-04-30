@@ -48,6 +48,7 @@ class TransactionController:
                     'updated_at': t.updated_at.isoformat()
                 } for t in transactions])
         except Exception as e:
+            print(f"Error al recuperar transaciones: {e}")
             return jsonify({'msg': 'Error al obtener transacciones'}), 500
     
     @jwt_required()
@@ -91,6 +92,7 @@ class TransactionController:
                     }
                 }), 201
         except Exception as e:
+            print(f"Error al crear transacción: {e}")
             return jsonify({'msg': 'Error al crear transacción'}), 500
     
     @jwt_required()
@@ -114,6 +116,7 @@ class TransactionController:
                     'updated_at': transaction.updated_at.isoformat()
                 })
         except Exception as e:
+            print(f"Error al obtener transación: {e}")
             return jsonify({'msg': 'Error al obtener transacción'}), 500
     
     @jwt_required()
@@ -160,6 +163,7 @@ class TransactionController:
                 })
                 
         except Exception as e:
+            print(f"Error al actualizar transación: {e}")
             return jsonify({'msg': 'Error al actualizar transacción'}), 500
     
     @jwt_required()
@@ -176,6 +180,7 @@ class TransactionController:
                 
                 return jsonify({'msg': 'Transacción eliminada'})
         except Exception as e:
+            print(f"Error al eliminar transación: {e}")
             return jsonify({'msg': 'Error al eliminar transacción'}), 500
     
     @jwt_required()
@@ -219,4 +224,5 @@ class TransactionController:
                     'categories': categories_summary
                 })
         except Exception as e:
+            print(f"Error al obtener resumen de transacciones: {e}")
             return jsonify({'msg': 'Error al obtener resumen de transacciones'}), 500

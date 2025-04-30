@@ -38,6 +38,7 @@ class UserSettingsController:
                     'currency': settings.currency
                 })
         except Exception as e:
+            print(f"Error al obtener configuración: {e}")
             return jsonify({'msg': 'Error al obtener configuración'}), 500
     
     @jwt_required()
@@ -68,4 +69,5 @@ class UserSettingsController:
                     }
                 })
         except Exception as e:
+            print(f"Error al actualizar configuración: {e}")
             return jsonify({'msg': 'Error al actualizar configuración'}), 500

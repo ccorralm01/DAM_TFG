@@ -54,6 +54,7 @@ class HistoryController:
         except ValueError:
             return jsonify({'msg': 'Parámetros year/month deben ser números enteros'}), 400
         except Exception as e:
+            print(f"Error al obtener historial mensual: {e}")
             return jsonify({'msg': 'Error al obtener historial mensual'}), 500
     
     @jwt_required()
@@ -81,4 +82,5 @@ class HistoryController:
         except ValueError:
             return jsonify({'msg': 'El parámetro year debe ser un número entero'}), 400
         except Exception as e:
+            print(f"Error al obtener historial anual: {e}")
             return jsonify({'msg': 'Error al obtener historial anual'}), 500
