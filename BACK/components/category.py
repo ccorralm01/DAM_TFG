@@ -40,7 +40,7 @@ class CategoryController:
                 return jsonify([{
                     'id': cat.id,
                     'name': cat.name,
-                    'icon': cat.icon,
+                    'color': cat.color,
                     'type': cat.type.value,
                     'created_at': cat.created_at.isoformat()
                 } for cat in categories])
@@ -61,7 +61,7 @@ class CategoryController:
             with self._session_scope():
                 category = Category(
                     name=data['name'],
-                    icon=data.get('icon'),
+                    color=data.get('color'),
                     type=category_type,
                     user_id=user_id
                 )
@@ -73,7 +73,7 @@ class CategoryController:
                     'category': {
                         'id': category.id,
                         'name': category.name,
-                        'icon': category.icon,
+                        'color': category.color,
                         'type': category.type.value
                     }
                 }), 201
@@ -93,7 +93,7 @@ class CategoryController:
                 return jsonify({
                     'id': category.id,
                     'name': category.name,
-                    'icon': category.icon,
+                    'color': category.color,
                     'type': category.type.value,
                     'created_at': category.created_at.isoformat()
                 })
@@ -114,8 +114,8 @@ class CategoryController:
                 
                 if 'name' in data:
                     category.name = data['name']
-                if 'icon' in data:
-                    category.icon = data['icon']
+                if 'color' in data:
+                    category.color = data['color']
                 if 'type' in data:
                     try:
                         category.type = CategoryType(data['type'])
@@ -127,7 +127,7 @@ class CategoryController:
                     'category': {
                         'id': category.id,
                         'name': category.name,
-                        'icon': category.icon,
+                        'color': category.color,
                         'type': category.type.value
                     }
                 })
