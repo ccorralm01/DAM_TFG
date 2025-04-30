@@ -1,0 +1,150 @@
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.modal-content {
+    background-color: rgb(9, 9, 11);
+    border: 1px solid rgb(39, 39, 42);
+    color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    width: 90%;
+    max-width: 500px;
+    max-height: 90vh;
+    overflow-y: auto;
+}
+
+.modal-header,
+.modal-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.modal-header {
+    margin-bottom: 20px;
+}
+
+.modal-footer {
+    margin-top: 20px;
+    gap: 10px;
+}
+
+.close-button {
+    background: none;
+    border: none;
+    font-size: 24px;
+    color: #fff;
+    cursor: pointer;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+}
+
+.form-control {
+    width: 100%;
+    padding: 8px;
+    border-radius: 4px;
+    background-color: rgb(39, 39, 42);
+    border: 0;
+    color: #fff;
+}
+
+.form-row {
+    display: flex;
+    gap: 15px;
+}
+
+.form-row .form-group {
+    flex: 1;
+}
+
+.new-category-form {
+    margin-top: 15px;
+    border-radius: 4px;
+}
+
+.color-selector {
+    position: relative;
+}
+
+.color-preview {
+    width: 40px;
+    height: 40px;
+    min-width: 40px;
+    border-radius: 4px;
+    border: 2px solid #fff;
+    cursor: pointer;
+}
+
+.btn-primary,
+.btn-secondary {
+    padding: 8px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.btn-primary {
+    background-color: rgb(59, 130, 246);
+    color: white;
+    border: none;
+}
+
+.btn-secondary {
+    background-color: transparent;
+    color: #fff;
+    border: 1px solid rgb(63, 63, 70);
+}
+
+.custom-select {
+    position: relative;
+}
+
+.color-dot {
+    position: absolute;
+    top: 50%;
+    right: 10px;
+    transform: translateY(-50%);
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    border: 2px solid #fff;
+    box-shadow: 0 0 0 1px #ccc;
+}
+
+
+/* Estilos para inputs, textarea y select cuando están enfocados */
+input[type="date"].form-control:focus,
+textarea.form-control:focus,
+select.form-control:focus {
+    background-color: rgb(0, 0, 0);
+    color: #fff;
+    outline: none;
+    box-shadow: none;
+}
+
+@media (max-width: 480px) {
+    .form-row {
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .color-picker {
+        width: 100%;
+    }
+}
