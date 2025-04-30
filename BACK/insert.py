@@ -59,23 +59,26 @@ def create_test_data_with_random_dates():
             )
             session.add(settings)
         
+        def random_color():
+            return "#{:06x}".format(random.randint(0, 0xFFFFFF))
+        
         # 3. Crear categorías (solo si no existen)
         if not session.execute(select(Category).where(Category.user_id == 1)).first():
             categories = [
                 # Necesidades
-                Category(name="Comida", icon="shopping-basket", type="need", user_id=1),
-                Category(name="Casa", icon="home", type="need", user_id=1),
-                Category(name="Transporte", icon="bus", type="need", user_id=1),
-                Category(name="Salud", icon="heart-pulse", type="need", user_id=1),
+                Category(name="Comida", color=random_color(), type="need", user_id=1),
+                Category(name="Casa", color=random_color(), type="need", user_id=1),
+                Category(name="Transporte", color=random_color(), type="need", user_id=1),
+                Category(name="Salud", color=random_color(), type="need", user_id=1),
                 # Deseos
-                Category(name="Diversión", icon="gamepad", type="want", user_id=1),
-                Category(name="Comer fuera", icon="utensils", type="want", user_id=1),
-                Category(name="Vacaciones", icon="umbrella-beach", type="want", user_id=1),
-                Category(name="Moda", icon="shirt", type="want", user_id=1),
+                Category(name="Diversión", color=random_color(), type="want", user_id=1),
+                Category(name="Comer fuera", color=random_color(), type="want", user_id=1),
+                Category(name="Vacaciones", color=random_color(), type="want", user_id=1),
+                Category(name="Moda", color=random_color(), type="want", user_id=1),
                 # Ahorros
-                Category(name="Ahorros", icon="coin", type="save", user_id=1),
-                Category(name="Inversiones", icon="trending-up", type="save", user_id=1),
-                Category(name="Emergencias", icon="first-aid", type="save", user_id=1)
+                Category(name="Ahorros", color=random_color(), type="save", user_id=1),
+                Category(name="Inversiones", color=random_color(), type="save", user_id=1),
+                Category(name="Emergencias", color=random_color(), type="save", user_id=1)
             ]
             session.add_all(categories)
             session.flush()

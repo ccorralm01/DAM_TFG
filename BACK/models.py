@@ -61,7 +61,7 @@ class Category(Base):
     id = Column(Integer, primary_key=True)
     created_at = Column(DateTime, default=datetime.now())
     name = Column(String(50), nullable=False)
-    icon = Column(String(50), nullable=True)
+    color = Column(String(50), nullable=True)
     type = Column(Enum(CategoryType), nullable=False)
 
     user_id = Column(Integer, ForeignKey('user.id'), nullable=False)
