@@ -243,7 +243,7 @@ const OverviewBigCard = ({
                     </motion.header>
 
                     <motion.div
-                        className="big-card-body d-flex flex-column h-100 w-100 justify-content-center align-items-center p-4"
+                        className="big-card-body d-flex flex-column h-100 w-100 justify-content-center align-items-center py-4"
                         variants={containerVariants}
                     >
                         {loading ? (

@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
 import "./styles/OverviewMidCard.css";
-import CustomBarChart from "./BarChart";
+import CustomPieChart from "./PieChart";
 
 const OverviewMidCard = ({
     type = "income"
@@ -97,7 +97,7 @@ const OverviewMidCard = ({
                     {title}
                 </motion.header>
                 <motion.div
-                    className={`middle-card-body d-flex flex-column py-4 h-100 w-100 align-items-center ${isEmpty ? 'justify-content-center' : 'justify-content-start'
+                    className={`middle-card-body d-flex flex-column h-100 w-100 align-items-center ${isEmpty ? 'justify-content-center' : 'justify-content-start'
                         }`}
                     variants={bodyVariants}
                 >
@@ -117,10 +117,10 @@ const OverviewMidCard = ({
                             </motion.span>
                         </>
                     ) : (
-                        <CustomBarChart
-                            data={sampleData}
-                            barColor={colors[type].fill}
-                            borderColor={colors[type].border}
+                        <CustomPieChart 
+                            colors={['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0']}
+                            width="100%"
+                            height="100%"
                         />
                     )}
                 </motion.div>
