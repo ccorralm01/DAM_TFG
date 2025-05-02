@@ -97,7 +97,7 @@ const TransactionModal = ({ show, onClose, type }) => {
                                         onChange={handleChange}
                                         required
                                     >
-                                        <option value="" disabled>Seleccione una categoría</option>
+                                        <option value="" className="text-light" disabled>Seleccione una categoría</option>
                                         <option value="new">➕ Nueva categoría</option>
                                         {categories.map(cat => (
                                             <option key={cat.id} value={cat.id} style={{ color: cat.color }}>
