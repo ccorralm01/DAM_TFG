@@ -1,12 +1,33 @@
 import { useState } from 'react';
-import { Outlet, Link } from 'react-router-dom';
+import { Outlet, Link, useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
 import "./styles/AppHeader.css";
 import Logo from "../../assets/Logo.png";
+import apiService from '../../services/apiService'; // Asegúrate de importar tu apiService
+
 const AppLayout = () => {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
+    const navigate = useNavigate();
 
     const toggleMenu = () => {
         setIsMenuOpen(!isMenuOpen);
+    };
+
+    const logOut = async () => {
+        try {
+            const response = await apiService.logout();
+            
+            // Cerrar menú móvil si está abierto
+            setIsMenuOpen(false);
+            
+            toast.success(response.msg || 'Sesión cerrada', {
+                autoClose: 1500,
+                onClose: () => navigate('/') // Redirigir a login después del toast
+            });
+
+        } catch (err) {
+            toast.error(err.message || 'Error al cerrar sesión');
+        }
     };
 
     return (
@@ -35,19 +56,21 @@ const AppLayout = () => {
                     </div>
                     
                     {/* Menú normal para desktop */}
-                    <ul className="lista-navegacion d-none d-md-flex align-items-center gap-5 mb-0">
+                    <ul className="lista-navegacion d-none d-md-flex align-items-center gap-5 mb-0 p-0">
                         <li><Link className="nav-link" to="/dashboard">Inicio</Link></li>
                         <li><Link className="nav-link" to="/transactions">Transacciones</Link></li>
                         <li><Link className="nav-link" to="/manage">Ajustes</Link></li>
+                        <li><button className="nav-link logout-btn" onClick={logOut}>Salir</button></li>
                     </ul>
                     
                     {/* Menú desplegable para móvil */}
                     <div className={`mobile-menu ${isMenuOpen ? 'open' : ''} d-md-none`}>
-                        <ul className="mb-0 pt-5"> {/* Añadido pt-5 para espacio del botón */}
-                            <img src={Logo} alt="Company Logo" className='logoTrirule img-fluid d-none d-md-block d-sm-block mb-3'/>
+                        <ul className="mb-0 pt-5">
+                            <img src={Logo} alt="Company Logo" className='logoTrirule img-fluid mb-5'/>
                             <li><Link className="nav-link" to="/dashboard" onClick={toggleMenu}>Inicio</Link></li>
                             <li><Link className="nav-link" to="/transactions" onClick={toggleMenu}>Transacciones</Link></li>
                             <li><Link className="nav-link" to="/manage" onClick={toggleMenu}>Ajustes</Link></li>
+                            <li><button className="nav-link logout-btn" onClick={() => { toggleMenu(); logOut(); }}>Salir</button></li>
                         </ul>
                     </div>
                 </nav>

@@ -19,7 +19,6 @@ const AuthForm = ({ authMode, onToggleAuthMode }) => {
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
 
-
     const toggleAuthMode = () => {
         navigate(isLogin ? '/signup' : '/');
     };

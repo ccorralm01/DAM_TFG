@@ -116,7 +116,7 @@ class AuthController:
             return jsonify({"msg": "Error en el servidor"}), 500
 
     def logout(self):
-        response = jsonify({'msg': 'Logout exitoso'})
+        response = jsonify({'msg': 'Sesión cerrada con éxito!'})
         unset_jwt_cookies(response)
         return response
     
