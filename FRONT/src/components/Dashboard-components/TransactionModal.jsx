@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import apiService from "../../services/apiService";
 import "./styles/TransactionModal.css";
+import { toast } from 'react-toastify';
 
 const TransactionModal = ({ show, onClose, type }) => {
     const [formData, setFormData] = useState({
@@ -23,8 +24,19 @@ const TransactionModal = ({ show, onClose, type }) => {
         setFormData(prev => ({ ...prev, color }));
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
+
+        const transactionData = {
+            amount: formData.amount,
+            description: formData.description,
+            date: formData.date,
+            newCategory: formData.category === "new" ? formData.newCategory : null,
+            color: formData.color,
+            category_id: formData.category !== "new" ? formData.category : null,
+            kind: type === 'income' ? 'income' : 'expense'
+        };
+
         if (formData.category === "new" && formData.newCategory) {
             const newCategory = {
                 value: formData.newCategory.toLowerCase().replace(/\s+/g, '-'),
@@ -33,7 +45,17 @@ const TransactionModal = ({ show, onClose, type }) => {
             };
             console.log("Nueva categoría:", newCategory);
         }
-        console.log("Datos enviados:", formData);
+
+        try {
+            const response = await apiService.createTransaction(transactionData);
+
+            toast.success(response.msg || "Nuevo " + (type === 'income' ? 'ingreso' : 'gasto') + "creado", {
+                autoClose: 1500,
+            });
+
+        } catch (err) {
+            toast.error(err.message || 'Error al crear transacción');
+        }
         onClose();
     };
 
