@@ -9,11 +9,19 @@ const TransactionModal = ({ show, onClose, type }) => {
         description: "",
         category: "",
         newCategory: "",
+        categoryType: "need", // Nuevo campo para el tipo de categoría
         color: "#3b82f6",
         date: new Date().toISOString().split('T')[0]
     });
 
     const [categories, setCategories] = useState([]);
+
+    // Opciones para los tipos de categoría
+    const categoryTypes = [
+        { value: "need", label: "Necesidad" },
+        { value: "want", label: "Deseo" },
+        { value: "save", label: "Ahorro" }
+    ];
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -34,25 +42,35 @@ const TransactionModal = ({ show, onClose, type }) => {
             newCategory: formData.category === "new" ? formData.newCategory : null,
             color: formData.color,
             category_id: formData.category !== "new" ? formData.category : null,
-            kind: type === 'income' ? 'income' : 'expense'
+            kind: type === 'income' ? 'income' : 'expense',
+            categoryType: formData.category === "new" ? formData.categoryType : null // Enviamos el tipo de categoría
         };
 
         if (formData.category === "new" && formData.newCategory) {
             const newCategory = {
                 value: formData.newCategory.toLowerCase().replace(/\s+/g, '-'),
-                label: formData.newCategory,
-                color: formData.color
+                name: formData.newCategory,
+                color: formData.color,
+                type: formData.categoryType
             };
             console.log("Nueva categoría:", newCategory);
+            try {
+                const response = await apiService.createCategory(newCategory);
+                transactionData.category_id = response.category.id;
+                console.log("Categoría creada:", response.category);
+                toast.success(response.msg || "Nueva categoría creada", {
+                    autoClose: 1500,
+                });
+            } catch (err) {
+                toast.error(err.message || 'Error al crear categoría');
+            }
         }
 
         try {
             const response = await apiService.createTransaction(transactionData);
-
-            toast.success(response.msg || "Nuevo " + (type === 'income' ? 'ingreso' : 'gasto') + "creado", {
+            toast.success(response.msg || "Nuevo " + (type === 'income' ? 'ingreso' : 'gasto') + " creado", {
                 autoClose: 1500,
             });
-
         } catch (err) {
             toast.error(err.message || 'Error al crear transacción');
         }
@@ -171,6 +189,24 @@ const TransactionModal = ({ show, onClose, type }) => {
                                             className="color-preview"
                                         />
                                     </div>
+                                </div>
+                                
+                                {/* Selector para el tipo de categoría */}
+                                <div className="form-group">
+                                    <label>Tipo de categoría</label>
+                                    <select
+                                        className="form-control"
+                                        name="categoryType"
+                                        value={formData.categoryType}
+                                        onChange={handleChange}
+                                        required
+                                    >
+                                        {categoryTypes.map(type => (
+                                            <option key={type.value} value={type.value}>
+                                                {type.label}
+                                            </option>
+                                        ))}
+                                    </select>
                                 </div>
                             </div>
                         )}

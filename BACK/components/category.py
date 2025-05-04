@@ -67,6 +67,7 @@ class CategoryController:
                 )
                 
                 session.add(category)
+                session.flush() # Para obtener el ID generado automáticamente
                 
                 return jsonify({
                     'msg': 'Categoría creada',
@@ -78,6 +79,7 @@ class CategoryController:
                     }
                 }), 201
         except Exception as e:
+            print("Error al crear categoría:", e)
             return jsonify({'msg': 'Error al crear categoría'}), 500
     
     @jwt_required()
