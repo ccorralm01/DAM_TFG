@@ -26,8 +26,7 @@ class CategoryType(enum.Enum):
 class TransactionKind(enum.Enum):
     income = "income"
     expense = "expense"
-    transfer = "transfer"
-
+    
 # -------------------- USER --------------------
 class User(Base):
     __tablename__ = 'user'

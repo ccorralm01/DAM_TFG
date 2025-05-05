@@ -43,7 +43,7 @@ const TransactionModal = ({ show, onClose, type }) => {
             color: formData.color,
             category_id: formData.category !== "new" ? formData.category : null,
             kind: type === 'income' ? 'income' : 'expense',
-            categoryType: formData.category === "new" ? formData.categoryType : null // Enviamos el tipo de categoría
+            categoryType: formData.category === "new" ? formData.categoryType : null
         };
 
         if (formData.category === "new" && formData.newCategory) {
