@@ -34,19 +34,22 @@ export default class CustomPieChart extends PureComponent {
     };
 
     render() {
+        // Extraemos las props necesarias
         const {
-            data = [
-                { name: 'Group A', value: 400 },
-                { name: 'Group B', value: 300 },
-                { name: 'Group C', value: 300 },
-                { name: 'Group D', value: 200 },
-            ],
+            data = [],
             width = '100%',
             height = 400,
-            colors = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042'],
+            currency = '€',
         } = this.props;
 
-        const total = data.reduce((sum, item) => sum + item.value, 0);
+        // Transformamos los datos al formato que espera Recharts
+        const chartData = data.map(item => ({
+            name: item.category,
+            value: item.amount,
+            color: item.color || '#8884d8' // Color por defecto si no viene definido
+        }));
+
+        const total = chartData.reduce((sum, item) => sum + item.value, 0);
 
         return (
             <div style={{ 
@@ -57,7 +60,7 @@ export default class CustomPieChart extends PureComponent {
                 <ResponsiveContainer width={width} height={height}>
                     <PieChart>
                         <Pie
-                            data={data}
+                            data={chartData}
                             cx="50%"
                             cy="50%"
                             innerRadius="60%"
@@ -67,10 +70,10 @@ export default class CustomPieChart extends PureComponent {
                             label={this.renderCustomizedLabel}
                             labelLine={false}
                         >
-                            {data.map((entry, index) => (
+                            {chartData.map((entry, index) => (
                                 <Cell 
                                     key={`cell-${index}`} 
-                                    fill={colors[index % colors.length]} 
+                                    fill={entry.color}  // Usamos el color de la categoría
                                     stroke="#fff"
                                     strokeWidth={1}
                                 />
@@ -87,11 +90,11 @@ export default class CustomPieChart extends PureComponent {
                                 fill: '#fff',
                             }}
                         >
-                            {total.toLocaleString() + ' €'}
+                            {total.toLocaleString() + ' ' + currency}
                         </text>
                         <Tooltip 
                             formatter={(value, name) => [
-                                `${value + "€"} (${((value / total) * 100).toFixed(1)}%)`, 
+                                `${value.toLocaleString()}${currency} (${((value / total) * 100).toFixed(1)}%)`, 
                                 name
                             ]}
                             contentStyle={{

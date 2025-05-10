@@ -2,9 +2,7 @@ import { motion } from "framer-motion";
 import "./styles/OverviewMidCard.css";
 import CustomPieChart from "./PieChart";
 
-const OverviewMidCard = ({
-    type = "income"
-}) => {
+const OverviewMidCard = ({type = "income", data = [] }) => {
     // Colores según el tipo
     const colors = {
         income: {
@@ -68,14 +66,7 @@ const OverviewMidCard = ({
         visible: { opacity: 1, y: 0 }
     };
 
-    // Datos de ejemplo (deberías reemplazarlos con tus datos reales)
-    const sampleData = [
-        { name: 'Categoría 1', uv: type === 'income' ? 4000 : 3000 },
-        { name: 'Categoría 2', uv: type === 'income' ? 3000 : 2000 },
-        { name: 'Categoría 3', uv: type === 'income' ? 2000 : 1500 },
-    ];
-
-    const isEmpty = sampleData.length === 0;
+    const isEmpty = data.length === 0;
 
     const title = type === 'income' ? 'Ingresos por categoría' : 'Gastos por categoría';
 
@@ -117,8 +108,8 @@ const OverviewMidCard = ({
                             </motion.span>
                         </>
                     ) : (
-                        <CustomPieChart 
-                            colors={['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0']}
+                        <CustomPieChart
+                            data={data}
                             width="100%"
                             height="100%"
                         />

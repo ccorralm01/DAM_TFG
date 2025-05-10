@@ -16,6 +16,8 @@ const DashBoard = () => {
     const [showModal, setShowModal] = useState(false); // Estado para controlar la visibilidad del modal
     const [modalType, setModalType] = useState(''); // 'income' o 'expense'
     const [refreshData, setRefreshData] = useState(false);  // Estado para forzar la actualización de los datos
+    const [sumary, setSumary] = useState({ income: 0, expense: 0, balance: 0 }); // Estado para almacenar el resumen de ingresos, gastos y balance
+    const [transactionsByCategory, setTransactionsByCategory] = useState({ income: {}, expenses: {}}); // Estado para almacenar las transacciones por categoría
 
     const handleTransactionCreated = () => {
         setRefreshData(prev => !prev); // Cambia el estado para forzar la actualización
@@ -33,6 +35,30 @@ const DashBoard = () => {
 
         fetchProfile();
     }, []);
+
+    useEffect(() => {
+        const fetchSummary = async () => {
+            try {
+                const profileDataSumary = await apiService.getTransactionsSummary();
+                setTransactionsByCategory({
+                    income: profileDataSumary.categories.income,
+                    expenses: profileDataSumary.categories.expenses
+                });
+                setSumary({
+                    income: profileDataSumary.summary.income,
+                    expenses: profileDataSumary.summary.expenses,
+                    balance: profileDataSumary.summary.balance
+                });
+
+                console.log("Resumen de transacciones:", transactionsByCategory);
+                console.log("Resumen:", sumary);
+            } catch (error) {
+                console.error("Error fetching summary:", error);
+            }
+        };
+        fetchSummary();      
+    }, [refreshData]); // Extraer el resumen de transacciones al cargar el componente
+
 
     const handleOpenModal = (type) => {
         setModalType(type);
@@ -55,14 +81,14 @@ const DashBoard = () => {
                             <span className="welcome-text">Cargando perfil...</span>
                         )}
                         <div className="d-flex gap-2 gap-md-4 mt-2 mt-md-0">
-                            <button 
-                                className="boton-ingreso px-2 px-md-3" 
+                            <button
+                                className="boton-ingreso px-2 px-md-3"
                                 onClick={() => handleOpenModal('income')}
                             >
                                 NUEVO INGRESO 🤑
                             </button>
-                            <button 
-                                className="boton-gasto px-2 px-md-3" 
+                            <button
+                                className="boton-gasto px-2 px-md-3"
                                 onClick={() => handleOpenModal('expense')}
                             >
                                 NUEVO GASTO 😤
@@ -81,20 +107,20 @@ const DashBoard = () => {
                     </div>
                 </div>
                 <section className="row g-3 mb-3">
-                    <OverviewMiniCard title="Ingresos"  iconName="trending-up"    bgColor="#34d39911" iconColor="#10b981" />
-                    <OverviewMiniCard title="Gastos"    iconName="trending-down"  bgColor="#f8727211" iconColor="#ef4444" />
-                    <OverviewMiniCard title="Balance"   iconName="wallet"         bgColor="#a78bfa11" iconColor="#8b5cf6" />
+                    <OverviewMiniCard title="Ingresos" iconName="trending-up" bgColor="#34d39911" iconColor="#10b981" amount={sumary.income}/>
+                    <OverviewMiniCard title="Gastos" iconName="trending-down" bgColor="#f8727211" iconColor="#ef4444" amount={sumary.expenses}/>
+                    <OverviewMiniCard title="Balance" iconName="wallet" bgColor="#a78bfa11" iconColor="#8b5cf6" amount={sumary.balance}/>
                 </section>
                 <section className="row g-3 mb-4">
-                    <OverviewMidCard type="income" />
-                    <OverviewMidCard type="expense" />
+                    <OverviewMidCard type="income" data={transactionsByCategory.income}/>
+                    <OverviewMidCard type="expense" data={transactionsByCategory.expenses}/>
                 </section>
                 <section className="row g-3">
                     <OverviewBigCard refreshTrigger={refreshData} />
                 </section>
             </main>
 
-            <TransactionModal 
+            <TransactionModal
                 show={showModal}
                 onClose={handleCloseModal}
                 type={modalType}

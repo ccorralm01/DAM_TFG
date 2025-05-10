@@ -55,7 +55,6 @@ class TransactionController:
     def create_transaction(self):
         user_id = get_jwt_identity()
         data = request.get_json()
-        print(f"Datos recibidos para crear transacción: {data}")
         
         try:
             transaction_kind = TransactionKind(data['kind'])
@@ -194,43 +193,90 @@ class TransactionController:
     @jwt_required()
     def get_transactions_summary(self):
         user_id = get_jwt_identity()
-        now = datetime.now()
-        current_month = now.month
-        current_year = now.year
+        
+        # Obtener parámetros de fecha del request
+        start_date_str = request.args.get('start_date')
+        end_date_str = request.args.get('end_date')
         
         try:
-            with self._session_scope():
-                start_date = datetime(current_year, current_month, 1).date()
-                if current_month < 12:
-                    end_date = datetime(current_year, current_month + 1, 1).date()
-                else:
-                    end_date = datetime(current_year + 1, 1, 1).date()
+            # Parsear fechas o usar valores por defecto (mes actual)
+            now = datetime.now()
+            if start_date_str:
+                start_date = datetime.strptime(start_date_str, '%Y-%m-%d').date()
+            else:
+                start_date = datetime(now.year, now.month, 1).date()
                 
+            if end_date_str:
+                end_date = datetime.strptime(end_date_str, '%Y-%m-%d').date()
+            else:
+                if now.month < 12:
+                    end_date = datetime(now.year, now.month + 1, 1).date()
+                else:
+                    end_date = datetime(now.year + 1, 1, 1).date()
+            
+            with self._session_scope():
+                # Obtener transacciones en el rango de fechas
                 transactions = session.query(Transaction).filter(
                     Transaction.user_id == user_id,
                     Transaction.date >= start_date,
-                    Transaction.date < end_date
+                    Transaction.date <= end_date
                 ).all()
                 
+                # Calcular totales
                 income = sum(t.amount for t in transactions if t.kind == TransactionKind.income)
                 expenses = sum(t.amount for t in transactions if t.kind == TransactionKind.expense)
                 
-                categories_summary = {}
+                # Preparar resumen por categorías como arrays de objetos
+                income_categories = []
+                expense_categories = []
+                
+                # Diccionarios temporales para acumular los montos por categoría
+                temp_income = {}
+                temp_expense = {}
+                # Diccionarios para guardar los colores de cada categoría
+                category_colors = {}
+                
                 for t in transactions:
-                    if t.kind == TransactionKind.expense and t.category_id:
+                    if t.category_id:
                         category = session.get(Category, t.category_id)
                         if category:
                             cat_name = category.name
-                            categories_summary[cat_name] = categories_summary.get(cat_name, 0) + t.amount
+                            # Guardamos el color la primera vez que encontramos la categoría
+                            if cat_name not in category_colors:
+                                category_colors[cat_name] = category.color
+                            
+                            if t.kind == TransactionKind.income:
+                                temp_income[cat_name] = temp_income.get(cat_name, 0) + t.amount
+                            else:
+                                temp_expense[cat_name] = temp_expense.get(cat_name, 0) + t.amount
+                
+                # Convertir los diccionarios temporales a arrays de objetos incluyendo el color
+                income_categories = [{
+                    'category': k, 
+                    'amount': float(v),
+                    'color': category_colors.get(k)
+                } for k, v in temp_income.items()]
+                
+                expense_categories = [{
+                    'category': k, 
+                    'amount': float(v),
+                    'color': category_colors.get(k)
+                } for k, v in temp_expense.items()]
                 
                 return jsonify({
-                    'month': current_month,
-                    'year': current_year,
-                    'income': income,
-                    'expenses': expenses,
-                    'balance': income - expenses,
-                    'categories': categories_summary
+                    'summary': {
+                        'income': float(income),
+                        'expenses': float(expenses),
+                        'balance': float(income - expenses)
+                    },
+                    'categories': {
+                        'income': income_categories,
+                        'expenses': expense_categories
+                    }
                 })
+                
+        except ValueError as e:
+            return jsonify({'msg': 'Formato de fecha inválido. Use YYYY-MM-DD'}), 400
         except Exception as e:
             print(f"Error al obtener resumen de transacciones: {e}")
             return jsonify({'msg': 'Error al obtener resumen de transacciones'}), 500
