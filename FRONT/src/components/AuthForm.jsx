@@ -87,7 +87,7 @@ const AuthForm = ({ authMode, onToggleAuthMode }) => {
                     autoClose: 2000,
                     onClose: () => navigate('/')
                 });
-
+                
                 setFormData({
                     email: '',
                     password: '',

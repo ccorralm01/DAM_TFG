@@ -93,7 +93,7 @@ const OverviewMidCard = ({type = "income", data = [] }) => {
                     variants={bodyVariants}
                 >
                     {isEmpty ? (
-                        <>
+                        <div className="p-5 d-flex flex-column align-items-center justify-content-center" style={{ color: colors[type].fill, minHeight: '200px' }}>
                             <motion.span
                                 className="msg-1 mb-2 fs-5"
                                 variants={textVariants}
@@ -106,7 +106,7 @@ const OverviewMidCard = ({type = "income", data = [] }) => {
                             >
                                 Prueba seleccionando un periodo diferente o añade {type === 'income' ? 'ingresos' : 'gastos'}
                             </motion.span>
-                        </>
+                        </div>
                     ) : (
                         <CustomPieChart
                             data={data}
