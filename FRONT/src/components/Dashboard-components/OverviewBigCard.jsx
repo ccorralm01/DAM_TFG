@@ -34,12 +34,10 @@ const OverviewBigCard = ({ title = "Ingresos por categoría", bodyCard = "", isE
                 if (timeRange === "monthly") {
                     // Llamada para datos mensuales con parámetros
                     response = await apiService.getMonthlyHistoryByDate(selectedYear, selectedMonth);
-                    console.log("Datos mensuales:", response);
                     setHistoryData(response);
                 } else {
                     // Llamada para datos anuales con parámetro
                     response = await apiService.getYearlyHistoryByDate(selectedYear);
-                    console.log("Datos anuales:", response);
                     setHistoryData(response);
                 }
             } catch (error) {
