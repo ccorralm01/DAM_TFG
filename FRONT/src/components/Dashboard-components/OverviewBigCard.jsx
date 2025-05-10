@@ -3,16 +3,13 @@ import "./styles/OverviewBigCard.css";
 import { useState, useEffect } from "react";
 import apiService from "../../services/apiService";
 import IncomeExpenseChart from "./IncomeExpenseChart";
-const OverviewBigCard = ({
-    title = "Ingresos por categoría",
-    bodyCard = "",
-    isEmpty = false
-}) => {
-    const [timeRange, setTimeRange] = useState("annual");
-    const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
-    const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth() + 1);
-    const [loading, setLoading] = useState(false);
-    const [historyData, setHistoryData] = useState(null);
+
+const OverviewBigCard = ({ title = "Ingresos por categoría", bodyCard = "", isEmpty = false, refreshTrigger }) => {
+    const [timeRange, setTimeRange] = useState("annual"); // Estado para el rango de tiempo (mensual/anual)
+    const [selectedYear, setSelectedYear] = useState(new Date().getFullYear()); // Año seleccionado (inicialmente el año actual)
+    const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth() + 1); // Mes seleccionado (inicialmente el mes actual)
+    const [loading, setLoading] = useState(false); // Estado de carga
+    const [historyData, setHistoryData] = useState(null); // Datos históricos
 
     // Generar opciones de años (últimos 5 años)
     const generateYearOptions = () => {
@@ -54,7 +51,7 @@ const OverviewBigCard = ({
         };
 
         fetchData();
-    }, [timeRange, selectedYear, selectedMonth]);
+    }, [timeRange, selectedYear, selectedMonth, refreshTrigger]);
 
     // Generar opciones de meses
     const months = [

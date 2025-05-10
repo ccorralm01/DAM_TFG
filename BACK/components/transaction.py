@@ -4,7 +4,7 @@ from datetime import datetime
 from models import session, Category, Transaction, TransactionKind
 from contextlib import contextmanager
 from sqlalchemy import func
-
+from components.history import HistoryController
 class TransactionController:
     def __init__(self, app):
         self.app = app
@@ -55,6 +55,7 @@ class TransactionController:
     def create_transaction(self):
         user_id = get_jwt_identity()
         data = request.get_json()
+        print(f"Datos recibidos para crear transacción: {data}")
         
         try:
             transaction_kind = TransactionKind(data['kind'])
@@ -69,16 +70,23 @@ class TransactionController:
                     if not category:
                         return jsonify({'msg': 'Categoría no encontrada'}), 404
                 
+                # Convertir la fecha a objeto date
+                transaction_date = datetime.strptime(data['date'], '%Y-%m-%d').date()
+                
                 transaction = Transaction(
                     amount=data['amount'],
                     description=data.get('description'),
-                    date=datetime.strptime(data['date'], '%Y-%m-%d').date(),
+                    date=transaction_date,
                     kind=transaction_kind,
                     category_id=category_id,
                     user_id=user_id
                 )
                 
                 session.add(transaction)
+                
+                # Actualizar los historiales
+                HistoryController._update_month_history(user_id, transaction_date)
+                HistoryController._update_year_history(user_id, transaction_date)
                 
                 return jsonify({
                     'msg': 'Transacción creada',

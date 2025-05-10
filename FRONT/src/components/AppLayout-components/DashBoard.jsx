@@ -12,9 +12,14 @@ import { Navigate } from 'react-router-dom';
 const DashBoard = () => {
     const { userId, isAuthenticated } = useOutletContext();
     if (!isAuthenticated) { return <Navigate to="/login" replace />; }
-    const [profile, setProfile] = useState(null);
-    const [showModal, setShowModal] = useState(false);
+    const [profile, setProfile] = useState(null); // Estado para almacenar el perfil del usuario
+    const [showModal, setShowModal] = useState(false); // Estado para controlar la visibilidad del modal
     const [modalType, setModalType] = useState(''); // 'income' o 'expense'
+    const [refreshData, setRefreshData] = useState(false);  // Estado para forzar la actualización de los datos
+
+    const handleTransactionCreated = () => {
+        setRefreshData(prev => !prev); // Cambia el estado para forzar la actualización
+    };
 
     useEffect(() => {
         const fetchProfile = async () => {
@@ -85,7 +90,7 @@ const DashBoard = () => {
                     <OverviewMidCard type="expense" />
                 </section>
                 <section className="row g-3">
-                    <OverviewBigCard />
+                    <OverviewBigCard refreshTrigger={refreshData} />
                 </section>
             </main>
 
@@ -93,6 +98,7 @@ const DashBoard = () => {
                 show={showModal}
                 onClose={handleCloseModal}
                 type={modalType}
+                onTransactionCreated={handleTransactionCreated}
             />
         </>
     )

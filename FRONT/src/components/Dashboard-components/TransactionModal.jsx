@@ -3,7 +3,7 @@ import apiService from "../../services/apiService";
 import "./styles/TransactionModal.css";
 import { toast } from 'react-toastify';
 
-const TransactionModal = ({ show, onClose, type }) => {
+const TransactionModal = ({ show, onClose, type, onTransactionCreated }) => {
     const [formData, setFormData] = useState({
         amount: "",
         description: "",
@@ -36,7 +36,7 @@ const TransactionModal = ({ show, onClose, type }) => {
         e.preventDefault();
 
         const transactionData = {
-            amount: formData.amount,
+            amount: parseFloat(formData.amount),
             description: formData.description,
             date: formData.date,
             newCategory: formData.category === "new" ? formData.newCategory : null,
@@ -71,6 +71,7 @@ const TransactionModal = ({ show, onClose, type }) => {
             toast.success(response.msg || "Nuevo " + (type === 'income' ? 'ingreso' : 'gasto') + " creado", {
                 autoClose: 1500,
             });
+            onTransactionCreated(); // Llama a la función para actualizar el estado en el componente padre
         } catch (err) {
             toast.error(err.message || 'Error al crear transacción');
         }
