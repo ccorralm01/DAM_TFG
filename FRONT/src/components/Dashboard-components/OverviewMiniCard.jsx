@@ -1,6 +1,7 @@
-import { motion } from "framer-motion";
+import { motion, useMotionValue, useTransform, animate } from "framer-motion";
 import "./styles/OverviewMiniCard.css";
 import MiniCardIcon from "./MiniCardIcon";
+import { useEffect, useState } from "react";
 
 const OverviewMiniCard = ({
     bgColor = "#34d39911",
@@ -43,16 +44,20 @@ const OverviewMiniCard = ({
         }
     };
 
-    const amountVariants = {
-        hidden: { opacity: 0 },
-        visible: {
-            opacity: 1,
-            transition: {
-                delay: 0.4,
-                duration: 0.7
+    // State for the animated value
+    const [displayAmount, setDisplayAmount] = useState(0);
+
+    useEffect(() => {
+        const animation = animate(0, amount, {
+            duration: 1.5,
+            ease: "easeOut",
+            onUpdate: (latest) => {
+                setDisplayAmount(latest);
             }
-        }
-    };
+        });
+
+        return animation.stop;
+    }, [amount]);
 
     return (
         <motion.article
@@ -88,9 +93,8 @@ const OverviewMiniCard = ({
 
                     <motion.span
                         className="mini-card-amount"
-                        variants={amountVariants}
                     >
-                        {amount.toLocaleString('es-ES', {
+                        {displayAmount.toLocaleString('es-ES', {
                             minimumFractionDigits: 2,
                             maximumFractionDigits: 2
                         })}{currency}
