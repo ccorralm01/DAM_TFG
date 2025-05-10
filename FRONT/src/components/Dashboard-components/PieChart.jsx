@@ -42,18 +42,20 @@ export default class CustomPieChart extends PureComponent {
             currency = '€',
         } = this.props;
 
-        // Transformamos los datos al formato que espera Recharts
-        const chartData = data.map(item => ({
-            name: item.category,
-            value: item.amount,
-            color: item.color || '#8884d8' // Color por defecto si no viene definido
-        }));
+        // Safely transform data
+        const chartData = Array.isArray(data)
+            ? data.map(item => ({
+                name: item?.category || 'Unknown',
+                value: item?.amount || 0,
+                color: item?.color || '#8884d8'
+            }))
+            : [];
 
         const total = chartData.reduce((sum, item) => sum + item.value, 0);
 
         return (
-            <div style={{ 
-                width: '100%', 
+            <div style={{
+                width: '100%',
                 height: '100%',
                 minHeight: '300px',
             }}>
@@ -71,8 +73,8 @@ export default class CustomPieChart extends PureComponent {
                             labelLine={false}
                         >
                             {chartData.map((entry, index) => (
-                                <Cell 
-                                    key={`cell-${index}`} 
+                                <Cell
+                                    key={`cell-${index}`}
                                     fill={entry.color}  // Usamos el color de la categoría
                                     stroke="#fff"
                                     strokeWidth={1}
@@ -92,9 +94,9 @@ export default class CustomPieChart extends PureComponent {
                         >
                             {total.toLocaleString() + ' ' + currency}
                         </text>
-                        <Tooltip 
+                        <Tooltip
                             formatter={(value, name) => [
-                                `${value.toLocaleString()}${currency} (${((value / total) * 100).toFixed(1)}%)`, 
+                                `${value.toLocaleString()}${currency} (${((value / total) * 100).toFixed(1)}%)`,
                                 name
                             ]}
                             contentStyle={{
