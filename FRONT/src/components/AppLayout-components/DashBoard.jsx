@@ -4,10 +4,14 @@ import OverviewMidCard from "../Dashboard-components/OverviewMidCard";
 import OverviewBigCard from "../Dashboard-components/OverviewBigCard";
 import TransactionModal from "../Dashboard-components/TransactionModal";
 
+import { DateRangePicker } from 'rsuite';
+import { addDays, format } from 'date-fns';
+import 'rsuite/dist/rsuite.min.css';
 import apiService from "../../services/apiService";
 import { useOutletContext } from 'react-router-dom';
 import { useState, useEffect } from "react";
 import { Navigate } from 'react-router-dom';
+import { da } from "date-fns/locale";
 
 const DashBoard = () => {
     const { userId, isAuthenticated } = useOutletContext();
@@ -17,8 +21,17 @@ const DashBoard = () => {
     const [modalType, setModalType] = useState(''); // 'income' o 'expense'
     const [refreshData, setRefreshData] = useState(false);  // Estado para forzar la actualización de los datos
     const [sumary, setSumary] = useState({ income: 0, expense: 0, balance: 0 }); // Estado para almacenar el resumen de ingresos, gastos y balance
-    const [transactionsByCategory, setTransactionsByCategory] = useState({ income: {}, expenses: {}}); // Estado para almacenar las transacciones por categoría
+    const [transactionsByCategory, setTransactionsByCategory] = useState({ income: {}, expenses: {} }); // Estado para almacenar las transacciones por categoría
 
+    const getCurrentMonthRange = () => {
+        const now = new Date();
+        const startDate = new Date(now.getFullYear(), now.getMonth(), 1);
+        const endDate = new Date(now.getFullYear(), now.getMonth() + 1, 0);
+        return [startDate, endDate];
+    }; // Función para obtener el rango de fechas del mes actual
+    
+    const [dateRange, setDateRange] = useState(getCurrentMonthRange()); // Estado para almacenar el rango de fechas seleccionado
+    
     const handleTransactionCreated = () => {
         setRefreshData(prev => !prev); // Cambia el estado para forzar la actualización
     };
@@ -39,7 +52,15 @@ const DashBoard = () => {
     useEffect(() => {
         const fetchSummary = async () => {
             try {
-                const profileDataSumary = await apiService.getTransactionsSummary();
+
+                const formattedStart = dateRange ? format(dateRange[0], 'yyyy-MM-dd') : null;
+                const formattedEnd = dateRange ? format(dateRange[1], 'yyyy-MM-dd') : null;
+
+                const profileDataSumary = await apiService.getTransactionsSummary(
+                    formattedStart,
+                    formattedEnd
+                );
+
                 setTransactionsByCategory({
                     income: profileDataSumary.categories.income,
                     expenses: profileDataSumary.categories.expenses
@@ -56,8 +77,8 @@ const DashBoard = () => {
                 console.error("Error fetching summary:", error);
             }
         };
-        fetchSummary();      
-    }, [refreshData]); // Extraer el resumen de transacciones al cargar el componente
+        fetchSummary();
+    }, [refreshData, dateRange]); // Extraer el resumen de transacciones al cargar el componente o cambiar fechas
 
 
     const handleOpenModal = (type) => {
@@ -69,6 +90,34 @@ const DashBoard = () => {
         setShowModal(false);
         setModalType('');
     };
+
+    const predefinedRanges = [
+        {
+            label: 'Hoy',
+            value: [new Date(), new Date()],
+            placement: 'left'
+        },
+        {
+            label: 'Ayer',
+            value: [addDays(new Date(), -1), addDays(new Date(), -1)],
+            placement: 'left'
+        },
+        {
+            label: 'Últimos 7 días',
+            value: [addDays(new Date(), -7), new Date()],
+            placement: 'left'
+        },
+        {
+            label: 'Últimos 30 días',
+            value: [addDays(new Date(), -30), new Date()],
+            placement: 'left'
+        },
+        {
+            label: 'Mes actual',
+            value: getCurrentMonthRange(),
+            placement: 'left'
+        }
+    ];
 
     return (
         <>
@@ -101,19 +150,25 @@ const DashBoard = () => {
                 <div className="panel-title d-flex flex-md-row flex-column justify-content-between align-items-md-center mb-4">
                     <span className="panel-title-text mb-2 mb-md-0">Panel</span>
                     <div>
-                        <select className="form-select" id="inputGroupSelect01">
-                            <option selected>Choose...</option>
-                        </select>
+                        <DateRangePicker
+                            theme="dark"
+                            showOneCalendar
+                            ranges={predefinedRanges}
+                            placement="bottomEnd"
+                            style={{ width: 230 }}
+                            value={dateRange}
+                            onChange={(value) => setDateRange(value)}
+                        />
                     </div>
                 </div>
                 <section className="row g-3 mb-3">
-                    <OverviewMiniCard title="Ingresos" iconName="trending-up" bgColor="#34d39911" iconColor="#10b981" amount={sumary.income}/>
-                    <OverviewMiniCard title="Gastos" iconName="trending-down" bgColor="#f8727211" iconColor="#ef4444" amount={sumary.expenses}/>
-                    <OverviewMiniCard title="Balance" iconName="wallet" bgColor="#a78bfa11" iconColor="#8b5cf6" amount={sumary.balance}/>
+                    <OverviewMiniCard title="Ingresos" iconName="trending-up" bgColor="#34d39911" iconColor="#10b981" amount={sumary.income} />
+                    <OverviewMiniCard title="Gastos" iconName="trending-down" bgColor="#f8727211" iconColor="#ef4444" amount={sumary.expenses} />
+                    <OverviewMiniCard title="Balance" iconName="wallet" bgColor="#a78bfa11" iconColor="#8b5cf6" amount={sumary.balance} />
                 </section>
                 <section className="row g-3 mb-4">
-                    <OverviewMidCard type="income" data={transactionsByCategory.income}/>
-                    <OverviewMidCard type="expense" data={transactionsByCategory.expenses}/>
+                    <OverviewMidCard type="income" data={transactionsByCategory.income} />
+                    <OverviewMidCard type="expense" data={transactionsByCategory.expenses} />
                 </section>
                 <section className="row g-3">
                     <OverviewBigCard refreshTrigger={refreshData} />

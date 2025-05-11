@@ -43,7 +43,7 @@ class ApiService {
 
     // ==================== AUTHENTICATION ====================
     login = (credentials) => this._fetch('/login', 'POST', credentials);
-    register =  (credentials) => this._fetch('/register', 'POST', credentials);
+    register = (credentials) => this._fetch('/register', 'POST', credentials);
     logout = () => this._fetch('/logout', 'POST');
     checkAuth = () => this._fetch('/check-auth', 'GET');
     getProfile = () => this._fetch('/profile', 'GET');
@@ -65,8 +65,12 @@ class ApiService {
     createTransaction = (transaction) => this._fetch('/transactions', 'POST', transaction);
     updateTransaction = (transactionId, transaction) => this._fetch(`/transactions/${transactionId}`, 'PUT', transaction);
     deleteTransaction = (transactionId) => this._fetch(`/transactions/${transactionId}`, 'DELETE');
-    getTransactionsSummary = () => this._fetch('/transactions/summary', 'GET');
-
+    getTransactionsSummary = (startDate = null, endDate = null) => {
+        const params = new URLSearchParams();
+        if (startDate) params.append('start_date', startDate);
+        if (endDate) params.append('end_date', endDate);
+        return this._fetch(`/transactions/summary?${params.toString()}`, 'GET');
+    }
     // ==================== HISTORY ====================
     getMonthlyHistoryByDate = (year, month) => this._fetch(`/history/monthly?year=${year}&month=${month}`, 'GET');
     getYearlyHistoryByDate = (year) => this._fetch(`/history/yearly?year=${year}`, 'GET');
