@@ -70,9 +70,6 @@ const DashBoard = () => {
                     expenses: profileDataSumary.summary.expenses,
                     balance: profileDataSumary.summary.balance
                 });
-
-                console.log("Resumen de transacciones:", transactionsByCategory);
-                console.log("Resumen:", sumary);
             } catch (error) {
                 console.error("Error fetching summary:", error);
             }
@@ -158,6 +155,7 @@ const DashBoard = () => {
                             style={{ width: 230 }}
                             value={dateRange}
                             onChange={(value) => setDateRange(value)}
+                            cleanable={false}
                         />
                     </div>
                 </div>
