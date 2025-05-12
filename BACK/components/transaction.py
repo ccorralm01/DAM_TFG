@@ -35,7 +35,12 @@ class TransactionController:
         user_id = get_jwt_identity()
         try:
             with self._session_scope():
+                # Obtenemos todas las transacciones del usuario
                 transactions = session.query(Transaction).filter_by(user_id=user_id).all()
+                
+                # Obtenemos todas las categorías del usuario para evitar N+1 queries
+                categories = session.query(Category).filter_by(user_id=user_id).all()
+                categories_dict = {cat.id: cat for cat in categories}
                 
                 return jsonify([{
                     'id': t.id,
@@ -43,12 +48,18 @@ class TransactionController:
                     'description': t.description,
                     'date': t.date.isoformat(),
                     'kind': t.kind.value,
-                    'category_id': t.category_id,
+                    'category': {
+                        'id': categories_dict[t.category_id].id,
+                        'name': categories_dict[t.category_id].name,
+                        'color': categories_dict[t.category_id].color,
+                        'type': categories_dict[t.category_id].type.value,
+                        'created_at': categories_dict[t.category_id].created_at.isoformat()
+                    } if t.category_id and t.category_id in categories_dict else None,
                     'created_at': t.created_at.isoformat(),
                     'updated_at': t.updated_at.isoformat()
                 } for t in transactions])
         except Exception as e:
-            print(f"Error al recuperar transaciones: {e}")
+            print(f"Error al recuperar transacciones: {e}")
             return jsonify({'msg': 'Error al obtener transacciones'}), 500
     
     @jwt_required()
