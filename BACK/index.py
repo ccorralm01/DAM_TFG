@@ -44,7 +44,7 @@ class TriruleAPI:
         HistoryController(self.app)
     
     def run(self, debug=False):
-        self.app.run(debug=debug)
+        self.app.run(host="0.0.0.0", debug=debug)
 
 if __name__ == '__main__':
     api = TriruleAPI()
