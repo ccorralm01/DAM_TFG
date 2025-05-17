@@ -1,0 +1,132 @@
+.filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin-bottom: 20px;
+    padding: 15px;
+    border-radius: 8px;
+    color: #fff;
+}
+
+.filter-group {
+    display: flex;
+    flex-direction: column;
+    min-width: 150px;
+}
+
+.filter-group label {
+    margin-bottom: 5px;
+    font-weight: 600;
+    font-size: 14px;
+}
+
+.filter-group input,
+.filter-group select {
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+.transactions-table-container {
+    overflow-x: auto;
+    margin-bottom: 20px;
+    background: rgba(0, 0, 0, 0.58);
+    border-radius: 16px;
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(14.6px);
+    -webkit-backdrop-filter: blur(14.6px);
+}
+
+.transactions-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.transactions-table th {
+    background-color: rgb(9, 9, 11);
+    padding: 12px 15px;
+    text-align: left;
+    font-weight: 600;
+    color: #fff;
+}
+
+.transactions-table td {
+    padding: 12px 15px;
+    color: #fff;
+    border-bottom: 1px solid rgb(39, 39, 42);
+}
+
+.transactions-table tr:hover {
+    /* From https://css.glass */
+    background: rgb(255, 255, 255, 0.25);
+    border-radius: 16px;
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(14.6px);
+    -webkit-backdrop-filter: blur(14.6px);
+}
+
+.category-tag {
+    display: inline-block;
+    padding: 3px 8px;
+    border-radius: 12px;
+    color: white;
+    font-size: 12px;
+    font-weight: 500;
+}
+
+.income {
+    color: #28a745 !important;
+}
+
+.expense {
+    color: #dc3545 !important;
+}
+
+.no-transactions {
+    text-align: center;
+    padding: 20px;
+    color: #666;
+}
+
+.pagination {
+    display: flex;
+    justify-content: center;
+    gap: 5px;
+    margin-top: 20px;
+}
+
+.pagination button {
+    padding: 5px 10px;
+    border: 1px solid #ddd;
+    background: white;
+    cursor: pointer;
+    border-radius: 4px;
+}
+
+.pagination button:hover:not(:disabled) {
+    background: #f0f0f0;
+}
+
+.pagination button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.pagination button.active {
+    background: #007bff;
+    color: white;
+    border-color: #007bff;
+}
+
+.summary {
+    margin-top: 10px;
+    color: #fff;
+    font-size: 14px;
+}
+
+.select {
+    padding: 8px;
+    border-radius: 4px;
+    background-color: rgb(24, 24, 27);
+    border-color: rgb(39, 39, 42) !important;
+}
