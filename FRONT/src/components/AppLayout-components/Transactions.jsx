@@ -3,30 +3,41 @@ import { motion } from 'framer-motion';
 import "./styles/Transactions.css";
 
 // Components
-import TransactionModal from '../Dashboard-components/TransactionModal'; // Modal para crear o editar transacciones
-import TransactionsTable from '../Transactions-components/TransactionsTable'; // Tabla para mostrar las transacciones
-import TransactionsFilters from '../Transactions-components/TransactionsFilters'; // Filtros para las transacciones
+import TransactionModal from '../Dashboard-components/TransactionModal';
+import TransactionsTable from '../Transactions-components/TransactionsTable';
+import TransactionsFilters from '../Transactions-components/TransactionsFilters';
 
 // Hooks
-import { useTransactions } from '../../hooks/useTransactions'; // Hook para obtener las transacciones
-import { useTransactionFilters } from '../../hooks/useTransactionFilters'; // Hook para manejar los filtros de las transacciones
-import { usePagination } from '../../hooks/usePagination'; // Hook para manejar la paginación
+import { useTransactions } from '../../hooks/useTransactions';
+import { useTransactionFilters } from '../../hooks/useTransactionFilters';
+import { usePagination } from '../../hooks/usePagination';
 
 const Transactions = () => {
     // Hooks
-    const { transactions, loading, categories, fetchTransactions } = useTransactions(); // Hook para obtener las transacciones
-    const { filters, filteredTransactions, handleFilterChange } = useTransactionFilters(transactions); // Hook para manejar los filtros
-    const { currentTransactions } = usePagination(filteredTransactions, Math.round(window.innerHeight * 7 / 1030)); // Hook para manejar la paginación
+    const { transactions, loading, categories, fetchTransactions } = useTransactions();
+    const { filters, filteredTransactions, handleFilterChange } = useTransactionFilters(transactions);
+    
+    // Paginación
+    const itemsPerPage = Math.round(window.innerHeight * 7 / 1030);
+    const {
+        pagination,
+        totalPages,
+        currentTransactions,
+        indexOfFirstItem,
+        indexOfLastItem,
+        paginate,
+        getPaginationGroup
+    } = usePagination(filteredTransactions, itemsPerPage);
 
     // Estados para el modal de edición
-    const [editingTransaction, setEditingTransaction] = useState(null); // Transacción que se está editando
-    const [showEditModal, setShowEditModal] = useState(false); // Estado para mostrar el modal
-    const [modalType, setModalType] = useState('expense'); // Tipo de transacción (gasto o ingreso)
+    const [editingTransaction, setEditingTransaction] = useState(null);
+    const [showEditModal, setShowEditModal] = useState(false);
+    const [modalType, setModalType] = useState('expense');
 
     // Animation variants
-    const fadeIn = { hidden: { opacity: 0 }, visible: { opacity: 1, transition: { duration: 0.5 } }}; // Variantes de animación para el fade in
-    const buttonHover = { scale: 1.05, transition: { duration: 0.2 }}; // Variantes de animación para el hover del botón
-    const buttonTap = { scale: 0.95, transition: { duration: 0.2 }}; // Variantes de animación para el tap del botón
+    const fadeIn = { hidden: { opacity: 0 }, visible: { opacity: 1, transition: { duration: 0.5 } }};
+    const buttonHover = { scale: 1.05, transition: { duration: 0.2 }};
+    const buttonTap = { scale: 0.95 };
 
     if (loading) {
         return (
@@ -39,7 +50,7 @@ const Transactions = () => {
                 Loading transactions...
             </motion.div>
         );
-    } 
+    }
 
     return (
         <motion.div
@@ -105,6 +116,92 @@ const Transactions = () => {
                     </tbody>
                 </table>
             </motion.div>
+
+            {/* Componente de Paginación */}
+            {filteredTransactions.length > itemsPerPage && (
+                <motion.div
+                    className="compact-pagination"
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.2 }}
+                >
+                    <motion.button
+                        onClick={() => paginate(1)}
+                        disabled={pagination.currentPage === 1}
+                        className="pagination-edge"
+                        whileHover={buttonHover}
+                        whileTap={buttonTap}
+                    >
+                        «
+                    </motion.button>
+
+                    <motion.button
+                        onClick={() => paginate(pagination.currentPage - 1)}
+                        disabled={pagination.currentPage === 1}
+                        className="pagination-prev-next"
+                        whileHover={buttonHover}
+                        whileTap={buttonTap}
+                    >
+                        ‹
+                    </motion.button>
+
+                    {getPaginationGroup().map((item, index) => (
+                        item === '...' ? (
+                            <motion.span
+                                key={index}
+                                className="pagination-ellipsis"
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 1 }}
+                            >
+                                ...
+                            </motion.span>
+                        ) : (
+                            <motion.button
+                                key={index}
+                                onClick={() => paginate(item)}
+                                className={`pagination-number ${pagination.currentPage === item ? 'active' : ''}`}
+                                whileHover={buttonHover}
+                                whileTap={buttonTap}
+                                initial={{ scale: 0.8 }}
+                                animate={{ scale: 1 }}
+                            >
+                                {item}
+                            </motion.button>
+                        )
+                    ))}
+
+                    <motion.button
+                        onClick={() => paginate(pagination.currentPage + 1)}
+                        disabled={pagination.currentPage === totalPages}
+                        className="pagination-prev-next"
+                        whileHover={buttonHover}
+                        whileTap={buttonTap}
+                    >
+                        ›
+                    </motion.button>
+
+                    <motion.button
+                        onClick={() => paginate(totalPages)}
+                        disabled={pagination.currentPage === totalPages}
+                        className="pagination-edge"
+                        whileHover={buttonHover}
+                        whileTap={buttonTap}
+                    >
+                        »
+                    </motion.button>
+                </motion.div>
+            )}
+
+            {/* Resumen de transacciones mostradas */}
+            <motion.div
+                className="summary"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.3 }}
+            >
+                Mostrando {indexOfFirstItem + 1}-{Math.min(indexOfLastItem, filteredTransactions.length)} de {filteredTransactions.length} transacciones
+            </motion.div>
+
             <TransactionModal
                 show={showEditModal}
                 onClose={() => setShowEditModal(false)}
