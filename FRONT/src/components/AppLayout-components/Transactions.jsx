@@ -2,11 +2,15 @@ import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import "./styles/Transactions.css";
 import apiService from "../../services/apiService";
+import TransactionModal from '../Dashboard-components/TransactionModal';
 
 const Transactions = () => {
     const [transactions, setTransactions] = useState([]);
     const [loading, setLoading] = useState(true);
     const [filteredTransactions, setFilteredTransactions] = useState([]);
+    const [editingTransaction, setEditingTransaction] = useState(null);
+    const [showEditModal, setShowEditModal] = useState(false);
+    const [modalType, setModalType] = useState('expense'); // 'income' o 'expense'
     const [filters, setFilters] = useState({
         kind: '',
         category: '',
@@ -21,8 +25,7 @@ const Transactions = () => {
         itemsPerPage: Math.round(itemsPerPage)
     });
 
-    useEffect(() => {
-        const fetchTransactions = async () => {
+    const fetchTransactions = async () => {
             try {
                 const transactionData = await apiService.getTransactions();
                 setTransactions(transactionData);
@@ -34,6 +37,7 @@ const Transactions = () => {
             }
         };
 
+    useEffect(() => {
         fetchTransactions();
     }, []);
 
@@ -218,8 +222,8 @@ const Transactions = () => {
                                 </option>
                                 {filterName === 'kind' ? (
                                     <>
-                                        <option value="income">Income</option>
-                                        <option value="expense">Expense</option>
+                                        <option value="income">Ingreso</option>
+                                        <option value="expense">Gasto</option>
                                     </>
                                 ) : (
                                     categories.map(cat => (
@@ -314,7 +318,7 @@ const Transactions = () => {
                                             ) : 'Uncategorized'}
                                         </td>
                                         <td className={transaction.kind}>
-                                            {transaction.kind.charAt(0).toUpperCase() + transaction.kind.slice(1)}
+                                            {transaction.kind === 'income' ? 'Ingreso' : 'Gasto'}
                                         </td>
                                         <td className={transaction.kind}>
                                             {transaction.kind === 'income' ? '+' : '-'}
@@ -325,6 +329,11 @@ const Transactions = () => {
                                                 className="edit-button btn btn-secondary"
                                                 whileHover={buttonHover}
                                                 whileTap={buttonTap}
+                                                onClick={() => {
+                                                    setEditingTransaction(transaction);
+                                                    setModalType(transaction.kind);
+                                                    setShowEditModal(true);
+                                                }}
                                             >
                                                 Editar
                                             </motion.button>
@@ -437,7 +446,18 @@ const Transactions = () => {
             >
                 Mostrando {indexOfFirstItem + 1}-{Math.min(indexOfLastItem, filteredTransactions.length)} de {filteredTransactions.length} transacciones
             </motion.div>
+            <TransactionModal
+                show={showEditModal}
+                onClose={() => setShowEditModal(false)}
+                type={modalType}
+                onTransactionCreated={() => {
+                    // Recargar las transacciones
+                    fetchTransactions();
+                }}
+                transactionToEdit={editingTransaction}
+            />
         </motion.div>
+
     );
 };
 

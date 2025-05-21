@@ -3,25 +3,58 @@ import apiService from "../../services/apiService";
 import "./styles/TransactionModal.css";
 import { toast } from 'react-toastify';
 
-const TransactionModal = ({ show, onClose, type, onTransactionCreated }) => {
+const TransactionModal = ({
+    show,
+    onClose,
+    type,
+    onTransactionCreated,
+    transactionToEdit // Nueva prop para la transacción a editar
+}) => {
+    const isEditMode = Boolean(transactionToEdit);
+
     const [formData, setFormData] = useState({
         amount: "",
         description: "",
         category: "",
         newCategory: "",
-        categoryType: "need", // Nuevo campo para el tipo de categoría
+        categoryType: "need",
         color: "#3b82f6",
         date: new Date().toISOString().split('T')[0]
     });
 
     const [categories, setCategories] = useState([]);
 
-    // Opciones para los tipos de categoría
     const categoryTypes = [
         { value: "need", label: "Necesidad" },
         { value: "want", label: "Deseo" },
         { value: "save", label: "Ahorro" }
     ];
+
+    // Efecto para cargar los datos de la transacción a editar
+    useEffect(() => {
+        if (isEditMode && transactionToEdit) {
+            setFormData({
+                amount: transactionToEdit.amount.toString(),
+                description: transactionToEdit.description,
+                category: transactionToEdit.category?.id || "",
+                newCategory: "",
+                categoryType: transactionToEdit.category?.type || "need",
+                color: transactionToEdit.category?.color || "#3b82f6",
+                date: transactionToEdit.date.split('T')[0]
+            });
+        } else {
+            // Resetear el formulario si no estamos en modo edición
+            setFormData({
+                amount: "",
+                description: "",
+                category: "",
+                newCategory: "",
+                categoryType: "need",
+                color: "#3b82f6",
+                date: new Date().toISOString().split('T')[0]
+            });
+        }
+    }, [isEditMode, transactionToEdit]);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -53,27 +86,38 @@ const TransactionModal = ({ show, onClose, type, onTransactionCreated }) => {
                 color: formData.color,
                 type: formData.categoryType
             };
-            console.log("Nueva categoría:", newCategory);
+
             try {
                 const response = await apiService.createCategory(newCategory);
                 transactionData.category_id = response.category.id;
-                console.log("Categoría creada:", response.category);
                 toast.success(response.msg || "Nueva categoría creada", {
                     autoClose: 1500,
                 });
             } catch (err) {
                 toast.error(err.message || 'Error al crear categoría');
+                return;
             }
         }
 
         try {
-            const response = await apiService.createTransaction(transactionData);
-            toast.success(response.msg || "Nuevo " + (type === 'income' ? 'ingreso' : 'gasto') + " creado", {
-                autoClose: 1500,
-            });
-            onTransactionCreated(); // Llama a la función para actualizar el estado en el componente padre
+            let response;
+            if (isEditMode) {
+                // Llamada para actualizar la transacción existente
+                response = await apiService.updateTransaction(transactionToEdit.id, transactionData);
+                toast.success(response.msg || "Transacción actualizada", {
+                    autoClose: 1500,
+                });
+            } else {
+                // Llamada para crear nueva transacción
+                response = await apiService.createTransaction(transactionData);
+                toast.success(response.msg || "Nuevo " + (type === 'income' ? 'ingreso' : 'gasto') + " creado", {
+                    autoClose: 1500,
+                });
+            }
+
+            onTransactionCreated(); // Actualizar el estado en el componente padre
         } catch (err) {
-            toast.error(err.message || 'Error al crear transacción');
+            toast.error(err.message || `Error al ${isEditMode ? 'actualizar' : 'crear'} transacción`);
         }
         onClose();
     };
@@ -96,7 +140,10 @@ const TransactionModal = ({ show, onClose, type, onTransactionCreated }) => {
         <div className="modal-overlay">
             <div className="modal-content">
                 <div className="modal-header">
-                    <h4>{type === 'income' ? 'Nuevo Ingreso' : 'Nuevo Gasto'}</h4>
+                    <h4>
+                        {isEditMode ? 'Editar Transacción' :
+                            type === 'income' ? 'Nuevo Ingreso' : 'Nuevo Gasto'}
+                    </h4>
                     <button className="close-button" onClick={onClose}>×</button>
                 </div>
 
@@ -181,7 +228,7 @@ const TransactionModal = ({ show, onClose, type, onTransactionCreated }) => {
                                             name="newCategory"
                                             value={formData.newCategory}
                                             onChange={handleChange}
-                                            required
+                                            required={formData.category === "new"}
                                         />
                                         <input
                                             type="color"
@@ -191,8 +238,7 @@ const TransactionModal = ({ show, onClose, type, onTransactionCreated }) => {
                                         />
                                     </div>
                                 </div>
-                                
-                                {/* Selector para el tipo de categoría */}
+
                                 <div className="form-group">
                                     <label>Tipo de categoría</label>
                                     <select
@@ -200,7 +246,7 @@ const TransactionModal = ({ show, onClose, type, onTransactionCreated }) => {
                                         name="categoryType"
                                         value={formData.categoryType}
                                         onChange={handleChange}
-                                        required
+                                        required={formData.category === "new"}
                                     >
                                         {categoryTypes.map(type => (
                                             <option key={type.value} value={type.value}>
@@ -218,7 +264,7 @@ const TransactionModal = ({ show, onClose, type, onTransactionCreated }) => {
                             Cancelar
                         </button>
                         <button type="submit" className="btn-primary">
-                            Guardar
+                            {isEditMode ? 'Actualizar' : 'Guardar'}
                         </button>
                     </div>
                 </form>
