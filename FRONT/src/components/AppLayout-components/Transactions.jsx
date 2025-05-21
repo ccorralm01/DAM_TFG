@@ -1,16 +1,16 @@
-import { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { useState } from 'react';
+import { motion } from 'framer-motion';
 import "./styles/Transactions.css";
 
 // Components
-import TransactionModal from '../Dashboard-components/TransactionModal';
-import TransactionsTable from '../Transactions-components/TransactionsTable';
-import TransactionsFilters from '../Transactions-components/TransactionsFilters';
+import TransactionModal from '../Dashboard-components/TransactionModal'; // Modal para crear o editar transacciones
+import TransactionsTable from '../Transactions-components/TransactionsTable'; // Tabla para mostrar las transacciones
+import TransactionsFilters from '../Transactions-components/TransactionsFilters'; // Filtros para las transacciones
 
 // Hooks
-import { useTransactions } from '../../hooks/useTransactions';
-import { useTransactionFilters } from '../../hooks/useTransactionFilters';
-import { usePagination } from '../../hooks/usePagination';
+import { useTransactions } from '../../hooks/useTransactions'; // Hook para obtener las transacciones
+import { useTransactionFilters } from '../../hooks/useTransactionFilters'; // Hook para manejar los filtros de las transacciones
+import { usePagination } from '../../hooks/usePagination'; // Hook para manejar la paginación
 
 const Transactions = () => {
     // Hooks
