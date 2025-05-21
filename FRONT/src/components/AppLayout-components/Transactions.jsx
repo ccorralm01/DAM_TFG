@@ -24,9 +24,9 @@ const Transactions = () => {
     const [modalType, setModalType] = useState('expense'); // Tipo de transacción (gasto o ingreso)
 
     // Animation variants
-    const fadeIn = { hidden: { opacity: 0 }, visible: { opacity: 1, transition: { duration: 0.5 } }};
-    const buttonHover = { scale: 1.05, transition: { duration: 0.2 }};
-    const buttonTap = { scale: 0.95, transition: { duration: 0.2 }};
+    const fadeIn = { hidden: { opacity: 0 }, visible: { opacity: 1, transition: { duration: 0.5 } }}; // Variantes de animación para el fade in
+    const buttonHover = { scale: 1.05, transition: { duration: 0.2 }}; // Variantes de animación para el hover del botón
+    const buttonTap = { scale: 0.95, transition: { duration: 0.2 }}; // Variantes de animación para el tap del botón
 
     if (loading) {
         return (
@@ -39,7 +39,7 @@ const Transactions = () => {
                 Loading transactions...
             </motion.div>
         );
-    }
+    } 
 
     return (
         <motion.div
