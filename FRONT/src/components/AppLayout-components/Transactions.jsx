@@ -16,7 +16,7 @@ const Transactions = () => {
     // Hooks
     const { transactions, loading, categories, fetchTransactions } = useTransactions(); // Hook para obtener las transacciones
     const { filters, filteredTransactions, handleFilterChange } = useTransactionFilters(transactions); // Hook para manejar los filtros
-    const { pagination, totalPages, currentTransactions, indexOfFirstItem, indexOfLastItem, paginate, getPaginationGroup } = usePagination(filteredTransactions, Math.round(window.innerHeight * 7 / 1030)); // Hook para manejar la paginación
+    const { currentTransactions } = usePagination(filteredTransactions, Math.round(window.innerHeight * 7 / 1030)); // Hook para manejar la paginación
 
     // Estados para el modal de edición
     const [editingTransaction, setEditingTransaction] = useState(null); // Transacción que se está editando
