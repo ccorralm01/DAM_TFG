@@ -4,6 +4,7 @@ const TransactionsTable = ({
     transactions, 
     categories,
     onEditTransaction,
+    onDeleteTransaction, // Nueva prop para manejar la eliminación
     buttonHover,
     buttonTap
 }) => {
@@ -65,6 +66,7 @@ const TransactionsTable = ({
                             className="delete-button btn btn-danger"
                             whileHover={buttonHover}
                             whileTap={buttonTap}
+                            onClick={() => onDeleteTransaction(transaction.id)} // Llamar a la función de eliminación
                         >
                             Eliminar
                         </motion.button>

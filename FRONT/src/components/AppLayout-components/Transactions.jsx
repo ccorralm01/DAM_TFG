@@ -1,12 +1,14 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import "./styles/Transactions.css";
+import { toast } from 'react-toastify';
+import apiService from '../../services/apiService';
 
 // Components
 import TransactionModal from '../Dashboard-components/TransactionModal';
 import TransactionsTable from '../Transactions-components/TransactionsTable';
 import TransactionsFilters from '../Transactions-components/TransactionsFilters';
-
+import LoadingSpinner from '../Ui-components/LoadingSpinner';
 // Hooks
 import { useTransactions } from '../../hooks/useTransactions';
 import { useTransactionFilters } from '../../hooks/useTransactionFilters';
@@ -39,16 +41,56 @@ const Transactions = () => {
     const buttonHover = { scale: 1.05, transition: { duration: 0.2 }};
     const buttonTap = { scale: 0.95 };
 
+    const deleteTransaction = async (transactionId) => {
+        try {
+            await apiService.deleteTransaction(transactionId);
+            toast.success('Transacción eliminada con éxito');
+            fetchTransactions(); // Refrescar la lista de transacciones
+        } catch (error) {
+            console.error('Error al eliminar la transacción:', error);
+        }
+    };
+
+
+    // Función para manejar la eliminación
+    const handleDeleteTransaction = async (transactionId) => {
+        // Mostrar toast de confirmación
+        toast.info(
+            <div>
+                <p>¿Estás seguro de eliminar esta transacción?</p>
+                <div className="toast-actions">
+                    <button 
+                        className="toast-confirm-btn"
+                        onClick={() => {
+                            toast.dismiss();
+                            deleteTransaction(transactionId);
+                        }}
+                    >
+                        Sí, eliminar
+                    </button>
+                    <button 
+                        className="toast-cancel-btn"
+                        onClick={() => toast.dismiss()}
+                    >
+                        Cancelar
+                    </button>
+                </div>
+            </div>,
+            {
+                position: "top-center",
+                autoClose: false,
+                closeOnClick: false,
+                draggable: false,
+                closeButton: false,
+                className: 'confirm-toast'
+            }
+        );
+    };
+
+
     if (loading) {
         return (
-            <motion.div
-                className="loading-container"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-            >
-                Loading transactions...
-            </motion.div>
+            <LoadingSpinner />
         );
     }
 
@@ -110,6 +152,7 @@ const Transactions = () => {
                                 setModalType(transaction.kind);
                                 setShowEditModal(true);
                             }}
+                            onDeleteTransaction={handleDeleteTransaction}
                             buttonHover={buttonHover}
                             buttonTap={buttonTap}
                         />
