@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Navigate, Outlet } from 'react-router-dom';
 import apiService from '../services/apiService';
+import LoadingSpinner from "./Ui-components/LoadingSpinner"
 
 const ProtectedRouter = () => {
     const [authState, setAuthState] = useState({
@@ -34,7 +35,7 @@ const ProtectedRouter = () => {
     }, []);
 
     if (authState.loading) {
-        return <div className="loading-spinner">Cargando...</div>;
+        return <LoadingSpinner />;
     }
 
     if (!authState.isAuthenticated) {

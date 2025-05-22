@@ -9,6 +9,7 @@ import Transactions from './components/AppLayout-components/Transactions.jsx';
 import Manage from './components/AppLayout-components/Manage.jsx';
 import NotificationProvider from './components/Ui-components/NotificationProvider.jsx';
 import ProtectedRouter from './components/ProtectedRouter.jsx';
+import LoadingSpinner from './components/Ui-components/LoadingSpinner.jsx';
 
 ReactDOM.createRoot(document.getElementById('root')).render(
     <BrowserRouter>
@@ -23,7 +24,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
               <Route element={<ProtectedRouter />}>
                   <Route path="/dashboard" element={<DashBoard />} />
                   <Route path="/transactions" element={<Transactions />} />
-                  <Route path="/manage" element={<Manage />} />
+                  <Route path="/manage" element={<LoadingSpinner />} />
                 </Route>
             </Route>
 
