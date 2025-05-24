@@ -22,7 +22,7 @@ const Transactions = () => {
 
     // Hooks
     const { transactions, loading, categories, fetchTransactions } = useTransactions();
-    const { filters, filteredTransactions, handleFilterChange } = useTransactionFilters(transactions);
+    const { filters, filteredTransactions, handleFilterChange, handleSort } = useTransactionFilters(transactions);
     const { pagination, totalPages, currentTransactions, indexOfFirstItem, indexOfLastItem, paginate, getPaginationGroup } = usePagination(filteredTransactions, itemsPerPage);
 
     // Estados para el modal de edición
@@ -124,14 +124,31 @@ const Transactions = () => {
                 <table className="transactions-table overflow-hidden">
                     <thead>
                         <tr>
-                            {['Fecha', 'Descripción', 'Categoría', 'Tipo', 'Cantidad', 'Acciones'].map((header, i) => (
+                            {[
+                                { key: 'date', label: 'Fecha' },
+                                { key: 'description', label: 'Descripción' },
+                                { key: 'category', label: 'Categoría' },
+                                { key: 'kind', label: 'Tipo' },
+                                { key: 'amount', label: 'Cantidad' },
+                                { key: 'actions', label: 'Acciones' }
+                            ].map((header, i) => (
                                 <motion.th
-                                    key={header}
+                                    key={header.key}
                                     initial={{ opacity: 0, y: -20 }}
                                     animate={{ opacity: 1, y: 0 }}
                                     transition={{ delay: i * 0.1 }}
+                                    onClick={() => header.key !== 'actions' && handleSort(header.key)}
+                                    className={header.key !== 'actions' ? 'sortable-header' : ''}
+                                    whileHover={header.key !== 'actions' ? { backgroundColor: 'rgba(0,0,0,0.05)' } : {}}
                                 >
-                                    {header}
+                                    <div className="header-content">
+                                        {header.label}
+                                        {filters.sortBy === header.key && (
+                                            <span className="sort-icon">
+                                                {filters.sortOrder === 'asc' ? ' ↑' : ' ↓'}
+                                            </span>
+                                        )}
+                                    </div>
                                 </motion.th>
                             ))}
                         </tr>
