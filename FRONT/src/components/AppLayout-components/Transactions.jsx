@@ -10,6 +10,7 @@ import TransactionsTable from '../Transactions-components/TransactionsTable';
 import TransactionsFilters from '../Transactions-components/TransactionsFilters';
 import LoadingSpinner from '../Ui-components/LoadingSpinner';
 import Pagination from '../Transactions-components/Pagination';
+import CustomToast from '../Ui-components/CustomToast';
 
 // Hooks
 import { useTransactions } from '../../hooks/useTransactions';
@@ -37,49 +38,32 @@ const Transactions = () => {
 
     const deleteTransaction = async (transactionId) => {
         try {
-            await apiService.deleteTransaction(transactionId);
-            toast.success('Transacción eliminada con éxito');
+            const response = await apiService.deleteTransaction(transactionId);
+            toast(<CustomToast title="Éxito!" message={response.msg} type='success' onClose={() => toast.dismiss()} />);
             fetchTransactions(); // Refrescar la lista de transacciones
         } catch (error) {
             console.error('Error al eliminar la transacción:', error);
+            toast(<CustomToast title="Error!" message={err.message || 'Error en la autenticación'} type='error' onClose={() => toast.dismiss()} />);
         }
     };
 
     // Función para manejar la eliminación
     const handleDeleteTransaction = async (transactionId) => {
-        // Mostrar toast de confirmación
-        toast.info(
-            <div>
-                <p>¿Estás seguro de eliminar esta transacción?</p>
-                <div className="toast-actions">
-                    <button
-                        className="toast-confirm-btn"
-                        onClick={() => {
-                            toast.dismiss();
-                            deleteTransaction(transactionId);
-                        }}
-                    >
-                        Sí, eliminar
-                    </button>
-                    <button
-                        className="toast-cancel-btn"
-                        onClick={() => toast.dismiss()}
-                    >
-                        Cancelar
-                    </button>
-                </div>
-            </div>,
+        toast(
+            <CustomToast
+                title="Confirmar eliminación"
+                message="¿Estás seguro de eliminar esta transacción?"
+                type="confirm"
+                onConfirm={() => deleteTransaction(transactionId)}
+                onClose={() => toast.dismiss()}
+                confirmText="Sí, eliminar"
+                cancelText="Cancelar"
+            />,
             {
                 position: "top-center",
-                autoClose: false,
-                closeOnClick: false,
-                draggable: false,
-                closeButton: false,
-                className: 'confirm-toast'
             }
         );
     };
-
 
     if (loading) {
         return (
