@@ -1,8 +1,13 @@
 import { useState, useEffect } from 'react';
 import { Navigate, Outlet } from 'react-router-dom';
+
+// Servicios
 import apiService from '../services/apiService';
+
+// Componentes
 import LoadingSpinner from "./Ui-components/LoadingSpinner"
 
+// Comprobar si el usuario está autenticado antes de renderizar las rutas protegidas
 const ProtectedRouter = () => {
     const [authState, setAuthState] = useState({
         loading: true,

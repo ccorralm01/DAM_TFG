@@ -1,6 +1,8 @@
 // components/Ui-components/Pagination.jsx
 import { motion } from 'framer-motion';
 import './styles/Pagination.css';
+
+// Componente de paginación para navegar entre páginas de resultados
 const Pagination = ({
     currentPage,
     totalPages,

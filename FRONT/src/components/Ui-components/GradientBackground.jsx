@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
+import { useEffect, useState } from "react";
 import { useLocation } from 'react-router-dom';
 
 const routeColors = {
@@ -10,19 +10,20 @@ const routeColors = {
     '/manage': '#f43fdb'
 };
 
+// Componente para crear un fondo de gradiente animado que cambia según la ruta actual
 const GradientBackground = ({ children }) => {
     const location = useLocation();
     const [colors, setColors] = useState({
         prev: '#29f',
         current: '#29f'
-    });
+    }); // Colores iniciales
 
     useEffect(() => {
         setColors(prev => ({
             prev: prev.current,
             current: routeColors[location.pathname] || '#29f'
         }));
-    }, [location.pathname]);
+    }, [location.pathname]); // Actualiza los colores cuando cambia la ruta
 
     return (
         <>

@@ -1,5 +1,6 @@
 import './styles/CustomToast.css';
 
+// Componente de notificación personalizado para mostrar mensajes en la aplicación
 const CustomToast = ({ title, message, closeToast, type = 'default' }) => ( // default | success | error | info | warning
     <div className={`custom-toast ${type}`}>
         <div className="toast-logo">

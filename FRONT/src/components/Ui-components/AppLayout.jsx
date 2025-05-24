@@ -6,6 +6,7 @@ import Logo from "../../assets/Logo.png";
 import apiService from '../../services/apiService'; // Asegúrate de importar tu apiService
 import CustomToast from './CustomToast';
 
+// Componente de diseño de la aplicación que incluye el encabezado y el menú de navegación
 const AppLayout = () => {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const navigate = useNavigate();

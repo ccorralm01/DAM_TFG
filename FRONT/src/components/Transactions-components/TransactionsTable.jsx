@@ -1,10 +1,11 @@
 import { motion, AnimatePresence } from 'framer-motion';
 
+// Componente para mostrar una tabla de transacciones con animaciones
 const TransactionsTable = ({ 
     transactions, 
     categories,
     onEditTransaction,
-    onDeleteTransaction, // Nueva prop para manejar la eliminación
+    onDeleteTransaction,
     buttonHover,
     buttonTap
 }) => {

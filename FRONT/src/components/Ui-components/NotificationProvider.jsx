@@ -2,6 +2,7 @@
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
+// Componente para proporcionar notificaciones en la aplicación
 const NotificationProvider = ({ children }) => {
     return (
         <>
@@ -11,8 +12,8 @@ const NotificationProvider = ({ children }) => {
                 bodyClassName={() => "custom-toast-body"}
                 position="bottom-right"
                 autoClose={3000}
-                hideProgressBar={true}  // Oculta la barra de progreso por defecto
-                closeButton={false}     // Oculta el botón de cerrar por defecto
+                hideProgressBar={true}
+                closeButton={false}
                 newestOnTop
                 closeOnClick={false}
                 pauseOnFocusLoss

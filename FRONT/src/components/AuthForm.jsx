@@ -1,11 +1,16 @@
 import { useState } from 'react';
+import { toast } from 'react-toastify';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate, useLocation } from 'react-router-dom';
 import './styles/AuthLogin.css';
+
+// Servicios
 import apiService from '../services/apiService';
-import { toast } from 'react-toastify';
+
+// Componentes
 import CustomToast from '../components/Ui-components/CustomToast';
 
+// Componente de formulario de autenticación con animaciones y transiciones
 const AuthForm = ({ authMode, onToggleAuthMode }) => {
     const location = useLocation();
     const isLogin = location.pathname === '/';
@@ -92,6 +97,7 @@ const AuthForm = ({ authMode, onToggleAuthMode }) => {
         }
     };
 
+    // Si el usuario ya está autenticado, redirigir a dashboard
     return (
         <main className="position-relative d-flex justify-content-center align-items-center min-vh-100">
             <div className="card shadow-lg col-md-6 col-lg-4 col-11">

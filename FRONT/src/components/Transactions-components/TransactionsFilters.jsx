@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { toast } from 'react-toastify';
 import CustomToast from '../Ui-components/CustomToast';
 
+// Componente para los filtros de la tabala de transacciones
 const TransactionsFilters = ({ 
     filters, 
     categories, 
