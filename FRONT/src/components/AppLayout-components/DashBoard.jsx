@@ -20,7 +20,7 @@ const DashBoard = () => {
     if (!isAuthenticated) { return <Navigate to="/login" replace />; }
     
     const { profile, refreshData, showModal, modalType, dateRange, predefinedRanges, handleOpenModal, handleCloseModal, handleTransactionCreated, setDateRange } = useDashboard(userId); // Hook para obtener las transacciones
-    const { summary } = useTransactionSummary(dateRange); // Hook para obtener el resumen de transacciones
+    const { summary } = useTransactionSummary(dateRange, refreshData); // Hook para obtener el resumen de transacciones
     
     return (
         <>

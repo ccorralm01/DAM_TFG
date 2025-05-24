@@ -68,3 +68,7 @@
 .panel-title select option {
     background-color: rgb(9, 9, 11);
 }
+.rs-input-group.rs-input-group-inside{
+    background-color: rgb(9, 9, 11) !important;
+    border: 1px solid rgb(39, 39, 42) !important;
+}
