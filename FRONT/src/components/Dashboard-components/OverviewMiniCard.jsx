@@ -1,4 +1,4 @@
-import { motion, useMotionValue, useTransform, animate } from "framer-motion";
+import { motion, animate } from "framer-motion";
 import "./styles/OverviewMiniCard.css";
 import MiniCardIcon from "./MiniCardIcon";
 import { useEffect, useState } from "react";

@@ -1,5 +1,3 @@
-// components/CustomToast.jsx
-import React from 'react';
 import './styles/CustomToast.css';
 
 const CustomToast = ({ title, message, closeToast, type = 'default' }) => ( // default | success | error | info | warning

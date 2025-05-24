@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { format, addDays } from 'date-fns';
+import { addDays } from 'date-fns';
 import apiService from "../services/apiService";
 
 export const useDashboard = (isAuthenticated) => {

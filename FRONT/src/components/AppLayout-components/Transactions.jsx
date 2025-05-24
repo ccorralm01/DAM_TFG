@@ -9,7 +9,6 @@ import TransactionModal from '../Dashboard-components/TransactionModal';
 import TransactionsTable from '../Transactions-components/TransactionsTable';
 import TransactionsFilters from '../Transactions-components/TransactionsFilters';
 import LoadingSpinner from '../Ui-components/LoadingSpinner';
-import CustomToast from '../Ui-components/CustomToast';
 
 // Hooks
 import { useTransactions } from '../../hooks/useTransactions';

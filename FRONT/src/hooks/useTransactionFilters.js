@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useMemo } from 'react';
 
 export const useTransactionFilters = (transactions = []) => {
     const [filters, setFilters] = useState({

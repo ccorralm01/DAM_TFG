@@ -1,5 +1,3 @@
-import React from 'react';
-
 const MiniCardIcon = ({
     iconName = "trending-up", // trending-up, trending-down, wallet
     size = 60,
