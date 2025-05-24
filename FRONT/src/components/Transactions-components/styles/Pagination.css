@@ -1,0 +1,56 @@
+/* styles/Pagination.css */
+.dark-pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0.5rem;
+    margin: 1.5rem 0;
+}
+
+.dark-pagination button {
+    background-color: rgb(9, 9, 11);
+    color: #e2e8f0;
+    border: 1px solid rgb(39, 39, 42);
+    border-radius: 6px;
+    padding: 0.5rem 0.8rem;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: all 0.2s ease;
+}
+
+.dark-pagination button:hover:not(:disabled) {
+    background-color: #4a5568;
+    transform: translateY(-1px);
+}
+
+.dark-pagination button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.dark-pagination .pagination-number.active {
+    background-color: rgb(9, 9, 11, 0.5);
+    color: white;
+    font-weight: bold;
+}
+
+.dark-pagination .pagination-ellipsis {
+    color: #000;
+    padding: 0 0.5rem;
+}
+
+/* Estilos específicos para los botones de flecha */
+.dark-pagination .pagination-edge,
+.dark-pagination .pagination-prev-next {
+    padding: 0.5rem;
+}
+
+.summary {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0.5rem;
+    margin: 1.5rem 0;
+    font-weight: 900;
+    color: #000;
+}

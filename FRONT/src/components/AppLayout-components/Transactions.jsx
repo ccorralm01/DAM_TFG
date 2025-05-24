@@ -9,6 +9,7 @@ import TransactionModal from '../Dashboard-components/TransactionModal';
 import TransactionsTable from '../Transactions-components/TransactionsTable';
 import TransactionsFilters from '../Transactions-components/TransactionsFilters';
 import LoadingSpinner from '../Ui-components/LoadingSpinner';
+import Pagination from '../Transactions-components/Pagination';
 
 // Hooks
 import { useTransactions } from '../../hooks/useTransactions';
@@ -171,77 +172,14 @@ const Transactions = () => {
 
             {/* Componente de Paginación */}
             {filteredTransactions.length > itemsPerPage && (
-                <motion.div
-                    className="compact-pagination"
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.2 }}
-                >
-                    <motion.button
-                        onClick={() => paginate(1)}
-                        disabled={pagination.currentPage === 1}
-                        className="pagination-edge"
-                        whileHover={buttonHover}
-                        whileTap={buttonTap}
-                    >
-                        «
-                    </motion.button>
-
-                    <motion.button
-                        onClick={() => paginate(pagination.currentPage - 1)}
-                        disabled={pagination.currentPage === 1}
-                        className="pagination-prev-next"
-                        whileHover={buttonHover}
-                        whileTap={buttonTap}
-                    >
-                        ‹
-                    </motion.button>
-
-                    {getPaginationGroup().map((item, index) => (
-                        item === '...' ? (
-                            <motion.span
-                                key={index}
-                                className="pagination-ellipsis"
-                                initial={{ opacity: 0 }}
-                                animate={{ opacity: 1 }}
-                            >
-                                ...
-                            </motion.span>
-                        ) : (
-                            <motion.button
-                                key={index}
-                                onClick={() => paginate(item)}
-                                className={`pagination-number ${pagination.currentPage === item ? 'active' : ''}`}
-                                whileHover={buttonHover}
-                                whileTap={buttonTap}
-                                initial={{ scale: 0.8 }}
-                                animate={{ scale: 1 }}
-                            >
-                                {item}
-                            </motion.button>
-                        )
-                    ))}
-
-                    <motion.button
-                        onClick={() => paginate(pagination.currentPage + 1)}
-                        disabled={pagination.currentPage === totalPages}
-                        className="pagination-prev-next"
-                        whileHover={buttonHover}
-                        whileTap={buttonTap}
-                    >
-                        ›
-                    </motion.button>
-
-                    <motion.button
-                        onClick={() => paginate(totalPages)}
-                        disabled={pagination.currentPage === totalPages}
-                        className="pagination-edge"
-                        whileHover={buttonHover}
-                        whileTap={buttonTap}
-                    >
-                        »
-                    </motion.button>
-                </motion.div>
+                <Pagination
+                    itemsPerPage={itemsPerPage}
+                    totalItems={filteredTransactions.length}
+                    paginate={paginate}
+                    currentPage={pagination.currentPage}
+                    totalPages={totalPages}
+                    getPaginationGroup={getPaginationGroup}
+                />
             )}
 
             {/* Resumen de transacciones mostradas */}
