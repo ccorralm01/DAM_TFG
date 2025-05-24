@@ -4,6 +4,7 @@ import { toast } from 'react-toastify';
 import "./styles/AppHeader.css";
 import Logo from "../../assets/Logo.png";
 import apiService from '../../services/apiService'; // Asegúrate de importar tu apiService
+import CustomToast from './CustomToast';
 
 const AppLayout = () => {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -19,11 +20,8 @@ const AppLayout = () => {
             
             // Cerrar menú móvil si está abierto
             setIsMenuOpen(false);
-            
-            toast.success(response.msg || 'Sesión cerrada', {
-                autoClose: 1500,
-                onClose: () => navigate('/') // Redirigir a login después del toast
-            });
+            toast(<CustomToast title="Éxito!" message={response.msg || 'Sesión cerrada'} type='success' onClose={() => toast.dismiss()} />, 
+            navigate('/', { replace: true }));
 
         } catch (err) {
             toast.error(err.message || 'Error al cerrar sesión');
