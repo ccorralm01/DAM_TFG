@@ -195,6 +195,11 @@ class TransactionController:
                     return jsonify({'msg': 'Transacción no encontrada'}), 404
                 
                 session.delete(transaction)
+                session.flush()
+                
+                # Actualizar los historiales
+                HistoryController._update_month_history(user_id, transaction.date)
+                HistoryController._update_year_history(user_id, transaction.date)
                 
                 return jsonify({'msg': 'Transacción eliminada'})
         except Exception as e:
