@@ -1,4 +1,8 @@
 import { motion } from 'framer-motion';
+import apiService from '../../services/apiService';
+import { useState, useEffect } from 'react';
+import { toast } from 'react-toastify';
+import CustomToast from '../Ui-components/CustomToast';
 
 const TransactionsFilters = ({ 
     filters, 
@@ -6,7 +10,38 @@ const TransactionsFilters = ({
     onFilterChange,
     buttonHover,
     buttonTap
-}) => {
+}
+) => {
+
+    const [isExporting, setIsExporting] = useState(false);
+
+    const handleExport = async () => {
+        setIsExporting(true);
+        try {
+            // Llamar al servicio de exportación
+            const blob = await apiService.exportTransactions();
+            
+            // Crear enlace de descarga
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `transacciones_${new Date().toISOString().split('T')[0]}.xlsx`;
+            document.body.appendChild(a);
+            a.click();
+            
+            // Limpiar
+            window.URL.revokeObjectURL(url);
+            a.remove();
+            
+            toast(<CustomToast title="Éxito!" message="Datos exportados" type='success' onClose={() => toast.dismiss()} />);
+        } catch (error) {
+            console.error('Error al exportar:', error);
+            toast(<CustomToast title="Error!" message={err.message || 'Error en la autenticación'} type='error' onClose={() => toast.dismiss()} />);
+        } finally {
+            setIsExporting(false);
+        }
+    };
+
     return (
         <motion.div
             className="filters my-4 d-flex align-items-end justify-content-around"
@@ -92,9 +127,16 @@ const TransactionsFilters = ({
                     className='btn btn-primary'
                     whileHover={buttonHover}
                     whileTap={buttonTap}
+                    onClick={handleExport}
+                    disabled={isExporting}
                 >
-                    EXPORTAR DATOS
+                    {isExporting ? (
+                        <span>Exportando...</span>
+                    ) : (
+                        <span>EXPORTAR DATOS</span>
+                    )}
                 </motion.button>
+
             </motion.div>
         </motion.div>
     );

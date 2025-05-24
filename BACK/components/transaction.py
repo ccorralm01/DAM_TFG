@@ -1,10 +1,13 @@
-from flask import jsonify, request
+from flask import jsonify, request, send_file
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from datetime import datetime
 from models import session, Category, Transaction, TransactionKind
 from contextlib import contextmanager
 from sqlalchemy import func
 from components.history import HistoryController
+from io import BytesIO
+import pandas as pd
+from werkzeug.utils import secure_filename
 class TransactionController:
     def __init__(self, app):
         self.app = app
@@ -17,6 +20,8 @@ class TransactionController:
         self.app.add_url_rule('/transactions/<int:transaction_id>', view_func=self.update_transaction, methods=['PUT'])
         self.app.add_url_rule('/transactions/<int:transaction_id>', view_func=self.delete_transaction, methods=['DELETE'])
         self.app.add_url_rule('/transactions/summary', view_func=self.get_transactions_summary, methods=['GET'])
+        self.app.add_url_rule('/transactions/export', view_func=self.export_transactions, methods=['GET'])
+        self.app.add_url_rule('/transactions/import', view_func=self.import_transactions, methods=['POST'])
 
     @contextmanager
     def _session_scope(self):
@@ -296,3 +301,163 @@ class TransactionController:
         except Exception as e:
             print(f"Error al obtener resumen de transacciones: {e}")
             return jsonify({'msg': 'Error al obtener resumen de transacciones'}), 500
+        
+    @jwt_required()
+    def export_transactions(self):
+        """Exporta las transacciones del usuario a un archivo Excel sin IDs internos"""
+        user_id = get_jwt_identity()
+        
+        try:
+            with self._session_scope():
+                # Obtener transacciones con información de categoría
+                transactions = session.query(
+                    Transaction,
+                    Category.name.label('category_name'),
+                    Category.color.label('category_color')
+                ).outerjoin(
+                    Category, Transaction.category_id == Category.id
+                ).filter(
+                    Transaction.user_id == user_id
+                ).all()
+
+                # Preparar datos para el DataFrame
+                data = []
+                for t, cat_name, cat_color in transactions:
+                    data.append({
+                        'Fecha': t.date.strftime('%Y-%m-%d'),
+                        'Descripción': t.description or '',
+                        'Categoría': cat_name or '',
+                        'Color Categoría': cat_color or '',
+                        'Tipo': t.kind.value,
+                        'Cantidad': float(t.amount),
+                        'Creado': t.created_at.strftime('%Y-%m-%d %H:%M'),
+                        'Actualizado': t.updated_at.strftime('%Y-%m-%d %H:%M')
+                    })
+
+                # Crear DataFrame y ordenar por fecha
+                df = pd.DataFrame(data)
+                df.sort_values(by='Fecha', ascending=False, inplace=True)
+
+                # Crear archivo Excel en memoria
+                output = BytesIO()
+                with pd.ExcelWriter(output, engine='openpyxl') as writer:
+                    df.to_excel(writer, sheet_name='Transacciones', index=False)
+                    
+                    # Formatear columnas
+                    workbook = writer.book
+                    worksheet = writer.sheets['Transacciones']
+                    
+                    # Ajustar ancho de columnas
+                    for column in df:
+                        column_length = max(df[column].astype(str).map(len).max(), len(column))
+                        col_idx = df.columns.get_loc(column)
+                        worksheet.column_dimensions[chr(65 + col_idx)].width = column_length + 2
+
+                output.seek(0)
+                
+                # Enviar archivo como descarga
+                return send_file(
+                    output,
+                    mimetype='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+                    as_attachment=True,
+                    download_name=f'transacciones_{datetime.now().strftime("%Y%m%d")}.xlsx'
+                )
+
+        except Exception as e:
+            print(f"Error al exportar transacciones: {e}")
+            return jsonify({'msg': 'Error al exportar transacciones'}), 500
+
+    @jwt_required()
+    def import_transactions(self):
+        """Importa transacciones desde un archivo Excel"""
+        user_id = get_jwt_identity()
+        
+        if 'file' not in request.files:
+            return jsonify({'msg': 'No se proporcionó archivo'}), 400
+            
+        file = request.files['file']
+        if file.filename == '':
+            return jsonify({'msg': 'Nombre de archivo vacío'}), 400
+            
+        if not file.filename.lower().endswith(('.xlsx', '.xls')):
+            return jsonify({'msg': 'Formato de archivo no soportado. Use .xlsx o .xls'}), 400
+
+        try:
+            # Leer archivo Excel
+            df = pd.read_excel(file)
+            
+            # Validar columnas requeridas
+            required_columns = {'Fecha', 'Tipo', 'Cantidad'}
+            if not required_columns.issubset(df.columns):
+                missing = required_columns - set(df.columns)
+                return jsonify({'msg': f'Faltan columnas requeridas: {missing}'}), 400
+
+            # Procesar transacciones
+            success_count = 0
+            errors = []
+            
+            with self._session_scope():
+                # Obtener categorías del usuario para mapeo
+                user_categories = session.query(Category).filter_by(user_id=user_id).all()
+                category_map = {cat.name.lower(): cat.id for cat in user_categories}
+                
+                for index, row in df.iterrows():
+                    try:
+                        # Validar y convertir datos
+                        date = pd.to_datetime(row['Fecha']).date()
+                        kind_str = str(row['Tipo']).strip().lower()
+                        amount = float(row['Cantidad'])
+                        description = str(row.get('Descripción', '')).strip() or None
+                        category_name = str(row.get('Categoría', '')).strip() or None
+                        
+                        # Validar tipo de transacción
+                        try:
+                            kind = TransactionKind(kind_str)
+                        except ValueError:
+                            errors.append(f"Fila {index+2}: Tipo de transacción inválido '{kind_str}'")
+                            continue
+                        
+                        # Mapear categoría si existe
+                        category_id = None
+                        if category_name:
+                            category_name_lower = category_name.lower()
+                            if category_name_lower in category_map:
+                                category_id = category_map[category_name_lower]
+                            else:
+                                errors.append(f"Fila {index+2}: Categoría '{category_name}' no encontrada")
+                                continue
+                        
+                        # Crear transacción
+                        transaction = Transaction(
+                            amount=amount,
+                            description=description,
+                            date=date,
+                            kind=kind,
+                            category_id=category_id,
+                            user_id=user_id
+                        )
+                        
+                        session.add(transaction)
+                        success_count += 1
+                        
+                    except Exception as e:
+                        errors.append(f"Fila {index+2}: Error - {str(e)}")
+                        continue
+                
+                # Actualizar historiales si hubo transacciones nuevas
+                if success_count > 0:
+                    dates_to_update = {t.date for t in session.new if isinstance(t, Transaction)}
+                    for date in dates_to_update:
+                        HistoryController._update_month_history(user_id, date)
+                        HistoryController._update_year_history(user_id, date)
+                
+                return jsonify({
+                    'msg': f'Importación completada con {success_count} transacciones procesadas',
+                    'success_count': success_count,
+                    'error_count': len(errors),
+                    'errors': errors if errors else None
+                })
+
+        except Exception as e:
+            print(f"Error al importar transacciones: {e}")
+            return jsonify({'msg': 'Error al procesar archivo Excel'}), 500

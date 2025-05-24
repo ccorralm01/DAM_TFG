@@ -8,7 +8,7 @@ class ApiService {
     }
 
     // Método genérico para manejar todas las peticiones
-    async _fetch(endpoint, method = 'GET', body = null, customHeaders = {}) {
+    async _fetch(endpoint, method = 'GET', body = null, customHeaders = {}, responseType = 'json') {
         const headers = {
             ...this.defaultHeaders,
             ...customHeaders
@@ -17,11 +17,16 @@ class ApiService {
         const config = {
             method,
             headers,
-            credentials: 'include', // Para enviar cookies (JWT)
+            credentials: 'include',
         };
 
-        if (body) {
+        // No stringify si es FormData (para importar)
+        if (body && !(body instanceof FormData)) {
             config.body = JSON.stringify(body);
+        } else if (body) {
+            config.body = body;
+            // El navegador establecerá automáticamente el Content-Type con el boundary
+            delete headers['Content-Type'];
         }
 
         try {
@@ -33,7 +38,15 @@ class ApiService {
                 throw new Error(errorMsg);
             }
 
-            return await response.json();
+            // Manejar diferentes tipos de respuesta
+            switch (responseType) {
+                case 'blob':
+                    return await response.blob();
+                case 'text':
+                    return await response.text();
+                default:
+                    return await response.json();
+            }
         } catch (error) {
             console.error('API Error:', error);
             throw error;
@@ -70,6 +83,21 @@ class ApiService {
         if (endDate) params.append('end_date', endDate);
         return this._fetch(`/transactions/summary?${params.toString()}`, 'GET');
     }
+
+    importTransactions = (file) => {
+        const formData = new FormData();
+        formData.append('file', file);
+        return this._fetch('/transactions/import', 'POST', formData, {}, 'json');
+    };
+
+    exportTransactions = () => this._fetch(
+        '/transactions/export',
+        'GET',
+        null,
+        { 'Accept': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' },
+        'blob'
+    );
+
     // ==================== HISTORY ====================
     getMonthlyHistoryByDate = (year, month) => this._fetch(`/history/monthly?year=${year}&month=${month}`, 'GET');
     getYearlyHistoryByDate = (year) => this._fetch(`/history/yearly?year=${year}`, 'GET');
