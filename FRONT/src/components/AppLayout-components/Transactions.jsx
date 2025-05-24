@@ -99,6 +99,7 @@ const Transactions = () => {
                 onFilterChange={handleFilterChange}
                 buttonHover={buttonHover}
                 buttonTap={buttonTap}
+                onImportSuccess={fetchTransactions}
             />
 
             <motion.div
