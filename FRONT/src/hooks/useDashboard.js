@@ -60,6 +60,7 @@ export const useDashboard = (isAuthenticated) => {
 
     return {
         profile,
+        refreshData,
         showModal,
         modalType,
         dateRange,

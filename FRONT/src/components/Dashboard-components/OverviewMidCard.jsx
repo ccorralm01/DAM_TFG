@@ -1,9 +1,13 @@
 import { motion } from "framer-motion";
 import "./styles/OverviewMidCard.css";
 import CustomPieChart from "./PieChart";
+import { useTransactionSummary } from '../../hooks/useTransactionSummary';
+import { tr } from "date-fns/locale";
 
-const OverviewMidCard = ({type = "income", data = [] }) => {
-    // Colores según el tipo
+const OverviewMidCard = ({type = "income", data = [], dateRange, refreshTrigger}) => {
+    const { transactionsByCategory } = useTransactionSummary(dateRange, refreshTrigger); // Hook para obtener el resumen de transacciones
+    data = type === 'income' ? transactionsByCategory.income : transactionsByCategory.expenses;
+
     const colors = {
         income: {
             border: "rgb(16, 185, 129)",

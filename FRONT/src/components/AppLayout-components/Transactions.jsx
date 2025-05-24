@@ -9,27 +9,21 @@ import TransactionModal from '../Dashboard-components/TransactionModal';
 import TransactionsTable from '../Transactions-components/TransactionsTable';
 import TransactionsFilters from '../Transactions-components/TransactionsFilters';
 import LoadingSpinner from '../Ui-components/LoadingSpinner';
+import CustomToast from '../Ui-components/CustomToast';
+
 // Hooks
 import { useTransactions } from '../../hooks/useTransactions';
 import { useTransactionFilters } from '../../hooks/useTransactionFilters';
 import { usePagination } from '../../hooks/usePagination';
 
 const Transactions = () => {
+    // Paginación
+    const itemsPerPage = Math.round(window.innerHeight * 7 / 1030);
+
     // Hooks
     const { transactions, loading, categories, fetchTransactions } = useTransactions();
     const { filters, filteredTransactions, handleFilterChange } = useTransactionFilters(transactions);
-    
-    // Paginación
-    const itemsPerPage = Math.round(window.innerHeight * 7 / 1030);
-    const {
-        pagination,
-        totalPages,
-        currentTransactions,
-        indexOfFirstItem,
-        indexOfLastItem,
-        paginate,
-        getPaginationGroup
-    } = usePagination(filteredTransactions, itemsPerPage);
+    const { pagination, totalPages, currentTransactions, indexOfFirstItem, indexOfLastItem, paginate, getPaginationGroup } = usePagination(filteredTransactions, itemsPerPage);
 
     // Estados para el modal de edición
     const [editingTransaction, setEditingTransaction] = useState(null);
@@ -37,8 +31,8 @@ const Transactions = () => {
     const [modalType, setModalType] = useState('expense');
 
     // Animation variants
-    const fadeIn = { hidden: { opacity: 0 }, visible: { opacity: 1, transition: { duration: 0.5 } }};
-    const buttonHover = { scale: 1.05, transition: { duration: 0.2 }};
+    const fadeIn = { hidden: { opacity: 0 }, visible: { opacity: 1, transition: { duration: 0.5 } } };
+    const buttonHover = { scale: 1.05, transition: { duration: 0.2 } };
     const buttonTap = { scale: 0.95 };
 
     const deleteTransaction = async (transactionId) => {
@@ -51,7 +45,6 @@ const Transactions = () => {
         }
     };
 
-
     // Función para manejar la eliminación
     const handleDeleteTransaction = async (transactionId) => {
         // Mostrar toast de confirmación
@@ -59,7 +52,7 @@ const Transactions = () => {
             <div>
                 <p>¿Estás seguro de eliminar esta transacción?</p>
                 <div className="toast-actions">
-                    <button 
+                    <button
                         className="toast-confirm-btn"
                         onClick={() => {
                             toast.dismiss();
@@ -68,7 +61,7 @@ const Transactions = () => {
                     >
                         Sí, eliminar
                     </button>
-                    <button 
+                    <button
                         className="toast-cancel-btn"
                         onClick={() => toast.dismiss()}
                     >

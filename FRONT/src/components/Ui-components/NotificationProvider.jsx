@@ -7,16 +7,17 @@ const NotificationProvider = ({ children }) => {
         <>
             {children}
             <ToastContainer
+                toastClassName={() => "custom-toast-wrapper"}
+                bodyClassName={() => "custom-toast-body"}
                 position="bottom-right"
                 autoClose={3000}
-                hideProgressBar={false}
+                hideProgressBar={true}  // Oculta la barra de progreso por defecto
+                closeButton={false}     // Oculta el botón de cerrar por defecto
                 newestOnTop
-                closeOnClick
-                rtl={false}
+                closeOnClick={false}
                 pauseOnFocusLoss
                 draggable
                 pauseOnHover
-                theme="colored"
             />
         </>
     );

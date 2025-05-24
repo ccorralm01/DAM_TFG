@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { format } from 'date-fns';
 import apiService from "../services/apiService";
 
-export const useTransactionSummary = (dateRange, refreshTrigger) => {
+export const useTransactionSummary = ( dateRange, refreshTrigger ) => {
     const [summary, setSummary] = useState({
         income: 0,
         expenses: 0,
@@ -50,12 +50,10 @@ export const useTransactionSummary = (dateRange, refreshTrigger) => {
         };
 
         fetchSummary();
-    }, [dateRange]);
+    }, [dateRange, refreshTrigger]);
 
     return {
         summary,
         transactionsByCategory,
-        loading,
-        error
     };
 };

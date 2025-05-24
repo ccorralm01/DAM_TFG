@@ -1,0 +1,76 @@
+/* styles/CustomToast.css */
+.custom-toast {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    color: #FFFFFF;
+    min-width: 300px;
+    padding: 16px;
+    border-radius: 8px;
+    position: relative;
+    box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.15);
+    background-color: #11353C;
+}
+
+/* Default style */
+.custom-toast.default {
+    border-bottom: transparent 4px solid;
+}
+
+/* Success style */
+.custom-toast.success {
+    border-bottom: #2D7D46 4px solid;
+}
+
+/* Error style */
+.custom-toast.error {
+    border-bottom: #C23B22 4px solid;
+}
+
+/* Warning style */
+.custom-toast.warning {
+    color: #333;
+    border-bottom: #FFA726 4px solid;
+}
+
+/* Info style */
+.custom-toast.info {
+    background-color: #1976D2;
+}
+
+.toast-logo {
+    flex-shrink: 0;
+    padding-top: 2px;
+}
+
+.toast-content {
+    flex-grow: 1;
+}
+
+.toast-title {
+    margin: 0 0 4px 0;
+    font-size: 16px;
+    font-weight: 600;
+    color: inherit;
+}
+
+.toast-message {
+    margin: 0;
+    font-size: 14px;
+    line-height: 1.4;
+    opacity: 0.8;
+}
+
+.toast-close {
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    margin-left: 8px;
+    flex-shrink: 0;
+}
+
+/* Adjust close button color based on toast type */
+.custom-toast.warning .toast-close path {
+    stroke: #333;
+}

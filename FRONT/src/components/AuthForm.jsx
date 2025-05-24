@@ -4,6 +4,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import './styles/AuthLogin.css';
 import apiService from '../services/apiService';
 import { toast } from 'react-toastify';
+import CustomToast from '../components/Ui-components/CustomToast';
 
 const AuthForm = ({ authMode, onToggleAuthMode }) => {
     const location = useLocation();
@@ -70,10 +71,8 @@ const AuthForm = ({ authMode, onToggleAuthMode }) => {
                     email: formData.email,
                     password: formData.password
                 };
-                await apiService.login(credentials);
-                toast.success('Inicio de sesión exitoso!', {
-                    autoClose: 1500,
-                });
+                const response = await apiService.login(credentials);
+                toast(<CustomToast title="Éxito!" message={response.msg} type='success' onClose={() => toast.dismiss()} />);
                 navigate('/dashboard')
             } else {
                 const newUser = {
@@ -81,22 +80,13 @@ const AuthForm = ({ authMode, onToggleAuthMode }) => {
                     email: formData.email,
                     password: formData.password
                 };
-                await apiService.register(newUser);
-
-                toast.success('¡Registro exitoso!', {
-                    autoClose: 2000,
-                    onClose: () => navigate('/')
-                });
-                
-                setFormData({
-                    email: '',
-                    password: '',
-                    username: '',
-                    confirmPassword: ''
-                });
+                const response = await apiService.register(newUser);
+                toast(<CustomToast title="Éxito!" message={response.msg} type='success' onClose={() => toast.dismiss()} />);
+                navigate('/')
             }
         } catch (err) {
-            toast.error(err.message || 'Error en la autenticación');
+            toast(<CustomToast title="Error!" message={err.message || 'Error en la autenticación'} type='error' onClose={() => toast.dismiss()} />);
+            toast.error();
         } finally {
             setLoading(false);
         }
