@@ -1,0 +1,7 @@
+.env para el servidor. clave jwt y expiración en models.py datos bd
+
+€ $ etc
+
+Página dashboard, big card opciones responsive
+Página trasacciones opcional daterange y responsive filtros
+
