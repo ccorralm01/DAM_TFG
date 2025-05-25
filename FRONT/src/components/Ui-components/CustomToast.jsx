@@ -1,4 +1,5 @@
 import './styles/CustomToast.css';
+import logo from '../../assets/Small-logo.png';
 
 const CustomToast = ({ 
     title, 
@@ -18,7 +19,7 @@ const CustomToast = ({
     return (
         <div className={`custom-toast ${type}`}>
             <div className="toast-logo">
-                <img alt="Logo" width="32" height="32" src="/src/assets/Small-logo.png" />
+                <img alt={logo} width="32" height="32" src={logo} />
             </div>
             <div className="toast-content">
                 <h4 className="toast-title">{title}</h4>

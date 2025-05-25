@@ -16,15 +16,30 @@ import CustomToast from '../Ui-components/CustomToast';
 import { useTransactions } from '../../hooks/useTransactions';
 import { useTransactionFilters } from '../../hooks/useTransactionFilters';
 import { usePagination } from '../../hooks/usePagination';
+import { useTransactionExport } from '../../hooks/useTransactionExport';
+import { useTransactionImport } from '../../hooks/useTransactionImport';
+import { useTransactionDeletion } from '../../hooks/useTransactionDeletion';
 
 const Transactions = () => {
     // Paginación
-    const itemsPerPage = Math.round(window.innerHeight * 7 / 1030);
+    var itemsPerPage = Math.round(window.innerHeight * 7 / 1030);
+    itemsPerPage = itemsPerPage > 10 ? 10 : itemsPerPage;
+    itemsPerPage = itemsPerPage < 5 ? 5 : itemsPerPage;
 
     // Hooks
     const { transactions, loading, categories, fetchTransactions } = useTransactions();
     const { filters, filteredTransactions, handleFilterChange, handleSort } = useTransactionFilters(transactions);
     const { pagination, totalPages, currentTransactions, indexOfFirstItem, indexOfLastItem, paginate, getPaginationGroup } = usePagination(filteredTransactions, itemsPerPage);
+    const { isExporting, handleExport } = useTransactionExport();
+    const {
+        showImportModal,
+        setShowImportModal,
+        selectedFile,
+        isImporting,
+        handleFileChange,
+        handleImport
+    } = useTransactionImport(fetchTransactions);
+    const { handleDeleteTransaction } = useTransactionDeletion(fetchTransactions);
 
     // Estados para el modal de edición
     const [editingTransaction, setEditingTransaction] = useState(null);
@@ -36,132 +51,8 @@ const Transactions = () => {
     const buttonHover = { scale: 1.05, transition: { duration: 0.2 } };
     const buttonTap = { scale: 0.95 };
 
-    const deleteTransaction = async (transactionId) => {
-        try {
-            const response = await apiService.deleteTransaction(transactionId);
-            toast(<CustomToast title="Éxito!" message={response.msg} type='success' onClose={() => toast.dismiss()} />);
-            fetchTransactions(); // Refrescar la lista de transacciones
-        } catch (error) {
-            console.error('Error al eliminar la transacción:', error);
-            toast(<CustomToast title="Error!" message={err.message || 'Error en la autenticación'} type='error' onClose={() => toast.dismiss()} />);
-        }
-    };
-
-    // Función para manejar la eliminación
-    const handleDeleteTransaction = async (transactionId) => {
-        toast(
-            <CustomToast
-                title="Confirmar eliminación"
-                message="¿Estás seguro de eliminar esta transacción?"
-                type="confirm"
-                onConfirm={() => deleteTransaction(transactionId)}
-                onClose={() => toast.dismiss()}
-                confirmText="Sí, eliminar"
-                cancelText="Cancelar"
-            />,
-            {
-                position: "top-center",
-            }
-        );
-    };
-
-
-    const [isExporting, setIsExporting] = useState(false);
-    const [showImportModal, setShowImportModal] = useState(false);
-    const [selectedFile, setSelectedFile] = useState(null);
-    const [isImporting, setIsImporting] = useState(false);
-
-    const handleExport = async () => {
-        setIsExporting(true);
-        try {
-            const blob = await apiService.exportTransactions();
-            const url = window.URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `transacciones_${new Date().toISOString().split('T')[0]}.xlsx`;
-            document.body.appendChild(a);
-            a.click();
-            window.URL.revokeObjectURL(url);
-            a.remove();
-
-            toast(
-                <CustomToast
-                    title="Éxito!"
-                    message="Datos exportados correctamente"
-                    type="success"
-                />
-            );
-        } catch (error) {
-            toast(
-                <CustomToast
-                    title="Error!"
-                    message={error.message || 'Error al exportar datos'}
-                    type="error"
-                />
-            );
-        } finally {
-            setIsExporting(false);
-        }
-    };
-
-    const handleFileChange = (e) => {
-        setSelectedFile(e.target.files[0]);
-    };
-
-    const handleImport = async () => {
-        if (!selectedFile) {
-            toast(
-                <CustomToast
-                    title="Advertencia"
-                    message="Por favor selecciona un archivo"
-                    type="warning"
-                />
-            );
-            return;
-        }
-
-        setIsImporting(true);
-        try {
-            const result = await apiService.importTransactions(selectedFile);
-
-            if (result.error_count > 0) {
-                toast(
-                    <CustomToast
-                        title="Importación parcial"
-                        message={`${result.success_count} transacciones importadas, ${result.error_count} errores`}
-                        type="warning"
-                    />
-                );
-            } else {
-                toast(
-                    <CustomToast
-                        title="Éxito!"
-                        message={`${result.success_count} transacciones importadas correctamente`}
-                        type="success"
-                    />
-                );
-                fetchTransactions()
-            }
-
-            setShowImportModal(false);
-            setSelectedFile(null);
-        } catch (error) {
-            toast(
-                <CustomToast
-                    title="Error!"
-                    message={error.message || 'Error al importar datos'}
-                    type="error"
-                />
-            );
-        } finally {
-            setIsImporting(false);
-        }
-    };
-
     if (loading) {
-        return (
-            <LoadingSpinner />
-        );
+        return <LoadingSpinner />;
     }
 
     return (
