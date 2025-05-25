@@ -58,7 +58,7 @@ const DashBoard = () => {
                             value={dateRange}
                             onChange={setDateRange}
                             cleanable={false}
-                            size="sm"
+                            size="md"
                             className="responsive-daterangepicker"
                         />
                     </div>
