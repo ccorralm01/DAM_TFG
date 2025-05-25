@@ -1,8 +1,6 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import "./styles/Transactions.css";
-import { toast } from 'react-toastify';
-import apiService from '../../services/apiService';
 
 // Components
 import TransactionModal from '../Dashboard-components/TransactionModal';
@@ -10,7 +8,6 @@ import TransactionsTable from '../Transactions-components/TransactionsTable';
 import TransactionsFilters from '../Transactions-components/TransactionsFilters';
 import LoadingSpinner from '../Ui-components/LoadingSpinner';
 import Pagination from '../Transactions-components/Pagination';
-import CustomToast from '../Ui-components/CustomToast';
 
 // Hooks
 import { useTransactions } from '../../hooks/useTransactions';
@@ -240,7 +237,7 @@ const Transactions = () => {
                                 Cancelar
                             </motion.button>
                             <motion.button
-                                className="btn btn-primary"
+                                className="btn-modal btn btn-primary"
                                 whileHover={buttonHover}
                                 whileTap={buttonTap}
                                 onClick={handleImport}

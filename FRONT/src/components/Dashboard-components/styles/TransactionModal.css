@@ -99,18 +99,6 @@
     cursor: pointer;
 }
 
-.btn-primary {
-    background-color: rgb(59, 130, 246);
-    color: white;
-    border: none;
-}
-
-.btn-secondary {
-    background-color: transparent;
-    color: #fff;
-    border: 1px solid rgb(63, 63, 70);
-}
-
 .custom-select {
     position: relative;
 }
