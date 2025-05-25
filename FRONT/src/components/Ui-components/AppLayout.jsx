@@ -58,7 +58,7 @@ const AppLayout = () => {
                     <ul className="lista-navegacion d-none d-md-flex align-items-center gap-5 mb-0 p-0">
                         <li><Link className="nav-link" to="/dashboard">Inicio</Link></li>
                         <li><Link className="nav-link" to="/transactions">Transacciones</Link></li>
-                        <li><Link className="nav-link" to="/manage">Ajustes</Link></li>
+                        <li><Link className="nav-link" to="/categories">Categorías</Link></li>
                         <li><button className="nav-link logout-btn" onClick={logOut}>Salir</button></li>
                     </ul>
                     
@@ -68,7 +68,7 @@ const AppLayout = () => {
                             <img src={Logo} alt="Company Logo" className='logoTrirule img-fluid mb-5'/>
                             <li><Link className="nav-link" to="/dashboard" onClick={toggleMenu}>Inicio</Link></li>
                             <li><Link className="nav-link" to="/transactions" onClick={toggleMenu}>Transacciones</Link></li>
-                            <li><Link className="nav-link" to="/manage" onClick={toggleMenu}>Ajustes</Link></li>
+                            <li><Link className="nav-link" to="/categories" onClick={toggleMenu}>Categorías</Link></li>
                             <li><button className="nav-link logout-btn" onClick={() => { toggleMenu(); logOut(); }}>Salir</button></li>
                         </ul>
                     </div>

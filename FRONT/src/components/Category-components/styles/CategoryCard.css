@@ -1,0 +1,63 @@
+/* Estilos para los tipos de categoría */
+.category-badge-need {
+    background-color: #e3f2fd;
+    color: #1976d2;
+}
+
+.category-badge-want {
+    background-color: #f3e5f5;
+    color: #8e24aa;
+}
+
+.category-badge-save {
+    background-color: #e8f5e9;
+    color: #388e3c;
+}
+
+/* Estilo base para las cartitas */
+.category-card {
+    transition: all 0.3s ease;
+    border-left: 4px solid;
+    position: relative;
+    overflow: hidden;
+    min-height: 150px;;
+}
+
+/* Efecto hover para desktop */
+@media (hover: hover) {
+    .category-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+}
+
+/* Tamaño de los iconos */
+.card-actions-edit, .card-actions-delete {
+    padding: 0.25rem;
+    line-height: 1;
+}
+
+.card-actions-edit{
+    background-color: rgb(90, 0, 76);
+    border: 1px solid rgb(244, 63, 219);
+}
+
+.card-actions-edit:hover{
+    background-color: rgb(244, 63, 219);
+    border: 1px solid rgb(90, 0, 76);
+}
+
+.card-icon{
+    color: white;
+}
+
+.card-actions-delete{
+    background-color: rgb(76, 5, 25);
+    border: 1px solid rgb(244, 63, 94);
+}
+
+.card-actions-delete:hover{
+    background-color: rgb(244, 63, 94);
+    border: 1px solid rgb(76, 5, 25);
+}
+    

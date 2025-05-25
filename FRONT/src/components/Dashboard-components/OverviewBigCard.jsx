@@ -74,7 +74,7 @@ const OverviewBigCard = ({ isEmpty = false, refreshTrigger }) => {
 
         <motion.article className="col-12" variants={containerVariants}>
             <motion.div
-                className="big-card d-flex flex-column px-4 py-3 gap-4"
+                className="app-item-container-bg big-card d-flex flex-column px-4 py-3 gap-4"
                 variants={cardVariants}
                 whileHover="hover"
             >

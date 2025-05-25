@@ -71,7 +71,7 @@ const Transactions = () => {
                             animate={{ opacity: 1 }}
                             exit={{ opacity: 0 }}
                         >
-                            Transacciones
+                            Mis Transacciones
                         </motion.span>
                         <div className='d-flex flex-md-row flex-column gap-2 gap-md-4 mt-2 mt-md-0'>
                             <motion.div
@@ -85,7 +85,7 @@ const Transactions = () => {
                                     whileTap={buttonTap}
                                     onClick={() => setShowImportModal(true)}
                                 >
-                                    IMPORTAR DATOS
+                                    IMPORTAR DATOS <i class="ms-1 bi bi-cloud-download"></i>
                                 </motion.button>
                             </motion.div>
 
@@ -101,7 +101,7 @@ const Transactions = () => {
                                     onClick={handleExport}
                                     disabled={isExporting}
                                 >
-                                    {isExporting ? "Exportando..." : "EXPORTAR DATOS"}
+                                    {isExporting ? "Exportando..." : "EXPORTAR DATOS"} <i class="ms-1 bi bi-cloud-upload"></i>
                                 </motion.button>
                             </motion.div>
                         </div>
