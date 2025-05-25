@@ -1,15 +1,16 @@
-.msg-1{
+.msg-1 {
     font-size: 1.1em;
     font-weight: bold;
     text-align: center;
 }
-.msg-2{
+
+.msg-2 {
     font-size: 1em;
     color: rgb(161, 161, 170);
     text-align: center;
 }
 
-.history{
+.history {
     font-size: 2.3em;
     font-weight: bold;
     color: #fff;
@@ -21,7 +22,7 @@
     }
 }
 
-.big-card{
+.big-card {
     min-height: 490px;
     background-color: rgb(9, 9, 11);
     border: 1px solid rgb(39, 39, 42);
@@ -33,9 +34,17 @@
     .big-card {
         min-height: 400px;
     }
+
+    .leyend {
+        align-items: flex-start;
+    }
+
+    .time-range-switch {
+        align-self: start;
+    }
 }
 
-.big-card select{
+.big-card select {
     color: #fff;
     min-width: 200px;
     background-color: black;
@@ -48,17 +57,23 @@
     }
 }
 
-.big-card-body{
+.big-card-body {
     background-color: #000;
     border-radius: 10px;
     flex: 1;
     min-height: 0;
 }
 
-.leyend span{
+
+
+.leyend span {
+    display: flex;
+    align-items: center;
+    justify-content: center;
     border: 1px solid rgb(39, 39, 42);
     border-radius: 25px;
     font-size: 0.9em;
+    min-width: 80px;
 }
 
 @media (max-width: 768px) {
@@ -66,22 +81,24 @@
         flex-direction: column;
         gap: 0.5rem !important;
     }
+
     .leyend span {
         padding: 0.25rem 0.5rem !important;
     }
 }
 
-.icon-red, .icon-green{
+.icon-red,
+.icon-green {
     min-height: 17px;
     min-width: 17px;
     border-radius: 100%;
 }
 
-.icon-green{
+.icon-green {
     background-color: rgb(16, 185, 129);
 }
 
-.icon-red{
+.icon-red {
     background-color: rgb(239, 68, 68);
 }
 
@@ -104,8 +121,8 @@
 }
 
 .switch-option.active {
-    background: #3b82f6;
-    color: white;
+    background: #10b981;
+    color: black;
     border-radius: 8px;
 }
 
@@ -117,4 +134,37 @@
 /* Ajustes para los selects */
 .form-select {
     min-width: 120px;
+}
+
+
+
+
+/* DashBoard.css */
+.date-range-picker-wrapper {
+    position: relative;
+}
+
+/* Ajustes para móvil */
+@media (max-width: 768px) {
+    .responsive-daterangepicker {
+        width: 100% !important;
+    }
+
+    .rs-picker-menu {
+        width: 100vw !important;
+        left: 0 !important;
+        transform: none !important;
+        position: fixed !important;
+        top: 50% !important;
+        max-height: 70vh;
+        overflow-y: auto;
+    }
+
+    .rs-calendar {
+        width: 100% !important;
+    }
+
+    .rs-picker-daterange-menu .rs-picker-toolbar {
+        flex-wrap: wrap;
+    }
 }

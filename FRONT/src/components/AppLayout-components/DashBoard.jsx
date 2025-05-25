@@ -13,10 +13,10 @@ import { useDashboard } from '../../hooks/useDashboard';
 const DashBoard = () => {
     const { userId, isAuthenticated } = useOutletContext();
     if (!isAuthenticated) { return <Navigate to="/login" replace />; }
-    
+
     const { profile, refreshData, showModal, modalType, dateRange, predefinedRanges, handleOpenModal, handleCloseModal, handleTransactionCreated, setDateRange } = useDashboard(userId); // Hook para obtener las transacciones
     const { summary } = useTransactionSummary(dateRange, refreshData); // Hook para obtener el resumen de transacciones
-    
+
     return (
         <>
             <header>
@@ -27,7 +27,8 @@ const DashBoard = () => {
                         ) : (
                             <span className="welcome-text">Cargando perfil...</span>
                         )}
-                        <div className="d-flex gap-2 gap-md-4 mt-2 mt-md-0">
+                        {/* Contenedor de botones modificado */}
+                        <div className="d-flex flex-md-row flex-column gap-2 gap-md-4 mt-2 mt-md-0">
                             <button
                                 className="boton-ingreso px-2 px-md-3"
                                 onClick={() => handleOpenModal('income')}
@@ -47,16 +48,18 @@ const DashBoard = () => {
             <main className="container py-4">
                 <div className="panel-title d-flex flex-md-row flex-column justify-content-between align-items-md-center mb-4">
                     <span className="panel-title-text mb-2 mb-md-0">Panel</span>
-                    <div>
+                    <div className="date-range-picker-wrapper">
                         <DateRangePicker
                             theme="dark"
                             showOneCalendar
                             ranges={predefinedRanges}
-                            placement="bottomEnd"
-                            style={{ width: 230 }}
+                            placement={"autoVertical"}
+                            style={{ width: "100%" }}
                             value={dateRange}
-                            onChange={(value) => setDateRange(value)}
+                            onChange={setDateRange}
                             cleanable={false}
+                            size="sm"
+                            className="responsive-daterangepicker"
                         />
                     </div>
                 </div>
@@ -67,7 +70,7 @@ const DashBoard = () => {
                 </section>
                 <section className="row g-3 mb-4">
                     <OverviewMidCard type="income" refreshTrigger={refreshData} dateRange={dateRange} />
-                    <OverviewMidCard type="expense" refreshTrigger={refreshData} dateRange={dateRange}/>
+                    <OverviewMidCard type="expense" refreshTrigger={refreshData} dateRange={dateRange} />
                 </section>
                 <section className="row g-3">
                     <OverviewBigCard refreshTrigger={refreshData} />

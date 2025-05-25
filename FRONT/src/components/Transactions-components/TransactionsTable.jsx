@@ -35,7 +35,7 @@ const TransactionsTable = ({
                     layout
                 >
                     <td>{new Date(transaction.date).toLocaleDateString()}</td>
-                    <td>{transaction.description}</td>
+                    <td>{transaction.description === 'nan' ? '' : transaction.description}</td>
                     <td>
                         {transaction.category ? (
                             <motion.span
