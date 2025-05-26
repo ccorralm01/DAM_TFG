@@ -61,7 +61,7 @@ const TransactionsTable = ({
                             whileTap={buttonTap}
                             onClick={() => onEditTransaction(transaction)}
                         >
-                            <i class="card-icon bi bi-pencil-fill"></i>
+                            <i className="card-icon bi bi-pencil-fill"></i>
                         </motion.button>
                         <motion.button
                             className="delete-button btn btn-danger"
@@ -69,7 +69,7 @@ const TransactionsTable = ({
                             whileTap={buttonTap}
                             onClick={() => onDeleteTransaction(transaction.id)} // Llamar a la función de eliminación
                         >
-                            <i class="card-icon bi bi-trash-fill"></i>
+                            <i className="card-icon bi bi-trash-fill"></i>
                         </motion.button>
                     </td>
                 </motion.tr>

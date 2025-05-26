@@ -71,21 +71,11 @@
     flex-shrink: 0;
 }
 
-/* Adjust close button color based on toast type */
 .custom-toast.warning .toast-close path {
     stroke: #333;
 }
 
-
-
-
-
-
 /* Estilos para el toast de confirmación */
-.custom-toast.confirm {
-    padding-bottom: 1rem;
-}
-
 .toast-btn {
     padding: 0.5rem 1rem;
     border-radius: 4px;
@@ -95,20 +85,27 @@
     transition: all 0.2s ease;
 }
 
+.toast-actions {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
 .toast-confirm-btn {
-    background-color: #2d7d46;
+    background-color: #ef4444;
     color: white;
 }
 
 .toast-confirm-btn:hover {
-    background-color: #235c36;
+    background-color: #dc2626;
 }
 
 .toast-cancel-btn {
-    background-color: #c23b22;
-    color: white;
+    background-color: #e5e7eb;
+    color: #4b5563;
 }
 
 .toast-cancel-btn:hover {
-    background-color: #9a2f1b;
+    background-color: #d1d5db;
 }

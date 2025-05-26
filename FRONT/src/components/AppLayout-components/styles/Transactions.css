@@ -95,46 +95,6 @@
     border-color: rgb(39, 39, 42) !important;
 }
 
-
-/* Estilos para los toasts de confirmación */
-.confirm-toast {
-    padding: 1rem;
-    min-width: 300px;
-}
-
-.toast-actions {
-    display: flex;
-    justify-content: center;
-    gap: 1rem;
-    margin-top: 1rem;
-}
-
-.toast-confirm-btn, .toast-cancel-btn {
-    padding: 0.5rem 1rem;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 0.9rem;
-}
-
-.toast-confirm-btn {
-    background-color: #ef4444;
-    color: white;
-}
-
-.toast-confirm-btn:hover {
-    background-color: #dc2626;
-}
-
-.toast-cancel-btn {
-    background-color: #e5e7eb;
-    color: #4b5563;
-}
-
-.toast-cancel-btn:hover {
-    background-color: #d1d5db;
-}
-
 .modal-overlay {
     position: fixed;
     top: 0;
@@ -181,6 +141,10 @@
     border-radius: 4px;
     cursor: pointer;
     transition: background-color 0.3s ease;
+}
+.modal-content .btn-modal:hover {
+    background-color: #b3d32f55;
+    border: 1px solid #cef43f;
 }
 
 .file-input-container {

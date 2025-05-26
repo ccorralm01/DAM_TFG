@@ -23,13 +23,6 @@
     overflow-y: auto;
 }
 
-.modal-header,
-.modal-footer {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
 .modal-header {
     margin-bottom: 20px;
 }
@@ -37,6 +30,26 @@
 .modal-footer {
     margin-top: 20px;
     gap: 10px;
+}
+
+.btn-aceptar {
+    background-color: rgb(16, 185, 129);
+    color: #fff;
+}
+
+.btn-cancelar{
+    background-color: rgb(244, 63, 94);
+    color: #fff;
+}
+
+.btn-aceptar:hover{
+    background-color: rgb(2, 44, 34);
+    border: 1px solid rgb(16, 185, 129);
+}
+
+.btn-cancelar:hover{
+    background-color: rgb(76, 5, 25);
+    border: 1px solid rgb(244, 63, 94);
 }
 
 .close-button {
