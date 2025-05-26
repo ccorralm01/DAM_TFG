@@ -138,7 +138,7 @@ const OverviewBigCard = ({ isEmpty = false, refreshTrigger }) => {
                         className="leyend d-flex gap-3 ms-lg-auto"
                         variants={containerVariants}
                     >
-                        {["ingreso", "gasto"].map((item, i) => (
+                        {["INGRESOS", "GASTOS"].map((item, i) => (
                             <motion.span
                                 key={item}
                                 className="d-flex align-items-center p-2"
@@ -147,7 +147,7 @@ const OverviewBigCard = ({ isEmpty = false, refreshTrigger }) => {
                                 whileHover={{ scale: 1.05 }}
                                 whileTap={{ scale: 0.95 }}
                             >
-                                <div className={`icon-${item === 'ingreso' ? 'green' : 'red'} mx-1`} />
+                                <div className={`icon-${item === 'INGRESOS' ? 'green' : 'red'} mx-1`} />
                                 {item}
                             </motion.span>
                         ))}

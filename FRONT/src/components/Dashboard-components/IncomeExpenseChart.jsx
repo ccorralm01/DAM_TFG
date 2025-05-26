@@ -125,7 +125,7 @@ export default class IncomeExpenseChart extends PureComponent {
                             <YAxis
                                 type="number"
                                 axisLine={false}
-                                tickFormatter={(value) => `$${value.toLocaleString()}`}
+                                tickFormatter={(value) => `${value.toLocaleString()}€`}
                                 tick={{ fontSize: isMobile ? 10 : 12 }}
                                 width={isMobile ? 50 : 60}
                             />
@@ -139,8 +139,8 @@ export default class IncomeExpenseChart extends PureComponent {
                             />
                             <Tooltip
                                 formatter={(value, name, props) => [
-                                    `$${value.toLocaleString()}`,
-                                    name === 'Ingresos' ? 'Ingresos' : 'Gastos'
+                                    `${value.toLocaleString()} €`,
+                                    name === 'Ingresos' ? 'INGRESOS' : 'GASTOS'
                                 ]}
                                 labelFormatter={label =>
                                     timeRange === 'monthly'

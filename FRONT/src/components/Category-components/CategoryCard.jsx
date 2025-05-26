@@ -74,7 +74,7 @@ const CategoryCard = ({ category, onEdit, onDelete }) => {
                     className="card-actions-edit btn btn-link text-secondary"
                     aria-label="Editar"
                 >
-                    <i class="card-icon bi bi-pencil-fill"></i>
+                    <i className="card-icon bi bi-pencil-fill"></i>
                 </motion.button>
 
                 <motion.button
@@ -88,7 +88,7 @@ const CategoryCard = ({ category, onEdit, onDelete }) => {
                     className="card-actions-delete btn btn-link text-secondary"
                     aria-label="Eliminar"
                 >
-                    <i class="card-icon bi bi-trash-fill"></i>
+                    <i className="card-icon bi bi-trash-fill"></i>
                 </motion.button>
             </div>
         </motion.div>
