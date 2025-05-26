@@ -5,6 +5,7 @@ import CustomToast from "../Ui-components/CustomToast";
 import CategoriesGrid from "../Category-components/CategoriesGrid";
 import CategoryModal from "../Category-components/CategoryModal";
 import LoadingSpinner from "../Ui-components/LoadingSpinner";
+import './styles/Categories.css';
 
 const Categories = () => {
     const [categories, setCategories] = useState([]);
@@ -101,7 +102,7 @@ const Categories = () => {
                     <div className="welcome-container container d-flex flex-md-row flex-column justify-content-between align-items-center py-3">
                         <span className="welcome-text">Mis Categorías</span>
                         <button 
-                            className="btn btn-primary"
+                            className="btn btn-nueva-categoria"
                             onClick={() => {
                                 setCurrentCategory(null);
                                 setShowModal(true);

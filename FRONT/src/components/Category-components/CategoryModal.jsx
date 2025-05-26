@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import './styles/CategoryModal.css';
 
 const CategoryModal = ({ show, onClose, onSave, category }) => {
     const [formData, setFormData] = useState({
@@ -40,7 +41,7 @@ const CategoryModal = ({ show, onClose, onSave, category }) => {
         <div className="modal fade show" style={{ display: 'block', backgroundColor: 'rgba(0,0,0,0.5)' }}>
             <div className="modal-dialog">
                 <div className="modal-content">
-                    <div className="modal-header">
+                    <div className="modal-heade-category">
                         <h5 className="modal-title">
                             {category ? 'Editar Categoría' : 'Nueva Categoría'}
                         </h5>
@@ -97,7 +98,7 @@ const CategoryModal = ({ show, onClose, onSave, category }) => {
                             </button>
                             <button 
                                 type="submit" 
-                                className="btn btn-primary"
+                                className="btn btn-aceptar-categoria"
                             >
                                 Guardar
                             </button>
