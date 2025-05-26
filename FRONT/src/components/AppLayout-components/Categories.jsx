@@ -47,12 +47,12 @@ const Categories = () => {
                 onConfirm={async () => {
                     try {
                         setIsDeleting(true);
-                        await apiService.deleteCategory(id);
+                        const response = await apiService.deleteCategory(id);
                         setCategories(categories.filter(cat => cat.id !== id));
-                        toast.success("Categoría eliminada correctamente");
+                        toast(<CustomToast title="Éxito!" message={response.msg} type='success' onClose={() => toast.dismiss()} />);
                     } catch (error) {
                         console.error("Error al eliminar:", error);
-                        toast.error("Error al eliminar la categoría");
+                        toast(<CustomToast title="Error!" message={error.message || "Error al eliminar la categoría"} type='error' onClose={() => toast.dismiss()} />);
                     } finally {
                         setIsDeleting(false);
                     }
@@ -74,18 +74,19 @@ const Categories = () => {
         try {
             if (currentCategory) {
                 // Edición
-                await apiService.updateCategory(currentCategory.id, categoryData);
-                toast.success("Categoría actualizada correctamente");
+                const response = await apiService.updateCategory(currentCategory.id, categoryData);
+                toast(<CustomToast title="Éxito!" message={response.msg} type='success' onClose={() => toast.dismiss()} />);
             } else {
                 // Creación
-                await apiService.createCategory(categoryData);
-                toast.success("Categoría creada correctamente");
+                const response = await apiService.createCategory(categoryData);
+                toast(<CustomToast title="Éxito!" message={response.msg} type='success' onClose={() => toast.dismiss()} />);
+
             }
             fetchCategories(); // Refrescar lista
             setShowModal(false);
         } catch (error) {
             console.error("Error al guardar:", error);
-            toast.error(error.message || "Error al guardar la categoría");
+            toast(<CustomToast title="Error!" message={error.message || "Error al guardar la categoría"} type='error' onClose={() => toast.dismiss()} />);
         }
     };
 
