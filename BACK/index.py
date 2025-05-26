@@ -1,3 +1,4 @@
+import os
 from flask import Flask, jsonify
 from flask_cors import CORS
 from flask_jwt_extended import JWTManager
@@ -9,7 +10,8 @@ from components.category import CategoryController
 from components.transaction import TransactionController
 from components.history import HistoryController
 from models import Base, engine
-
+from dotenv import load_dotenv
+load_dotenv()
 class TriruleAPI:
     def __init__(self):
         self.app = Flask(__name__)
@@ -19,7 +21,7 @@ class TriruleAPI:
         self._create_tables()
         
     def _configure_app(self):
-        self.app.config['JWT_SECRET_KEY'] = 'supersecret-key'
+        self.app.config['JWT_SECRET_KEY'] = os.getenv('JWT_SECRET_KEY')
         self.app.config['JWT_TOKEN_LOCATION'] = ['cookies']
         self.app.config['JWT_COOKIE_SECURE'] = False
         self.app.config['JWT_ACCESS_COOKIE_PATH'] = '/'

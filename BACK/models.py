@@ -1,3 +1,4 @@
+import os
 from sqlalchemy import (
     Column, Integer, String, ForeignKey, DateTime, Date, Float,
     UniqueConstraint, Enum, create_engine
@@ -5,8 +6,12 @@ from sqlalchemy import (
 from sqlalchemy.orm import relationship, declarative_base, sessionmaker, scoped_session
 import enum
 from datetime import datetime
+from dotenv import load_dotenv
 
-engine = create_engine('mysql+pymysql://root:@localhost/trirule',
+# Cargar variables de entorno desde el archivo .env
+load_dotenv()
+
+engine = create_engine(f'mysql+pymysql://{os.getenv("DB_USER")}:{os.getenv("DB_PASSWORD")}@{os.getenv("DB_HOST")}/{os.getenv("DB_NAME")}',
         pool_pre_ping=True,  # Verifica conexiones antes de usarlas
         pool_recycle=3600,   # Recicla conexiones cada 1 hora
         echo=False
