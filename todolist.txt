@@ -1,7 +1,6 @@
-.env para el servidor. clave jwt y expiración en models.py datos bd
-
+.env  datos bd
 € $ etc
-
-Página dashboard, big card opciones responsive
-Página trasacciones opcional daterange y responsive filtros
-
+Página trasacciones opcional daterange
+Comprobar xsls
+cheks registro
+modal explicación regla 50 30 20

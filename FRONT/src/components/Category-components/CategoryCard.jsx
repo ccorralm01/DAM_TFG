@@ -48,7 +48,7 @@ const CategoryCard = ({ category, onEdit, onDelete }) => {
         >
             <div className="card-body p-3">
                 <div className="d-flex justify-content-between align-items-center mb-2">
-                    <h5 className="card-title mb-0" style={{ fontSize: '1rem' }}>
+                    <h5 className="mb-0" style={{ fontSize: '1rem' }}>
                         {category.name}
                     </h5>
                     <small className="text-light">

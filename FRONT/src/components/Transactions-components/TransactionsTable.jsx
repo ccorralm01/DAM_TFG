@@ -54,7 +54,7 @@ const TransactionsTable = ({
                         {transaction.kind === 'income' ? '+' : '-'}
                         {transaction.amount.toFixed(2)}
                     </td>
-                    <td className="d-flex gap-3">
+                    <td className="td-acciones d-flex gap-3">
                         <motion.button
                             className="edit-button btn btn-secondary"
                             whileHover={buttonHover}

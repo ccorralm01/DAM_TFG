@@ -19,18 +19,18 @@ const CategoriesGrid = ({ categories, onEdit, onDelete, isDeleting }) => {
         });
 
         return [
-            { 
-                name: 'Necesidades', 
+            {
+                name: 'Necesidades',
                 value: typeTotals.need,
                 percentage: total > 0 ? (typeTotals.need / total * 100).toFixed(1) + '%' : '0%'
             },
-            { 
-                name: 'Deseos', 
+            {
+                name: 'Deseos',
                 value: typeTotals.want,
                 percentage: total > 0 ? (typeTotals.want / total * 100).toFixed(1) + '%' : '0%'
             },
-            { 
-                name: 'Ahorros', 
+            {
+                name: 'Ahorros',
                 value: typeTotals.save,
                 percentage: total > 0 ? (typeTotals.save / total * 100).toFixed(1) + '%' : '0%'
             }
@@ -68,7 +68,13 @@ const CategoriesGrid = ({ categories, onEdit, onDelete, isDeleting }) => {
                                                     <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                                                 ))}
                                             </Pie>
-                                            <Tooltip formatter={(value) => [`${value.toFixed(2)}€`, 'Total']} />
+                                            <Tooltip
+                                                formatter={(value, name, props) => {
+                                                    const total = chartData.reduce((sum, item) => sum + item.value, 0);
+                                                    const percentage = ((value / total) * 100).toFixed(2);
+                                                    return [`${percentage}%`, props.payload.name || name];
+                                                }}
+                                            />
                                             <Legend />
                                         </PieChart>
                                     </ResponsiveContainer>
