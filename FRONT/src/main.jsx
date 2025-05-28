@@ -9,6 +9,7 @@ import Transactions from './components/AppLayout-components/Transactions.jsx';
 import Categories from './components/AppLayout-components/Categories.jsx';
 import NotificationProvider from './components/Ui-components/NotificationProvider.jsx';
 import ProtectedRouter from './components/ProtectedRouter.jsx';
+import Settings from './components/AppLayout-components/Settings.jsx';
 
 ReactDOM.createRoot(document.getElementById('root')).render(
     <BrowserRouter>
@@ -24,6 +25,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
                   <Route path="/dashboard" element={<DashBoard />} />
                   <Route path="/transactions" element={<Transactions />} />
                   <Route path="/categories" element={<Categories />} />
+                  <Route path="/ajustes" element={<Settings />} />
                 </Route>
             </Route>
 

@@ -7,7 +7,8 @@ const routeColors = {
     '/signup': '#63e',
     '/dashboard': '#10b981',
     '/transactions': '#cef43f',
-    '/categories': '#f43fdb'
+    '/categories': '#f43fdb',
+    '/ajustes': '#909090'
 };
 
 // Componente para crear un fondo de gradiente animado que cambia según la ruta actual

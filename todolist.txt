@@ -1,6 +1,5 @@
 .env  datos bd
-€ $ etc
 Página trasacciones opcional daterange
-Comprobar xsls
 cheks registro
 modal explicación regla 50 30 20
+Página de ajustes, cambio divisa y actualización perfil

@@ -55,10 +55,11 @@ const AppLayout = () => {
                     </div>
                     
                     {/* Menú normal para desktop */}
-                    <ul className="lista-navegacion d-none d-md-flex align-items-center gap-5 mb-0 p-0">
+                    <ul className="lista-navegacion d-none d-md-flex align-items-center gap-4 gap-lg-5 mb-0 p-0">
                         <li><Link className="nav-link" to="/dashboard">Inicio</Link></li>
                         <li><Link className="nav-link" to="/transactions">Transacciones</Link></li>
                         <li><Link className="nav-link" to="/categories">Categorías</Link></li>
+                        <li><Link className="nav-link" to="/ajustes">Ajustes</Link></li>
                         <li><button className="nav-link logout-btn" onClick={logOut}>Salir</button></li>
                     </ul>
                     
@@ -69,6 +70,7 @@ const AppLayout = () => {
                             <li><Link className="nav-link" to="/dashboard" onClick={toggleMenu}>Inicio</Link></li>
                             <li><Link className="nav-link" to="/transactions" onClick={toggleMenu}>Transacciones</Link></li>
                             <li><Link className="nav-link" to="/categories" onClick={toggleMenu}>Categorías</Link></li>
+                            <li><Link className="nav-link" to="/ajustes" onClick={toggleMenu}>Ajustes</Link></li>
                             <li><button className="nav-link logout-btn" onClick={() => { toggleMenu(); logOut(); }}>Salir</button></li>
                         </ul>
                     </div>
