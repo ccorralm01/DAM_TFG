@@ -3,3 +3,4 @@ Página trasacciones opcional daterange
 cheks registro
 modal explicación regla 50 30 20
 Página de ajustes, cambio divisa y actualización perfil
+validación de imputs en back y front
