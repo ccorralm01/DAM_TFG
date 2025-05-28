@@ -1,11 +1,10 @@
-import { PureComponent } from 'react';
+import { Component } from 'react';
 import {
     BarChart,
     Bar,
     XAxis,
     YAxis,
     ResponsiveContainer,
-    Legend,
     CartesianGrid,
     Tooltip
 } from 'recharts';
@@ -15,7 +14,7 @@ const COLORS = {
     expense: 'rgb(239, 68, 68)',
 };
 
-export default class IncomeExpenseChart extends PureComponent {
+export default class IncomeExpenseChart extends Component {
     state = {
         isMobile: typeof window !== 'undefined' && window.innerWidth < 768,
         containerWidth: '100%'
@@ -57,8 +56,10 @@ export default class IncomeExpenseChart extends PureComponent {
             data = [],
             selectedMonth = "",
             selectedYear = "",
+            currency
         } = this.props;
 
+        console.log(currency)
         const { isMobile, containerWidth } = this.state;
 
         // Determinar si los datos son mensuales o anuales
@@ -125,7 +126,7 @@ export default class IncomeExpenseChart extends PureComponent {
                             <YAxis
                                 type="number"
                                 axisLine={false}
-                                tickFormatter={(value) => `${value.toLocaleString()}€`}
+                                tickFormatter={(value) => `${value.toLocaleString()} ${currency}`}
                                 tick={{ fontSize: isMobile ? 10 : 12 }}
                                 width={isMobile ? 50 : 60}
                             />
@@ -138,9 +139,9 @@ export default class IncomeExpenseChart extends PureComponent {
                                 tick={{ fontSize: isMobile ? 10 : 12 }}
                             />
                             <Tooltip
-                                formatter={(value, name, props) => [
-                                    `${value.toLocaleString()} €`,
-                                    name === 'Ingresos' ? 'INGRESOS' : 'GASTOS'
+                                formatter={(value, name) => [
+                                    `${value.toLocaleString()} ${currency}`,
+                                    name === 'income' ? 'INGRESOS' : 'GASTOS'
                                 ]}
                                 labelFormatter={label =>
                                     timeRange === 'monthly'
@@ -164,14 +165,14 @@ export default class IncomeExpenseChart extends PureComponent {
                             />
                             <Bar
                                 dataKey="income"
-                                name="Ingresos"
+                                name="income"
                                 fill={COLORS.income}
                                 radius={[4, 4, 0, 0]}
                                 animationDuration={1500}
                             />
                             <Bar
                                 dataKey="expense"
-                                name="Gastos"
+                                name="expense"
                                 fill={COLORS.expense}
                                 radius={[4, 4, 0, 0]}
                                 animationDuration={1500}

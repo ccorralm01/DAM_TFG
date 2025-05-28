@@ -9,6 +9,7 @@ import { useOutletContext } from 'react-router-dom';
 import { Navigate } from 'react-router-dom';
 import { useTransactionSummary } from '../../hooks/useTransactionSummary';
 import { useDashboard } from '../../hooks/useDashboard';
+import { useCurrency } from "../../hooks/useCurrency";
 
 const DashBoard = () => {
     const { userId, isAuthenticated } = useOutletContext();
@@ -16,7 +17,7 @@ const DashBoard = () => {
 
     const { profile, refreshData, showModal, modalType, dateRange, predefinedRanges, handleOpenModal, handleCloseModal, handleTransactionCreated, setDateRange } = useDashboard(userId); // Hook para obtener las transacciones
     const { summary } = useTransactionSummary(dateRange, refreshData); // Hook para obtener el resumen de transacciones
-
+    const { currency } = useCurrency();
     return (
         <>
             <header>
@@ -64,16 +65,16 @@ const DashBoard = () => {
                     </div>
                 </div>
                 <section className="row g-3 mb-3">
-                    <OverviewMiniCard title="Ingresos" iconName="trending-up" bgColor="#34d39911" iconColor="#10b981" amount={summary.income} />
-                    <OverviewMiniCard title="Gastos" iconName="trending-down" bgColor="#f8727211" iconColor="#ef4444" amount={summary.expenses} />
-                    <OverviewMiniCard title="Balance" iconName="wallet" bgColor="#a78bfa11" iconColor="#8b5cf6" amount={summary.balance} />
+                    <OverviewMiniCard title="Ingresos" currency={currency} iconName="trending-up" bgColor="#34d39911" iconColor="#10b981" amount={summary.income} />
+                    <OverviewMiniCard title="Gastos" currency={currency} iconName="trending-down" bgColor="#f8727211" iconColor="#ef4444" amount={summary.expenses} />
+                    <OverviewMiniCard title="Balance" currency={currency} iconName="wallet" bgColor="#a78bfa11" iconColor="#8b5cf6" amount={summary.balance} />
                 </section>
                 <section className="row g-3 mb-4">
-                    <OverviewMidCard type="income" refreshTrigger={refreshData} dateRange={dateRange} />
-                    <OverviewMidCard type="expense" refreshTrigger={refreshData} dateRange={dateRange} />
+                    <OverviewMidCard type="income" currency={currency} refreshTrigger={refreshData} dateRange={dateRange} />
+                    <OverviewMidCard type="expense" currency={currency} refreshTrigger={refreshData} dateRange={dateRange} />
                 </section>
                 <section className="row g-3">
-                    <OverviewBigCard refreshTrigger={refreshData} />
+                    <OverviewBigCard currency={currency} refreshTrigger={refreshData} />
                 </section>
             </main>
 

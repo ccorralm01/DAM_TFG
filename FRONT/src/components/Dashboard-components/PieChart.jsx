@@ -9,7 +9,8 @@ export default class CustomPieChart extends PureComponent {
         innerRadius,
         outerRadius,
         percent,
-        index
+        index,
+        currency
     }) => {
         const RADIAN = Math.PI / 180;
         const radius = innerRadius + (outerRadius - innerRadius) * 1.8;
@@ -39,7 +40,7 @@ export default class CustomPieChart extends PureComponent {
             data = [],
             width = '100%',
             height = 400,
-            currency = '€',
+            currency,
         } = this.props;
 
         // Safely transform data

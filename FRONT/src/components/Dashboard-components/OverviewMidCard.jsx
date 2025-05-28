@@ -5,7 +5,7 @@ import { useTransactionSummary } from '../../hooks/useTransactionSummary';
 import { tr } from "date-fns/locale";
 import '../../index.css'
 
-const OverviewMidCard = ({type = "income", data = [], dateRange, refreshTrigger}) => {
+const OverviewMidCard = ({type = "income", data = [], dateRange, refreshTrigger, currency = "€"}) => {
     const { transactionsByCategory } = useTransactionSummary(dateRange, refreshTrigger); // Hook para obtener el resumen de transacciones
     data = type === 'income' ? transactionsByCategory.income : transactionsByCategory.expenses;
 
@@ -117,6 +117,7 @@ const OverviewMidCard = ({type = "income", data = [], dateRange, refreshTrigger}
                             data={data}
                             width="100%"
                             height="100%"
+                            currency={currency}
                         />
                     )}
                 </motion.div>

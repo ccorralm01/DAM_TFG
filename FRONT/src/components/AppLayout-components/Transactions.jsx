@@ -17,6 +17,7 @@ import { usePagination } from '../../hooks/usePagination';
 import { useTransactionExport } from '../../hooks/useTransactionExport';
 import { useTransactionImport } from '../../hooks/useTransactionImport';
 import { useTransactionDeletion } from '../../hooks/useTransactionDeletion';
+import { useCurrency } from '../../hooks/useCurrency';
 
 const Transactions = () => {
     // Paginación
@@ -38,6 +39,7 @@ const Transactions = () => {
         handleImport
     } = useTransactionImport(fetchTransactions);
     const { handleDeleteTransaction } = useTransactionDeletion(fetchTransactions);
+    const { currency } = useCurrency();
 
     // Estados para el modal de edición
     const [editingTransaction, setEditingTransaction] = useState(null);
@@ -163,6 +165,7 @@ const Transactions = () => {
                             onDeleteTransaction={handleDeleteTransaction}
                             buttonHover={buttonHover}
                             buttonTap={buttonTap}
+                            currency={currency}
                         />
                     </tbody>
                 </table>

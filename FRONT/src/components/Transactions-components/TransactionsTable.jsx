@@ -7,7 +7,8 @@ const TransactionsTable = ({
     onEditTransaction,
     onDeleteTransaction,
     buttonHover,
-    buttonTap
+    buttonTap,
+    currency
 }) => {
     if (transactions.length === 0) {
         return (
@@ -52,7 +53,7 @@ const TransactionsTable = ({
                     </td>
                     <td className={transaction.kind}>
                         {transaction.kind === 'income' ? '+' : '-'}
-                        {transaction.amount.toFixed(2)}
+                        {transaction.amount.toFixed(2) + " "+currency}
                     </td>
                     <td className="td-acciones d-flex gap-3">
                         <motion.button

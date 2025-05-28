@@ -3,7 +3,7 @@ import "./styles/OverviewBigCard.css";
 import IncomeExpenseChart from "./IncomeExpenseChart";
 import useOverviewData from "../../hooks/useOverviewData";
 
-const OverviewBigCard = ({ isEmpty = false, refreshTrigger }) => {
+const OverviewBigCard = ({ isEmpty = false, refreshTrigger, currency="$" }) => {
     const {
         timeRange,
         setTimeRange,
@@ -174,6 +174,7 @@ const OverviewBigCard = ({ isEmpty = false, refreshTrigger }) => {
                             data={historyData}
                             selectedMonth={selectedMonth}
                             selectedYear={selectedYear}
+                            currency={currency}
                         />
                     )}
                 </motion.div>
