@@ -1,7 +1,8 @@
 from flask import jsonify, request
 from flask_jwt_extended import jwt_required, get_jwt_identity
-from models import session, UserSettings
+from models import session, UserSettings, User
 from contextlib import contextmanager
+import bcrypt
 
 class UserSettingsController:
     def __init__(self, app):
@@ -11,6 +12,8 @@ class UserSettingsController:
     def _register_routes(self):
         self.app.add_url_rule('/settings', view_func=self.get_settings, methods=['GET'])
         self.app.add_url_rule('/settings', view_func=self.update_settings, methods=['PUT'])
+        self.app.add_url_rule('/settings/profile', view_func=self.update_profile, methods=['PUT'])
+        self.app.add_url_rule('/settings/password', view_func=self.update_password, methods=['PUT'])
 
     @contextmanager
     def _session_scope(self):
@@ -71,3 +74,83 @@ class UserSettingsController:
         except Exception as e:
             print(f"Error al actualizar configuración: {e}")
             return jsonify({'msg': 'Error al actualizar configuración'}), 500
+        
+    @jwt_required()
+    def update_profile(self):
+        """Actualiza el perfil del usuario (username y email)"""
+        user_id = get_jwt_identity()
+        data = request.get_json()
+        
+        if not data:
+            return jsonify({'msg': 'No se proporcionaron datos para actualizar'}), 400
+        
+        allowed_fields = {'username', 'email'}
+        if not any(field in data for field in allowed_fields):
+            return jsonify({'msg': 'Se requiere al menos uno de los campos: username o email'}), 400
+        
+        try:
+            with self._session_scope():
+                user = session.query(User).filter_by(id=user_id).first()
+                if not user:
+                    return jsonify({'msg': 'Usuario no encontrado'}), 404
+                
+                updated_fields = {}
+                
+                if 'username' in data and data['username']:
+                    user.username = data['username']
+                    updated_fields['username'] = user.username
+                
+                if 'email' in data and data['email']:
+                    existing_user = session.query(User).filter(
+                        User.email == data['email'],
+                        User.id != user_id
+                    ).first()
+                    if existing_user:
+                        return jsonify({'msg': 'El email ya está en uso por otro usuario'}), 400
+                    user.email = data['email']
+                    updated_fields['email'] = user.email
+                
+                if not updated_fields:
+                    return jsonify({'msg': 'No se proporcionaron campos válidos para actualizar'}), 400
+                
+                return jsonify({
+                    'msg': 'Perfil actualizado correctamente',
+                    'updated_fields': updated_fields
+                })
+                
+        except Exception as e:
+            print(f"Error al actualizar perfil: {e}")
+            return jsonify({'msg': 'Error al actualizar perfil'}), 500
+
+    @jwt_required()
+    def update_password(self):
+        """Actualiza la contraseña del usuario"""
+        user_id = get_jwt_identity()
+        data = request.get_json()
+        
+        required_fields = {'current_password', 'new_password'}
+        if not data or not all(field in data for field in required_fields):
+            return jsonify({'msg': 'Se requieren los campos current_password y new_password'}), 400
+        
+        if not data['new_password']:
+            return jsonify({'msg': 'La nueva contraseña no puede estar vacía'}), 400
+        
+        try:
+            with self._session_scope():
+                user = session.query(User).filter_by(id=user_id).first()
+                if not user:
+                    return jsonify({'msg': 'Usuario no encontrado'}), 404
+                
+                # Verificar contraseña actual
+                if not bcrypt.checkpw(data['current_password'].encode('utf-8'), user.password.encode('utf-8')):
+                    return jsonify({'msg': 'La contraseña actual es incorrecta'}), 401
+                
+                # Hashear nueva contraseña
+                hashed_password = bcrypt.hashpw(data['new_password'].encode('utf-8'), bcrypt.gensalt())
+                user.password = hashed_password.decode('utf-8')
+                
+                return jsonify({'msg': 'Contraseña actualizada correctamente'})
+                
+        except Exception as e:
+            print(f"Error al actualizar contraseña: {e}")
+            return jsonify({'msg': 'Error al actualizar contraseña'}), 500
