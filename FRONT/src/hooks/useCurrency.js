@@ -12,27 +12,8 @@ const getCurrencySymbol = (currencyCode) => {
             return '£';
         case 'JPY':
             return '¥';
-        case 'CNY':
-            return '¥';
-        case 'INR':
-            return '₹';
-        case 'RUB':
-            return '₽';
-        case 'BRL':
-            return 'R$';
-        case 'MXN':
-            return '$';
-        case 'CAD':
-            return '$';
-        case 'AUD':
-            return '$';
-        case 'KRW':
-            return '₩';
-        case 'TRY':
-            return '₺';
-        // Añade más monedas según necesites
         default:
-            return currencyCode || '$'; // Si no está en la lista, devuelve el código o $ por defecto
+            return currencyCode || '$';
     }
 };
 

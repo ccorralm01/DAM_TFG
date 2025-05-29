@@ -63,6 +63,8 @@ class ApiService {
     // ==================== USER SETTINGS ====================
     getSettings = () => this._fetch('/settings', 'GET');
     updateSettings = (settings) => this._fetch('/settings', 'PUT', settings);
+    updateProfile = (userData) => this._fetch('/settings/profile', 'PUT', userData);
+    updatePassword = (newPassword) => this._fetch('/settings/password', 'PUT', newPassword);
 
     // ==================== CATEGORIES ====================
     getCategories = () => this._fetch('/categories', 'GET');
