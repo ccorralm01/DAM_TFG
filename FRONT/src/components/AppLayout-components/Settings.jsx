@@ -19,6 +19,7 @@ const Settings = () => {
         currency: "EUR",
         symbol: "€"
     });
+    const [previousCurrency, setPreviousCurrency] = useState("EUR");
     const [passwordData, setPasswordData] = useState({
         current_password: "",
         new_password: "",
@@ -50,6 +51,7 @@ const Settings = () => {
                         currency: settingsData.currency,
                         symbol: symbol
                     });
+                    setPreviousCurrency(settingsData.currency);
                 }
 
             } catch (error) {
@@ -116,25 +118,55 @@ const Settings = () => {
         }
     };
 
-    // Actualizar moneda
+    // Actualizar moneda con factor de conversión
+    // Actualizar moneda con factor de conversión
     const handleCurrencyUpdate = async (e) => {
         e.preventDefault();
         try {
             setLoading(true);
+
+            // 1. Obtener las tasas de cambio para todas las monedas desde la nueva base
+            const ratesResponse = await fetch(
+                `https://api.frankfurter.dev/v1/latest?symbols=USD,EUR,GBP,JPY&base=${currencyData.currency}`
+            );
+            const ratesData = await ratesResponse.json();
+
+            // 2. Obtener específicamente la tasa de conversión de la moneda anterior a la nueva
+            const conversionResponse = await fetch(
+                `https://api.frankfurter.dev/v1/latest?from=${previousCurrency}&to=${currencyData.currency}`
+            );
+            const conversionData = await conversionResponse.json();
+            const conversionRate = conversionData.rates[currencyData.currency];
+
+            // 3. Enviar al backend la nueva moneda y el factor de conversión
             const response = await apiService.updateSettings({
-                currency: currencyData.currency
+                currency: currencyData.currency,
+                conversion_rate: conversionRate
             });
 
+            console.log("Actualizado a ",currencyData.currency," Con cambio de ", conversionRate)
+
             if (response && response.settings) {
-                // Actualizar el estado con la respuesta del backend
+                // 4. Actualizar los estados locales
                 setCurrencyData({
                     currency: response.settings.currency,
                     symbol: getCurrencySymbol(response.settings.currency)
                 });
+                setPreviousCurrency(response.settings.currency);
+                setExchangeRates(ratesData.rates);
             }
+
             toast(<CustomToast title="Éxito!" message={response.msg} type='success' onClose={() => toast.dismiss()} />);
         } catch (error) {
             console.error("Error updating currency:", error);
+            toast(<CustomToast title="Error" message="No se pudo actualizar la moneda" type='error' onClose={() => toast.dismiss()} />);
+
+            // Revertir al valor anterior si falla
+            setCurrencyData(prev => ({
+                ...prev,
+                currency: previousCurrency,
+                symbol: getCurrencySymbol(previousCurrency)
+            }));
         } finally {
             setLoading(false);
         }

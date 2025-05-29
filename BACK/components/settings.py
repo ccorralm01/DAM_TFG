@@ -1,6 +1,6 @@
 from flask import jsonify, request
 from flask_jwt_extended import jwt_required, get_jwt_identity
-from models import session, UserSettings, User
+from models import session, UserSettings, User, Transaction
 from contextlib import contextmanager
 import bcrypt
 
@@ -54,19 +54,32 @@ class UserSettingsController:
         
         try:
             with self._session_scope():
+                # 1. Obtener la configuración actual del usuario
                 settings = session.query(UserSettings).filter_by(user_id=user_id).first()
+                old_currency = settings.currency if settings else 'EUR'
+                new_currency = data.get('currency', old_currency)
                 
+                # 2. Si hay cambio de moneda y se proporciona un factor de conversión
+                if 'conversion_rate' in data and old_currency != new_currency:
+                    conversion_rate = float(data['conversion_rate'])
+                    
+                    # 3. Actualizar todos los montos de las transacciones
+                    transactions = session.query(Transaction).filter_by(user_id=user_id).all()
+                    for transaction in transactions:
+                        transaction.amount = round(transaction.amount * conversion_rate, 2)
+                
+                # 4. Actualizar o crear la configuración
                 if not settings:
                     settings = UserSettings(
                         user_id=user_id, 
-                        currency=data.get('currency', 'EUR')
+                        currency=new_currency
                     )
                     session.add(settings)
                 else:
-                    settings.currency = data.get('currency', settings.currency)
+                    settings.currency = new_currency
                                 
                 return jsonify({
-                    'msg': 'Configuración actualizada',
+                    'msg': 'Configuración y transacciones actualizadas',
                     'settings': {
                         'currency': settings.currency
                     }
