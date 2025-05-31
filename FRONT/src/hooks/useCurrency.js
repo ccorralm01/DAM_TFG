@@ -24,9 +24,7 @@ export const useCurrency = () => {
     
     const fetchCurrency = async () => {
         try {
-            const response = await apiService.getSettings();
-            console.log("Currency response:", response);
-            
+            const response = await apiService.getSettings();            
             const code = response?.currency || 'USD';
             const symbol = getCurrencySymbol(code);
             

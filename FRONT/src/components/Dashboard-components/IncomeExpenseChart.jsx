@@ -59,7 +59,6 @@ export default class IncomeExpenseChart extends Component {
             currency
         } = this.props;
 
-        console.log(currency)
         const { isMobile, containerWidth } = this.state;
 
         // Determinar si los datos son mensuales o anuales
