@@ -1,4 +1,3 @@
-const API_BASE_URL = 'http://localhost:5000';
 class ApiService {
     constructor() {
         this.defaultHeaders = {
@@ -30,7 +29,7 @@ class ApiService {
         }
 
         try {
-            const response = await fetch(`${API_BASE_URL}${endpoint}`, config);
+            const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}${endpoint}`, config);
 
             if (!response.ok) {
                 const errorData = await response.json().catch(() => ({}));
