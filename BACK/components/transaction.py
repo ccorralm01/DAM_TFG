@@ -14,13 +14,21 @@ class TransactionController:
         self._register_routes()
     
     def _register_routes(self):
+        # Recuperar transacciones
         self.app.add_url_rule('/transactions', view_func=self.get_transactions, methods=['GET'])
+        # Crear transacción
         self.app.add_url_rule('/transactions', view_func=self.create_transaction, methods=['POST'])
+        # Recuperar transacción
         self.app.add_url_rule('/transactions/<int:transaction_id>', view_func=self.get_transaction, methods=['GET'])
+        # Actualizar transacción
         self.app.add_url_rule('/transactions/<int:transaction_id>', view_func=self.update_transaction, methods=['PUT'])
+        # Eliminar transacción
         self.app.add_url_rule('/transactions/<int:transaction_id>', view_func=self.delete_transaction, methods=['DELETE'])
+        # Recuperar resumen de transacciones
         self.app.add_url_rule('/transactions/summary', view_func=self.get_transactions_summary, methods=['GET'])
+        # Exportar
         self.app.add_url_rule('/transactions/export', view_func=self.export_transactions, methods=['GET'])
+        # Importar
         self.app.add_url_rule('/transactions/import', view_func=self.import_transactions, methods=['POST'])
 
     @contextmanager

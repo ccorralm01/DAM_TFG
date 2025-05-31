@@ -11,7 +11,9 @@ class HistoryController:
         self._register_routes()
     
     def _register_routes(self):
+        # Historial por mes
         self.app.add_url_rule('/history/monthly', view_func=self.get_monthly_history, methods=['GET'])
+        # Historial por año
         self.app.add_url_rule('/history/yearly', view_func=self.get_yearly_history, methods=['GET'])
 
     @contextmanager

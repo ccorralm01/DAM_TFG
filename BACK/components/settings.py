@@ -10,9 +10,13 @@ class UserSettingsController:
         self._register_routes()
     
     def _register_routes(self):
+        # Recuperar tipo de moneda
         self.app.add_url_rule('/settings', view_func=self.get_settings, methods=['GET'])
+        # Actualizar tipo de moneda
         self.app.add_url_rule('/settings', view_func=self.update_settings, methods=['PUT'])
+        # Actualizar perfil
         self.app.add_url_rule('/settings/profile', view_func=self.update_profile, methods=['PUT'])
+        # Actualizar contraseña
         self.app.add_url_rule('/settings/password', view_func=self.update_password, methods=['PUT'])
 
     @contextmanager

@@ -12,10 +12,15 @@ class CategoryController:
         self._register_routes()
     
     def _register_routes(self):
+        # Recuperar categorías
         self.app.add_url_rule('/categories', view_func=self.get_categories, methods=['GET'])
+        # Crear categoría
         self.app.add_url_rule('/categories', view_func=self.create_category, methods=['POST'])
+        # Recuperar categoría
         self.app.add_url_rule('/categories/<int:category_id>', view_func=self.get_category, methods=['GET'])
+        # Actualizar categoría
         self.app.add_url_rule('/categories/<int:category_id>', view_func=self.update_category, methods=['PUT'])
+        # Eliminar categoría
         self.app.add_url_rule('/categories/<int:category_id>', view_func=self.delete_category, methods=['DELETE'])
 
     @contextmanager

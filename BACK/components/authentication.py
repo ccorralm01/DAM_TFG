@@ -9,19 +9,22 @@ from contextlib import contextmanager
 from models import session, User
 
 class AuthController:
-    def __init__(self, app, jwt):
+    def __init__(self, app):
         self.app = app
-        self.jwt = jwt
         self._register_routes()
     
     def _register_routes(self):
+        # Registro
         self.app.add_url_rule('/register', view_func=self.register, methods=['POST'])
+        # Inicio de sesión
         self.app.add_url_rule('/login', view_func=self.login, methods=['POST'])
+        # Cierre de sesión
         self.app.add_url_rule('/logout', view_func=self.logout, methods=['POST'])
+        # Recuperar datos del perfil
         self.app.add_url_rule('/profile', view_func=self.profile, methods=['GET'])
+        # Comprobar autenticación
         self.app.add_url_rule('/check-auth', view_func=self.check_auth, methods=['GET'])
-        self.app.add_url_rule('/check-email', view_func=self.check_email, methods=['POST'])
-        self.app.add_url_rule('/check-username', view_func=self.check_username, methods=['POST'])
+
 
     @contextmanager
     def _session_scope(self):

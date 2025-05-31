@@ -39,7 +39,7 @@ class TriruleAPI:
         self.app.add_url_rule('/', view_func=lambda: jsonify({'msg': 'API Trirule funcionando'}))
         
         # Inicializar controladores
-        AuthController(self.app, self.jwt)
+        AuthController(self.app)
         UserSettingsController(self.app)
         CategoryController(self.app)
         TransactionController(self.app)
