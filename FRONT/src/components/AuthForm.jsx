@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { toast } from 'react-toastify';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate, useLocation } from 'react-router-dom';
@@ -9,6 +9,24 @@ import apiService from '../services/apiService';
 
 // Componentes
 import CustomToast from '../components/Ui-components/CustomToast';
+
+// Validación de contraseña
+const validatePassword = (password) => {
+  const hasMinLength = password.length >= 8;
+  const hasLowercase = /[a-z]/.test(password);
+  const hasNumber = /[0-9]/.test(password);
+  const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>]/.test(password);
+  
+  return {
+    isValid: hasMinLength && hasLowercase && hasNumber && hasSpecialChar,
+    checks: {
+      length: hasMinLength,
+      lowercase: hasLowercase,
+      number: hasNumber,
+      specialChar: hasSpecialChar
+    }
+  };
+};
 
 // Componente de formulario de autenticación con animaciones y transiciones
 const AuthForm = ({ authMode, onToggleAuthMode }) => {
@@ -21,6 +39,15 @@ const AuthForm = ({ authMode, onToggleAuthMode }) => {
         username: '',
         confirmPassword: ''
     });
+    const [passwordValidation, setPasswordValidation] = useState({
+      isValid: false,
+      checks: {
+        length: false,
+        lowercase: false,
+        number: false,
+        specialChar: false
+      }
+    });
     const [error, setError] = useState(null);
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
@@ -28,6 +55,23 @@ const AuthForm = ({ authMode, onToggleAuthMode }) => {
     const toggleAuthMode = () => {
         navigate(isLogin ? '/signup' : '/');
     };
+
+    // Efecto para validar la contraseña en tiempo real
+    useEffect(() => {
+      if (formData.password) {
+        setPasswordValidation(validatePassword(formData.password));
+      } else {
+        setPasswordValidation({
+          isValid: false,
+          checks: {
+            length: false,
+            lowercase: false,
+            number: false,
+            specialChar: false
+          }
+        });
+      }
+    }, [formData.password]);
 
     // Animaciones
     const containerVariants = {
@@ -58,7 +102,6 @@ const AuthForm = ({ authMode, onToggleAuthMode }) => {
         }));
     };
 
-
     const handleSubmit = async (e) => {
         e.preventDefault();
         setLoading(true);
@@ -66,6 +109,12 @@ const AuthForm = ({ authMode, onToggleAuthMode }) => {
 
         if (!isLogin && formData.password !== formData.confirmPassword) {
             toast(<CustomToast title="Error!" message={'Las contraseñas no coinciden'} type='error' onClose={() => toast.dismiss()} />);
+            setLoading(false);
+            return;
+        }
+
+        if (!isLogin && !passwordValidation.isValid) {
+            toast(<CustomToast title="Error!" message={'La contraseña no cumple con los requisitos'} type='error' onClose={() => toast.dismiss()} />);
             setLoading(false);
             return;
         }
@@ -97,7 +146,6 @@ const AuthForm = ({ authMode, onToggleAuthMode }) => {
         }
     };
 
-    // Si el usuario ya está autenticado, redirigir a dashboard
     return (
         <main className="position-relative d-flex justify-content-center align-items-center min-vh-100">
             <div className="card shadow-lg col-md-6 col-lg-4 col-11">
@@ -196,6 +244,25 @@ const AuthForm = ({ authMode, onToggleAuthMode }) => {
                                         value={formData.password}
                                         onChange={handleChange}
                                     />
+                                    {!isLogin && formData.password && (
+                                        <div className="password-feedback mt-2">
+                                            <small>La contraseña debe contener:</small>
+                                            <ul className="list-unstyled mb-0">
+                                                <li className={passwordValidation.checks.length ? 'text-success' : 'text-danger'}>
+                                                    {passwordValidation.checks.length ? '✓' : '✗'} Mínimo 8 caracteres
+                                                </li>
+                                                <li className={passwordValidation.checks.lowercase ? 'text-success' : 'text-danger'}>
+                                                    {passwordValidation.checks.lowercase ? '✓' : '✗'} Al menos una letra minúscula
+                                                </li>
+                                                <li className={passwordValidation.checks.number ? 'text-success' : 'text-danger'}>
+                                                    {passwordValidation.checks.number ? '✓' : '✗'} Al menos un número
+                                                </li>
+                                                <li className={passwordValidation.checks.specialChar ? 'text-success' : 'text-danger'}>
+                                                    {passwordValidation.checks.specialChar ? '✓' : '✗'} Al menos un carácter especial (!@#$%^&*)
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    )}
                                 </motion.div>
 
                                 {!isLogin && (
@@ -203,13 +270,18 @@ const AuthForm = ({ authMode, onToggleAuthMode }) => {
                                         <label htmlFor="confirmPassword" className="form-label">Confirmar Contraseña</label>
                                         <input
                                             type="password"
-                                            className="form-control"
+                                            className={`form-control ${formData.confirmPassword && formData.password !== formData.confirmPassword ? 'is-invalid' : formData.confirmPassword && formData.password === formData.confirmPassword ? 'is-valid' : ''}`}
                                             id="confirmPassword"
                                             placeholder="••••••••"
                                             required
                                             value={formData.confirmPassword}
                                             onChange={handleChange}
                                         />
+                                        {formData.confirmPassword && (
+                                            <div className={`mt-1 small ${formData.password === formData.confirmPassword ? 'text-success' : 'text-danger'}`}>
+                                                {formData.password === formData.confirmPassword ? 'Las contraseñas coinciden' : 'Las contraseñas no coinciden'}
+                                            </div>
+                                        )}
                                     </motion.div>
                                 )}
 
@@ -220,7 +292,7 @@ const AuthForm = ({ authMode, onToggleAuthMode }) => {
                                         style={{ backgroundColor: mainColor }}
                                         whileHover={{ scale: 1.02 }}
                                         whileTap={{ scale: 0.98 }}
-                                        disabled={loading}
+                                        disabled={loading || (!isLogin && (!passwordValidation.isValid || (formData.confirmPassword && formData.password !== formData.confirmPassword)))}
                                     >
                                         {loading ? (
                                             <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>

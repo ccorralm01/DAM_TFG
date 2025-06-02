@@ -6,6 +6,24 @@ import apiService from "../../services/apiService";
 import CustomToast from "../Ui-components/CustomToast";
 import LoadingSpinner from '../Ui-components/LoadingSpinner';
 
+// Función de validación de contraseña
+const validatePassword = (password) => {
+  const hasMinLength = password.length >= 8;
+  const hasLowercase = /[a-z]/.test(password);
+  const hasNumber = /[0-9]/.test(password);
+  const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>]/.test(password);
+  
+  return {
+    isValid: hasMinLength && hasLowercase && hasNumber && hasSpecialChar,
+    checks: {
+      length: hasMinLength,
+      lowercase: hasLowercase,
+      number: hasNumber,
+      specialChar: hasSpecialChar
+    }
+  };
+};
+
 const Settings = () => {
     const [userData, setUserData] = useState({
         username: '',
@@ -25,8 +43,33 @@ const Settings = () => {
         new_password: "",
         confirm_password: ""
     });
-
+    const [passwordValidation, setPasswordValidation] = useState({
+        isValid: false,
+        checks: {
+            length: false,
+            lowercase: false,
+            number: false,
+            specialChar: false
+        }
+    });
     const [exchangeRates, setExchangeRates] = useState(null);
+
+    // Efecto para validar la nueva contraseña en tiempo real
+    useEffect(() => {
+        if (passwordData.new_password) {
+            setPasswordValidation(validatePassword(passwordData.new_password));
+        } else {
+            setPasswordValidation({
+                isValid: false,
+                checks: {
+                    length: false,
+                    lowercase: false,
+                    number: false,
+                    specialChar: false
+                }
+            });
+        }
+    }, [passwordData.new_password]);
 
     // Recuperar datos del perfil y ajustes
     useEffect(() => {
@@ -64,7 +107,6 @@ const Settings = () => {
         fetchData();
     }, []);
 
-
     // Función auxiliar para obtener símbolo de moneda
     const getCurrencySymbol = (currency) => {
         switch (currency) {
@@ -75,7 +117,6 @@ const Settings = () => {
             default: return '€';
         }
     };
-
 
     // Actualizar perfil
     const handleSubmit = async (e) => {
@@ -95,6 +136,10 @@ const Settings = () => {
 
                 if (!passwordData.current_password) {
                     throw new Error("Debes ingresar tu contraseña actual para cambiarla");
+                }
+
+                if (!passwordValidation.isValid) {
+                    throw new Error("La nueva contraseña no cumple con los requisitos");
                 }
 
                 console.log(passwordData)
@@ -118,7 +163,6 @@ const Settings = () => {
         }
     };
 
-    // Actualizar moneda con factor de conversión
     // Actualizar moneda con factor de conversión
     const handleCurrencyUpdate = async (e) => {
         e.preventDefault();
@@ -349,6 +393,25 @@ const Settings = () => {
                                                         new_password: e.target.value
                                                     })}
                                                 />
+                                                {passwordData.new_password && (
+                                                    <div className="password-feedback mt-2">
+                                                        <small>La contraseña debe contener:</small>
+                                                        <ul className="list-unstyled mb-0">
+                                                            <li className={passwordValidation.checks.length ? 'text-success' : 'text-danger'}>
+                                                                {passwordValidation.checks.length ? '✓' : '✗'} Mínimo 8 caracteres
+                                                            </li>
+                                                            <li className={passwordValidation.checks.lowercase ? 'text-success' : 'text-danger'}>
+                                                                {passwordValidation.checks.lowercase ? '✓' : '✗'} Al menos una letra minúscula
+                                                            </li>
+                                                            <li className={passwordValidation.checks.number ? 'text-success' : 'text-danger'}>
+                                                                {passwordValidation.checks.number ? '✓' : '✗'} Al menos un número
+                                                            </li>
+                                                            <li className={passwordValidation.checks.specialChar ? 'text-success' : 'text-danger'}>
+                                                                {passwordValidation.checks.specialChar ? '✓' : '✗'} Al menos un carácter especial (!@#$%^&*)
+                                                            </li>
+                                                        </ul>
+                                                    </div>
+                                                )}
                                             </motion.div>
 
                                             <motion.div className="mb-3" variants={textVariants}>
@@ -356,7 +419,7 @@ const Settings = () => {
                                                 <input
                                                     id="confirmPassword"
                                                     type="password"
-                                                    className="form-control fs-6"
+                                                    className={`form-control fs-6 ${passwordData.confirm_password && passwordData.new_password !== passwordData.confirm_password ? 'is-invalid' : passwordData.confirm_password && passwordData.new_password === passwordData.confirm_password ? 'is-valid' : ''}`}
                                                     placeholder="Confirma tu nueva contraseña"
                                                     value={passwordData.confirm_password}
                                                     onChange={(e) => setPasswordData({
@@ -364,6 +427,11 @@ const Settings = () => {
                                                         confirm_password: e.target.value
                                                     })}
                                                 />
+                                                {passwordData.confirm_password && (
+                                                    <div className={`mt-1 small ${passwordData.new_password === passwordData.confirm_password ? 'text-success' : 'text-danger'}`}>
+                                                        {passwordData.new_password === passwordData.confirm_password ? 'Las contraseñas coinciden' : 'Las contraseñas no coinciden'}
+                                                    </div>
+                                                )}
                                             </motion.div>
                                         </div>
                                     </>
@@ -392,7 +460,11 @@ const Settings = () => {
                                         <button
                                             type="submit"
                                             className="btn btn-primary flex-grow-1"
-                                            disabled={loading}
+                                            disabled={loading || 
+                                                (passwordData.new_password && 
+                                                    (!passwordValidation.isValid || 
+                                                    passwordData.new_password !== passwordData.confirm_password ||
+                                                    !passwordData.current_password))}
                                         >
                                             {loading ? (
                                                 <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
