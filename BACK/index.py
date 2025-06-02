@@ -51,37 +51,4 @@ class TriruleAPI:
 if __name__ == '__main__':
     api = TriruleAPI()
     api.run(debug=True)
-    
-
-"""
-    self.app.add_url_rule('/', view_func=self.index)
-    self.app.add_url_rule('/register', view_func=self.register, methods=['POST'])
-    self.app.add_url_rule('/login', view_func=self.login, methods=['POST'])
-    self.app.add_url_rule('/logout', view_func=self.logout, methods=['POST'])
-    self.app.add_url_rule('/profile', view_func=self.profile, methods=['GET'])
-    self.app.add_url_rule('/check-auth', view_func=self.check_auth, methods=['GET'])
-
-    # User settings routes
-    self.app.add_url_rule('/settings', view_func=self.get_settings, methods=['GET'])
-    self.app.add_url_rule('/settings', view_func=self.update_settings, methods=['PUT'])
-
-    # Category routes
-    self.app.add_url_rule('/categories', view_func=self.get_categories, methods=['GET'])
-    self.app.add_url_rule('/categories', view_func=self.create_category, methods=['POST'])
-    self.app.add_url_rule('/categories/<int:category_id>', view_func=self.get_category, methods=['GET'])
-    self.app.add_url_rule('/categories/<int:category_id>', view_func=self.update_category, methods=['PUT'])
-    self.app.add_url_rule('/categories/<int:category_id>', view_func=self.delete_category, methods=['DELETE'])
-
-    # Transaction routes
-    self.app.add_url_rule('/transactions', view_func=self.get_transactions, methods=['GET'])
-    self.app.add_url_rule('/transactions', view_func=self.create_transaction, methods=['POST'])
-    self.app.add_url_rule('/transactions/<int:transaction_id>', view_func=self.get_transaction, methods=['GET'])
-    self.app.add_url_rule('/transactions/<int:transaction_id>', view_func=self.update_transaction, methods=['PUT'])
-    self.app.add_url_rule('/transactions/<int:transaction_id>', view_func=self.delete_transaction, methods=['DELETE'])
-    self.app.add_url_rule('/transactions/summary', view_func=self.get_transactions_summary, methods=['GET'])
-
-    # History routes
-    self.app.add_url_rule('/history/monthly', view_func=self.get_monthly_history, methods=['GET'])
-    self.app.add_url_rule('/history/yearly', view_func=self.get_yearly_history, methods=['GET'])
-"""
 

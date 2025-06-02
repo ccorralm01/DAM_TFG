@@ -38,7 +38,7 @@ const CategoriesGrid = ({ categories, onEdit, onDelete, isDeleting }) => {
     };
 
     const chartData = getChartData();
-    const COLORS = ['#1976d2', '#8e24aa', '#388e3c'];
+    const COLORS = ['#00B273', '#9A50EA', '#FE4C4B'];
 
     const renderCustomizedLabel = ({ name, percentage }) => {
         return `${name}: ${percentage}`;
