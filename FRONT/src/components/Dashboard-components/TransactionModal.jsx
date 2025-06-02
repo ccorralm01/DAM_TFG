@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import apiService from "../../services/apiService";
 import "./styles/TransactionModal.css";
 import { toast } from 'react-toastify';
+import CustomToast from "../Ui-components/CustomToast";
 
 const TransactionModal = ({
     show,
@@ -90,11 +91,9 @@ const TransactionModal = ({
             try {
                 const response = await apiService.createCategory(newCategory);
                 transactionData.category_id = response.category.id;
-                toast.success(response.msg || "Nueva categoría creada", {
-                    autoClose: 1500,
-                });
+                toast(<CustomToast title="Éxito!" message={response.msg || "Nueva categoría creada"} type='success' onClose={() => toast.dismiss()} />);
             } catch (err) {
-                toast.error(err.message || 'Error al crear categoría');
+                toast(<CustomToast title="Error!" message={err.message || 'Error al crear categoría'} type='error' onClose={() => toast.dismiss()} />);
                 return;
             }
         }
@@ -104,20 +103,16 @@ const TransactionModal = ({
             if (isEditMode) {
                 // Llamada para actualizar la transacción existente
                 response = await apiService.updateTransaction(transactionToEdit.id, transactionData);
-                toast.success(response.msg || "Transacción actualizada", {
-                    autoClose: 1500,
-                });
+                toast(<CustomToast title="Éxito!" message={response.msg || "Transacción actualizada"} type='success' onClose={() => toast.dismiss()} />);
             } else {
                 // Llamada para crear nueva transacción
                 response = await apiService.createTransaction(transactionData);
-                toast.success(response.msg || "Nuevo " + (type === 'income' ? 'ingreso' : 'gasto') + " creado", {
-                    autoClose: 1500,
-                });
+                toast(<CustomToast title="Éxito!" message={response.msg || "Nuevo " + (type === 'income' ? 'ingreso' : 'gasto') + " creado"} type='success' onClose={() => toast.dismiss()} />);
             }
 
             onTransactionCreated(); // Actualizar el estado en el componente padre
         } catch (err) {
-            toast.error(err.message || `Error al ${isEditMode ? 'actualizar' : 'crear'} transacción`);
+            toast(<CustomToast title="Error!" message={err.message || `Error al ${isEditMode ? 'actualizar' : 'crear'} transacción`} type='error' onClose={() => toast.dismiss()} />);
         }
         onClose();
     };

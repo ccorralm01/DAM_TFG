@@ -33,7 +33,10 @@ class TriruleAPI:
         self.jwt = JWTManager(self.app)
         
     def _create_tables(self):
-        Base.metadata.create_all(engine)
+        try:
+            Base.metadata.create_all(engine)
+        except Exception as e:
+            print(f"Error en la base de datos: {e}")
     
     def _register_controllers(self):
         self.app.add_url_rule('/', view_func=lambda: jsonify({'msg': 'API Trirule funcionando'}))

@@ -25,7 +25,7 @@ const AppLayout = () => {
             navigate('/', { replace: true }));
 
         } catch (err) {
-            toast.error(err.message || 'Error al cerrar sesión');
+            toast(<CustomToast title="Error!" message={err.message || 'Error al cerrar sesión'} type='error' onClose={() => toast.dismiss()} />);
         }
     };
 

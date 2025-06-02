@@ -65,7 +65,7 @@ const AuthForm = ({ authMode, onToggleAuthMode }) => {
         setError(null);
 
         if (!isLogin && formData.password !== formData.confirmPassword) {
-            toast.error('Las contraseñas no coinciden');
+            toast(<CustomToast title="Error!" message={'Las contraseñas no coinciden'} type='error' onClose={() => toast.dismiss()} />);
             setLoading(false);
             return;
         }

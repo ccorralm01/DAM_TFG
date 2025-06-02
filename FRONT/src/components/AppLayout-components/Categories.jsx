@@ -26,7 +26,7 @@ const Categories = () => {
             setCategories(response);
         } catch (error) {
             console.error("Error al obtener las categorías:", error);
-            toast.error("Error al cargar las categorías");
+            toast(<CustomToast title="Error!" message={"Error al cargar las categorías"} type='error' onClose={() => toast.dismiss()} />);
         } finally {
             setLoading(false);
         }
