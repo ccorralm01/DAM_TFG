@@ -1,3 +1,4 @@
+import re
 from flask import jsonify, request
 from sqlalchemy.sql import exists
 import bcrypt
@@ -44,8 +45,61 @@ class AuthController:
         email = data.get('email')
         password = data.get('password')
 
+        # Validación de campos requeridos
         if not username or not email or not password:
             return jsonify({"msg": "Todos los campos son requeridos"}), 400
+
+        # Validación del formato del email
+        if not re.match(r'^[\w\.-]+@[\w\.-]+\.\w+$', email):
+            return jsonify({"msg": "El formato del email no es válido"}), 400
+
+        # Validación del nombre de usuario
+        if len(username) < 3 or len(username) > 20:
+            return jsonify({"msg": "El nombre de usuario debe tener entre 3 y 20 caracteres"}), 400
+        if not re.match(r'^[a-zA-Z0-9_]+$', username):
+            return jsonify({"msg": "El nombre de usuario solo puede contener letras, números y guiones bajos"}), 400
+
+        # Validación de la contraseña (consistente con el frontend)
+        if len(password) < 8:
+            return jsonify({
+                "msg": "La contraseña debe tener al menos 8 caracteres",
+                "validation": {
+                    "length": False,
+                    "lowercase": any(c.islower() for c in password),
+                    "number": any(c.isdigit() for c in password),
+                    "specialChar": bool(re.search(r'[!@#$%^&*(),.?":{}|<>]', password))
+                }
+            }), 400
+        if not any(c.islower() for c in password):
+            return jsonify({
+                "msg": "La contraseña debe contener al menos una letra minúscula",
+                "validation": {
+                    "length": len(password) >= 8,
+                    "lowercase": False,
+                    "number": any(c.isdigit() for c in password),
+                    "specialChar": bool(re.search(r'[!@#$%^&*(),.?":{}|<>]', password))
+                }
+            }), 400
+        if not any(c.isdigit() for c in password):
+            return jsonify({
+                "msg": "La contraseña debe contener al menos un número",
+                "validation": {
+                    "length": len(password) >= 8,
+                    "lowercase": any(c.islower() for c in password),
+                    "number": False,
+                    "specialChar": bool(re.search(r'[!@#$%^&*(),.?":{}|<>]', password))
+                }
+            }), 400
+        if not re.search(r'[!@#$%^&*(),.?":{}|<>]', password):
+            return jsonify({
+                "msg": "La contraseña debe contener al menos un carácter especial (!@#$%^&*)",
+                "validation": {
+                    "length": len(password) >= 8,
+                    "lowercase": any(c.islower() for c in password),
+                    "number": any(c.isdigit() for c in password),
+                    "specialChar": False
+                }
+            }), 400
 
         try:
             user_id = None
