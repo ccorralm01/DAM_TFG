@@ -141,32 +141,117 @@ class UserSettingsController:
 
     @jwt_required()
     def update_password(self):
-        """Actualiza la contraseña del usuario"""
+        """Actualiza la contraseña del usuario con validaciones robustas"""
         user_id = get_jwt_identity()
         data = request.get_json()
         
-        required_fields = {'current_password', 'new_password'}
+        # Validación de campos requeridos
+        required_fields = {'current_password', 'new_password', 'confirm_password'}
         if not data or not all(field in data for field in required_fields):
-            return jsonify({'msg': 'Se requieren los campos current_password y new_password'}), 400
+            return jsonify({'msg': 'Se requieren los campos: current_password, new_password y confirm_password'}), 400
         
-        if not data['new_password']:
+        current_password = data.get('current_password')
+        new_password = data.get('new_password')
+        confirm_password = data.get('confirm_password')
+        
+        # Validaciones básicas
+        if not current_password:
+            return jsonify({'msg': 'La contraseña actual no puede estar vacía'}), 400
+        
+        if not new_password:
             return jsonify({'msg': 'La nueva contraseña no puede estar vacía'}), 400
         
+        if new_password != confirm_password:
+            return jsonify({
+                'msg': 'Las nuevas contraseñas no coinciden',
+                'validation': {
+                    'passwordsMatch': False
+                }
+            }), 400
+        
+        # Validación de fortaleza de la nueva contraseña
+        if len(new_password) < 8:
+            return jsonify({
+                'msg': 'La nueva contraseña debe tener al menos 8 caracteres',
+                'validation': {
+                    'length': False,
+                    'lowercase': any(c.islower() for c in new_password),
+                    'number': any(c.isdigit() for c in new_password),
+                    'specialChar': bool(re.search(r'[!@#$%^&*(),.?":{}|<>]', new_password)),
+                    'passwordsMatch': new_password == confirm_password
+                }
+            }), 400
+        
+        if not any(c.islower() for c in new_password):
+            return jsonify({
+                'msg': 'La nueva contraseña debe contener al menos una letra minúscula',
+                'validation': {
+                    'length': len(new_password) >= 8,
+                    'lowercase': False,
+                    'number': any(c.isdigit() for c in new_password),
+                    'specialChar': bool(re.search(r'[!@#$%^&*(),.?":{}|<>]', new_password)),
+                    'passwordsMatch': new_password == confirm_password
+                }
+            }), 400
+        
+        if not any(c.isdigit() for c in new_password):
+            return jsonify({
+                'msg': 'La nueva contraseña debe contener al menos un número',
+                'validation': {
+                    'length': len(new_password) >= 8,
+                    'lowercase': any(c.islower() for c in new_password),
+                    'number': False,
+                    'specialChar': bool(re.search(r'[!@#$%^&*(),.?":{}|<>]', new_password)),
+                    'passwordsMatch': new_password == confirm_password
+                }
+            }), 400
+        
+        if not re.search(r'[!@#$%^&*(),.?":{}|<>]', new_password):
+            return jsonify({
+                'msg': 'La nueva contraseña debe contener al menos un carácter especial (!@#$%^&*)',
+                'validation': {
+                    'length': len(new_password) >= 8,
+                    'lowercase': any(c.islower() for c in new_password),
+                    'number': any(c.isdigit() for c in new_password),
+                    'specialChar': False,
+                    'passwordsMatch': new_password == confirm_password
+                }
+            }), 400
+        
+        # Verificar que la nueva contraseña no sea igual a la actual
+        if new_password == current_password:
+            return jsonify({
+                'msg': 'La nueva contraseña no puede ser igual a la actual',
+                'validation': {
+                    'notSameAsCurrent': False
+                }
+            }), 400
+        
         try:
-            with self._session_scope():
+            with self._session_scope() as session:
                 user = session.query(User).filter_by(id=user_id).first()
                 if not user:
                     return jsonify({'msg': 'Usuario no encontrado'}), 404
                 
                 # Verificar contraseña actual
-                if not bcrypt.checkpw(data['current_password'].encode('utf-8'), user.password.encode('utf-8')):
+                if not bcrypt.checkpw(current_password.encode('utf-8'), user.password.encode('utf-8')):
                     return jsonify({'msg': 'La contraseña actual es incorrecta'}), 401
                 
                 # Hashear nueva contraseña
-                hashed_password = bcrypt.hashpw(data['new_password'].encode('utf-8'), bcrypt.gensalt())
+                hashed_password = bcrypt.hashpw(new_password.encode('utf-8'), bcrypt.gensalt())
                 user.password = hashed_password.decode('utf-8')
                 
-                return jsonify({'msg': 'Contraseña actualizada correctamente'})
+                return jsonify({
+                    'msg': 'Contraseña actualizada correctamente',
+                    'validation': {
+                        'length': True,
+                        'lowercase': True,
+                        'number': True,
+                        'specialChar': True,
+                        'passwordsMatch': True,
+                        'notSameAsCurrent': True
+                    }
+                }), 200
                 
         except Exception as e:
             print(f"Error al actualizar contraseña: {e}")
