@@ -1,13 +1,14 @@
 from flask import jsonify, request, send_file
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from datetime import datetime
-from models import session, Category, Transaction, TransactionKind
+from models import session, Category, Transaction, TransactionKind, CategoryType
 from contextlib import contextmanager
 from sqlalchemy import func
 from components.history import HistoryController
 from io import BytesIO
 import pandas as pd
 from werkzeug.utils import secure_filename
+import random
 class TransactionController:
     def __init__(self, app):
         self.app = app
@@ -321,7 +322,8 @@ class TransactionController:
                 transactions = session.query(
                     Transaction,
                     Category.name.label('category_name'),
-                    Category.color.label('category_color')
+                    Category.color.label('category_color'),
+                    Category.type.label('category_type')
                 ).outerjoin(
                     Category, Transaction.category_id == Category.id
                 ).filter(
@@ -330,13 +332,14 @@ class TransactionController:
 
                 # Preparar datos para el DataFrame
                 data = []
-                for t, cat_name, cat_color in transactions:
+                for t, cat_name, cat_color, cat_type in transactions:
                     data.append({
                         'Fecha': t.date.strftime('%Y-%m-%d'),
                         'Descripción': t.description or '',
                         'Categoría': cat_name or '',
                         'Color Categoría': cat_color or '',
-                        'Tipo': t.kind.value,
+                        'Tipo Categoría': cat_type.value if cat_type else '',
+                        'Tipo Transacción': t.kind.value,
                         'Cantidad': float(t.amount),
                         'Creado': t.created_at.strftime('%Y-%m-%d %H:%M'),
                         'Actualizado': t.updated_at.strftime('%Y-%m-%d %H:%M')
@@ -377,7 +380,7 @@ class TransactionController:
 
     @jwt_required()
     def import_transactions(self):
-        """Importa transacciones desde un archivo Excel"""
+        """Importa transacciones desde un archivo Excel, creando categorías si no existen"""
         user_id = get_jwt_identity()
         
         if 'file' not in request.files:
@@ -395,7 +398,7 @@ class TransactionController:
             df = pd.read_excel(file)
             
             # Validar columnas requeridas
-            required_columns = {'Fecha', 'Tipo', 'Cantidad'}
+            required_columns = {'Fecha', 'Tipo Transacción', 'Cantidad'}
             if not required_columns.issubset(df.columns):
                 missing = required_columns - set(df.columns)
                 return jsonify({'msg': f'Faltan columnas requeridas: {missing}'}), 400
@@ -405,18 +408,20 @@ class TransactionController:
             errors = []
             
             with self._session_scope():
-                # Obtener categorías del usuario para mapeo
+                # Obtener categorías existentes del usuario
                 user_categories = session.query(Category).filter_by(user_id=user_id).all()
-                category_map = {cat.name.lower(): cat.id for cat in user_categories}
+                category_map = {cat.name.lower(): cat for cat in user_categories}
                 
                 for index, row in df.iterrows():
                     try:
                         # Validar y convertir datos
                         date = pd.to_datetime(row['Fecha']).date()
-                        kind_str = str(row['Tipo']).strip().lower()
+                        kind_str = str(row['Tipo Transacción']).strip().lower()
                         amount = float(row['Cantidad'])
                         description = str(row.get('Descripción', '')).strip() or None
                         category_name = str(row.get('Categoría', '')).strip() or None
+                        category_color = str(row.get('Color Categoría', '')).strip() or None
+                        category_type_str = str(row.get('Tipo Categoría', '')).strip() or None
                         
                         # Validar tipo de transacción
                         try:
@@ -425,15 +430,40 @@ class TransactionController:
                             errors.append(f"Fila {index+2}: Tipo de transacción inválido '{kind_str}'")
                             continue
                         
-                        # Mapear categoría si existe
+                        # Mapear o crear categoría si existe
                         category_id = None
                         if category_name:
                             category_name_lower = category_name.lower()
+                            
                             if category_name_lower in category_map:
-                                category_id = category_map[category_name_lower]
+                                # Usar categoría existente
+                                category = category_map[category_name_lower]
+                                category_id = category.id
                             else:
-                                errors.append(f"Fila {index+2}: Categoría '{category_name}' no encontrada")
-                                continue
+                                # Validar y crear nueva categoría
+                                if not category_type_str:
+                                    errors.append(f"Fila {index+2}: Falta el tipo de categoría para crear nueva categoría '{category_name}'")
+                                    continue
+                                
+                                try:
+                                    category_type = CategoryType(category_type_str)
+                                except ValueError:
+                                    errors.append(f"Fila {index+2}: Tipo de categoría inválido '{category_type_str}'")
+                                    continue
+                                
+                                # Crear nueva categoría
+                                new_category = Category(
+                                    name=category_name,
+                                    type=category_type,
+                                    color=category_color or self._generate_random_color(),
+                                    user_id=user_id
+                                )
+                                
+                                session.add(new_category)
+                                session.flush()  # Para obtener el ID
+                                
+                                category_id = new_category.id
+                                category_map[category_name_lower] = new_category
                         
                         # Crear transacción
                         transaction = Transaction(
@@ -469,3 +499,7 @@ class TransactionController:
         except Exception as e:
             print(f"Error al importar transacciones: {e}")
             return jsonify({'msg': 'Error al procesar archivo Excel'}), 500
+
+    def _generate_random_color(self):
+        """Genera un color hexadecimal aleatorio para nuevas categorías"""
+        return f"#{random.randint(0, 0xFFFFFF):06x}"
