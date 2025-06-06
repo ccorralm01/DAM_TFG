@@ -118,16 +118,18 @@ const TransactionModal = ({
     };
 
     useEffect(() => {
-        const fetchCategories = async () => {
-            try {
-                const categoriesData = await apiService.getCategories();
-                setCategories(categoriesData);
-            } catch (error) {
-                console.error("Error fetching categories:", error);
-            }
-        };
-        fetchCategories();
-    }, []);
+        if (show) { // Solo ejecutar cuando el modal se muestra
+            const fetchCategories = async () => {
+                try {
+                    const categoriesData = await apiService.getCategories();
+                    setCategories(categoriesData);
+                } catch (error) {
+                    console.error("Error fetching categories:", error);
+                }
+            };
+            fetchCategories();
+        }
+    }, [show]); // Dependencia en la prop 'show'
 
     if (!show) return null;
 
