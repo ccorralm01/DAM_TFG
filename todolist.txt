@@ -1,5 +1,1 @@
-.env  datos bd
-Página trasacciones opcional daterange
-cheks registro
 modal explicación regla 50 30 20
-validación de imputs en back y front
