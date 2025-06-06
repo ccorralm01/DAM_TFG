@@ -9,7 +9,7 @@ const TransactionModal = ({
     onClose,
     type,
     onTransactionCreated,
-    transactionToEdit // Nueva prop para la transacción a editar
+    transactionToEdit
 }) => {
     const isEditMode = Boolean(transactionToEdit);
 
@@ -66,6 +66,7 @@ const TransactionModal = ({
         setFormData(prev => ({ ...prev, color }));
     };
 
+    // Manejador de envío
     const handleSubmit = async (e) => {
         e.preventDefault();
 

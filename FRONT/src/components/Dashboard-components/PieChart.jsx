@@ -43,7 +43,7 @@ export default class CustomPieChart extends PureComponent {
             currency,
         } = this.props;
 
-        // Safely transform data
+        // Transformamos los datos
         const chartData = Array.isArray(data)
             ? data.map(item => ({
                 name: item?.category || 'Unknown',

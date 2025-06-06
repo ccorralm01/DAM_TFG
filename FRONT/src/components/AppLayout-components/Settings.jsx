@@ -8,20 +8,20 @@ import LoadingSpinner from '../Ui-components/LoadingSpinner';
 
 // Función de validación de contraseña
 const validatePassword = (password) => {
-  const hasMinLength = password.length >= 8;
-  const hasLowercase = /[a-z]/.test(password);
-  const hasNumber = /[0-9]/.test(password);
-  const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>]/.test(password);
-  
-  return {
-    isValid: hasMinLength && hasLowercase && hasNumber && hasSpecialChar,
-    checks: {
-      length: hasMinLength,
-      lowercase: hasLowercase,
-      number: hasNumber,
-      specialChar: hasSpecialChar
-    }
-  };
+    const hasMinLength = password.length >= 8;
+    const hasLowercase = /[a-z]/.test(password);
+    const hasNumber = /[0-9]/.test(password);
+    const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>]/.test(password);
+
+    return {
+        isValid: hasMinLength && hasLowercase && hasNumber && hasSpecialChar,
+        checks: {
+            length: hasMinLength,
+            lowercase: hasLowercase,
+            number: hasNumber,
+            specialChar: hasSpecialChar
+        }
+    };
 };
 
 const Settings = () => {
@@ -188,7 +188,7 @@ const Settings = () => {
                 conversion_rate: conversionRate
             });
 
-            console.log("Actualizado a ",currencyData.currency," Con cambio de ", conversionRate)
+            console.log("Actualizado a ", currencyData.currency, " Con cambio de ", conversionRate)
 
             if (response && response.settings) {
                 // 4. Actualizar los estados locales
@@ -460,11 +460,11 @@ const Settings = () => {
                                         <button
                                             type="submit"
                                             className="btn btn-primary flex-grow-1"
-                                            disabled={loading || 
-                                                (passwordData.new_password && 
-                                                    (!passwordValidation.isValid || 
-                                                    passwordData.new_password !== passwordData.confirm_password ||
-                                                    !passwordData.current_password))}
+                                            disabled={loading ||
+                                                (passwordData.new_password &&
+                                                    (!passwordValidation.isValid ||
+                                                        passwordData.new_password !== passwordData.confirm_password ||
+                                                        !passwordData.current_password))}
                                         >
                                             {loading ? (
                                                 <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>

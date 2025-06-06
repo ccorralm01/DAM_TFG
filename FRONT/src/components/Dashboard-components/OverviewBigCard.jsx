@@ -17,7 +17,7 @@ const OverviewBigCard = ({ isEmpty = false, refreshTrigger, currency="$" }) => {
         monthOptions,
     } = useOverviewData(refreshTrigger);
 
-    // Animaciones (se mantienen igual)
+    // Animaciones
     const containerVariants = {
         hidden: { opacity: 0 },
         visible: {

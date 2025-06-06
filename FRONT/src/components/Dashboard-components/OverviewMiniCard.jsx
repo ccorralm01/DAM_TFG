@@ -44,7 +44,7 @@ const OverviewMiniCard = ({
         }
     };
 
-    // State for the animated value
+    // activar animaciones
     const [displayAmount, setDisplayAmount] = useState(0);
 
     useEffect(() => {

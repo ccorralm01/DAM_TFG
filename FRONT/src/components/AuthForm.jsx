@@ -12,20 +12,20 @@ import CustomToast from '../components/Ui-components/CustomToast';
 
 // Validación de contraseña
 const validatePassword = (password) => {
-  const hasMinLength = password.length >= 8;
-  const hasLowercase = /[a-z]/.test(password);
-  const hasNumber = /[0-9]/.test(password);
-  const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>]/.test(password);
-  
-  return {
-    isValid: hasMinLength && hasLowercase && hasNumber && hasSpecialChar,
-    checks: {
-      length: hasMinLength,
-      lowercase: hasLowercase,
-      number: hasNumber,
-      specialChar: hasSpecialChar
-    }
-  };
+    const hasMinLength = password.length >= 8;
+    const hasLowercase = /[a-z]/.test(password);
+    const hasNumber = /[0-9]/.test(password);
+    const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>]/.test(password);
+
+    return {
+        isValid: hasMinLength && hasLowercase && hasNumber && hasSpecialChar,
+        checks: {
+            length: hasMinLength,
+            lowercase: hasLowercase,
+            number: hasNumber,
+            specialChar: hasSpecialChar
+        }
+    };
 };
 
 // Componente de formulario de autenticación con animaciones y transiciones
@@ -40,13 +40,13 @@ const AuthForm = ({ authMode, onToggleAuthMode }) => {
         confirmPassword: ''
     });
     const [passwordValidation, setPasswordValidation] = useState({
-      isValid: false,
-      checks: {
-        length: false,
-        lowercase: false,
-        number: false,
-        specialChar: false
-      }
+        isValid: false,
+        checks: {
+            length: false,
+            lowercase: false,
+            number: false,
+            specialChar: false
+        }
     });
     const [error, setError] = useState(null);
     const [loading, setLoading] = useState(false);
@@ -58,19 +58,19 @@ const AuthForm = ({ authMode, onToggleAuthMode }) => {
 
     // Efecto para validar la contraseña en tiempo real
     useEffect(() => {
-      if (formData.password) {
-        setPasswordValidation(validatePassword(formData.password));
-      } else {
-        setPasswordValidation({
-          isValid: false,
-          checks: {
-            length: false,
-            lowercase: false,
-            number: false,
-            specialChar: false
-          }
-        });
-      }
+        if (formData.password) {
+            setPasswordValidation(validatePassword(formData.password));
+        } else {
+            setPasswordValidation({
+                isValid: false,
+                checks: {
+                    length: false,
+                    lowercase: false,
+                    number: false,
+                    specialChar: false
+                }
+            });
+        }
     }, [formData.password]);
 
     // Animaciones
