@@ -7,7 +7,7 @@ from flask_jwt_extended import (
     jwt_required, get_jwt_identity, unset_jwt_cookies
 )
 from contextlib import contextmanager
-from models import session, User
+from models import session, User, UserSettings
 
 class AuthController:
     def __init__(self, app):
@@ -38,108 +38,115 @@ class AuthController:
             raise e
         finally:
             session.remove()
-
+            
     def register(self):
-        data = request.get_json()
-        username = data.get('username')
-        email = data.get('email')
-        password = data.get('password')
+            data = request.get_json()
+            username = data.get('username')
+            email = data.get('email')
+            password = data.get('password')
 
-        # Validación de campos requeridos
-        if not username or not email or not password:
-            return jsonify({"msg": "Todos los campos son requeridos"}), 400
+            # Validación de campos requeridos
+            if not username or not email or not password:
+                return jsonify({"msg": "Todos los campos son requeridos"}), 400
 
-        # Validación del formato del email
-        if not re.match(r'^[\w\.-]+@[\w\.-]+\.\w+$', email):
-            return jsonify({"msg": "El formato del email no es válido"}), 400
+            # Validación del formato del email
+            if not re.match(r'^[\w\.-]+@[\w\.-]+\.\w+$', email):
+                return jsonify({"msg": "El formato del email no es válido"}), 400
 
-        # Validación del nombre de usuario
-        if len(username) < 3 or len(username) > 20:
-            return jsonify({"msg": "El nombre de usuario debe tener entre 3 y 20 caracteres"}), 400
-        if not re.match(r'^[a-zA-Z0-9_]+$', username):
-            return jsonify({"msg": "El nombre de usuario solo puede contener letras, números y guiones bajos"}), 400
+            # Validación del nombre de usuario
+            if len(username) < 3 or len(username) > 20:
+                return jsonify({"msg": "El nombre de usuario debe tener entre 3 y 20 caracteres"}), 400
+            if not re.match(r'^[a-zA-Z0-9_]+$', username):
+                return jsonify({"msg": "El nombre de usuario solo puede contener letras, números y guiones bajos"}), 400
 
-        # Validación de la contraseña (consistente con el frontend)
-        if len(password) < 8:
-            return jsonify({
-                "msg": "La contraseña debe tener al menos 8 caracteres",
-                "validation": {
-                    "length": False,
-                    "lowercase": any(c.islower() for c in password),
-                    "number": any(c.isdigit() for c in password),
-                    "specialChar": bool(re.search(r'[!@#$%^&*(),.?":{}|<>]', password))
-                }
-            }), 400
-        if not any(c.islower() for c in password):
-            return jsonify({
-                "msg": "La contraseña debe contener al menos una letra minúscula",
-                "validation": {
-                    "length": len(password) >= 8,
-                    "lowercase": False,
-                    "number": any(c.isdigit() for c in password),
-                    "specialChar": bool(re.search(r'[!@#$%^&*(),.?":{}|<>]', password))
-                }
-            }), 400
-        if not any(c.isdigit() for c in password):
-            return jsonify({
-                "msg": "La contraseña debe contener al menos un número",
-                "validation": {
-                    "length": len(password) >= 8,
-                    "lowercase": any(c.islower() for c in password),
-                    "number": False,
-                    "specialChar": bool(re.search(r'[!@#$%^&*(),.?":{}|<>]', password))
-                }
-            }), 400
-        if not re.search(r'[!@#$%^&*(),.?":{}|<>]', password):
-            return jsonify({
-                "msg": "La contraseña debe contener al menos un carácter especial (!@#$%^&*)",
-                "validation": {
-                    "length": len(password) >= 8,
-                    "lowercase": any(c.islower() for c in password),
-                    "number": any(c.isdigit() for c in password),
-                    "specialChar": False
-                }
-            }), 400
+            # Validación de la contraseña (consistente con el frontend)
+            if len(password) < 8:
+                return jsonify({
+                    "msg": "La contraseña debe tener al menos 8 caracteres",
+                    "validation": {
+                        "length": False,
+                        "lowercase": any(c.islower() for c in password),
+                        "number": any(c.isdigit() for c in password),
+                        "specialChar": bool(re.search(r'[!@#$%^&*(),.?":{}|<>]', password))
+                    }
+                }), 400
+            if not any(c.islower() for c in password):
+                return jsonify({
+                    "msg": "La contraseña debe contener al menos una letra minúscula",
+                    "validation": {
+                        "length": len(password) >= 8,
+                        "lowercase": False,
+                        "number": any(c.isdigit() for c in password),
+                        "specialChar": bool(re.search(r'[!@#$%^&*(),.?":{}|<>]', password))
+                    }
+                }), 400
+            if not any(c.isdigit() for c in password):
+                return jsonify({
+                    "msg": "La contraseña debe contener al menos un número",
+                    "validation": {
+                        "length": len(password) >= 8,
+                        "lowercase": any(c.islower() for c in password),
+                        "number": False,
+                        "specialChar": bool(re.search(r'[!@#$%^&*(),.?":{}|<>]', password))
+                    }
+                }), 400
+            if not re.search(r'[!@#$%^&*(),.?":{}|<>]', password):
+                return jsonify({
+                    "msg": "La contraseña debe contener al menos un carácter especial (!@#$%^&*)",
+                    "validation": {
+                        "length": len(password) >= 8,
+                        "lowercase": any(c.islower() for c in password),
+                        "number": any(c.isdigit() for c in password),
+                        "specialChar": False
+                    }
+                }), 400
 
-        try:
-            user_id = None
-            with self._session_scope() as session:
-                # Verificar si el usuario o email ya existen
-                if session.query(exists().where(User.email == email)).scalar():
-                    return jsonify({"msg": "El email ya está registrado"}), 409
+            try:
+                user_id = None
+                with self._session_scope() as session:
+                    # Verificar si el usuario o email ya existen
+                    if session.query(exists().where(User.email == email)).scalar():
+                        return jsonify({"msg": "El email ya está registrado"}), 409
 
-                if session.query(exists().where(User.username == username)).scalar():
-                    return jsonify({"msg": "El nombre de usuario ya está en uso"}), 409
+                    if session.query(exists().where(User.username == username)).scalar():
+                        return jsonify({"msg": "El nombre de usuario ya está en uso"}), 409
 
-                # Hashear la contraseña
-                hashed_password = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
+                    # Hashear la contraseña
+                    hashed_password = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
 
-                new_user = User(
-                    username=username,
-                    email=email,
-                    password=hashed_password.decode('utf-8')
-                )
-                session.add(new_user)
-                session.flush()  # Asegurarse de que el ID se genere antes de cerrar la sesión
-                user_id = new_user.id 
+                    # Crear nuevo usuario
+                    new_user = User(
+                        username=username,
+                        email=email,
+                        password=hashed_password.decode('utf-8')
+                    )
+                    session.add(new_user)
+                    session.flush()  # Asegurarse de que el ID se genere
+                    user_id = new_user.id
 
-            access_token = create_access_token(identity=str(user_id))
+                    # Crear configuración de usuario con USD como moneda predeterminada
+                    user_settings = UserSettings(
+                        user_id=user_id,
+                    )
+                    session.add(user_settings)
 
-            response = jsonify({
-                "msg": "Registro exitoso",
-                "user": {
-                    "id": user_id,
-                    "username": username,
-                    "email": email
-                }
-            })
-            set_access_cookies(response, access_token)
-            return response, 201
+                access_token = create_access_token(identity=str(user_id))
 
-        except Exception as e:
-            print(f"Error en el registro: {str(e)}")
-            return jsonify({"msg": f"Error en el servidor: {str(e)}"}), 500
+                response = jsonify({
+                    "msg": "Registro exitoso",
+                    "user": {
+                        "id": user_id,
+                        "username": username,
+                        "email": email
+                    }
+                })
+                set_access_cookies(response, access_token)
+                return response, 201
 
+            except Exception as e:
+                print(f"Error en el registro: {str(e)}")
+                return jsonify({"msg": f"Error en el servidor: {str(e)}"}), 500
+            
     def login(self):
         data = request.get_json()
         email = data.get('email')
