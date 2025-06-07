@@ -2,20 +2,22 @@
 import { useState, useEffect } from "react";
 import apiService from "../services/apiService";
 
+// Hook para manejar datos de resumen (overview) con filtros de tiempo
 const useOverviewData = (refreshTrigger) => {
-    const [timeRange, setTimeRange] = useState("annual");
+    // Estados para controlar los filtros y carga de datos
+    const [timeRange, setTimeRange] = useState("annual");  // 'annual' o 'monthly'
     const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
     const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth() + 1);
     const [loading, setLoading] = useState(false);
-    const [historyData, setHistoryData] = useState(null);
+    const [historyData, setHistoryData] = useState(null);  // Datos históricos
 
-    // Generar opciones de años (últimos 5 años)
+    // Generar array de los últimos 5 años para selector
     const yearOptions = Array.from(
         { length: 5 },
         (_, i) => new Date().getFullYear() - i
     );
 
-    // Opciones de meses
+    // Array de meses con nombres en español
     const monthOptions = [
         { value: 1, label: "Enero" },
         { value: 2, label: "Febrero" },
@@ -31,20 +33,21 @@ const useOverviewData = (refreshTrigger) => {
         { value: 12, label: "Diciembre" },
     ];
 
-    // Resetear mes cuando cambia el rango de tiempo
+    // Efecto para resetear mes cuando se cambia a vista anual
     useEffect(() => {
         if (timeRange === "annual") {
             setSelectedMonth(new Date().getMonth() + 1);
         }
     }, [timeRange]);
 
-    // Cargar datos cuando cambian los filtros
+    // Efecto principal para cargar datos cuando cambian los filtros
     useEffect(() => {
         const fetchData = async () => {
             setLoading(true);
             try {
                 let response;
 
+                // Decide qué endpoint llamar según el rango de tiempo
                 if (timeRange === "monthly") {
                     response = await apiService.getMonthlyHistoryByDate(selectedYear, selectedMonth);
                 } else {
@@ -61,8 +64,9 @@ const useOverviewData = (refreshTrigger) => {
         };
 
         fetchData();
-    }, [timeRange, selectedYear, selectedMonth, refreshTrigger]);
+    }, [timeRange, selectedYear, selectedMonth, refreshTrigger]);  // Dependencias que trigger re-fetch
 
+    // Retorna todos los estados y setters para ser usados por el componente
     return {
         timeRange,
         setTimeRange,
@@ -78,3 +82,6 @@ const useOverviewData = (refreshTrigger) => {
 };
 
 export default useOverviewData;
+
+
+

@@ -1,68 +1,75 @@
 import { useState, useMemo } from 'react';
 
+// Hook para filtrar y ordenar transacciones
 export const useTransactionFilters = (transactions = []) => {
+    // Estado para los filtros y ordenación
     const [filters, setFilters] = useState({
-        kind: '',
-        category: '',
-        dateFrom: '',
-        dateTo: '',
-        search: '',
-        sortBy: 'date',       // Campo por defecto para ordenar
-        sortOrder: 'desc'     // Orden por defecto (descendente)
+        kind: '',             // Tipo de transacción (ingreso/gasto)
+        category: '',         // ID de categoría
+        dateFrom: '',         // Fecha inicial
+        dateTo: '',           // Fecha final
+        search: '',           // Término de búsqueda
+        sortBy: 'date',       // Campo para ordenar (por defecto: fecha)
+        sortOrder: 'desc'     // Orden (por defecto: descendente)
     });
 
+    // Transacciones filtradas y ordenadas (memorizadas para mejor rendimiento)
     const filteredTransactions = useMemo(() => {
-        let result = [...transactions];
+        let resultado = [...transactions]; // Copia de las transacciones originales
 
-        // Aplicar filtros
+        // Aplicar filtro por tipo
         if (filters.kind) {
-            result = result.filter(t => t.kind === filters.kind);
+            resultado = resultado.filter(t => t.kind === filters.kind);
         }
 
+        // Aplicar filtro por categoría
         if (filters.category) {
-            result = result.filter(t => t.category && t.category.id.toString() === filters.category);
+            resultado = resultado.filter(t => t.category && t.category.id.toString() === filters.category);
         }
 
+        // Aplicar filtro por fecha inicial
         if (filters.dateFrom) {
-            const fromDate = new Date(filters.dateFrom);
-            fromDate.setHours(0, 0, 0, 0);
-            result = result.filter(t => new Date(t.date) >= fromDate);
+            const fechaInicio = new Date(filters.dateFrom);
+            fechaInicio.setHours(0, 0, 0, 0);
+            resultado = resultado.filter(t => new Date(t.date) >= fechaInicio);
         }
 
+        // Aplicar filtro por fecha final
         if (filters.dateTo) {
-            const toDate = new Date(filters.dateTo);
-            toDate.setHours(23, 59, 59, 999);
-            result = result.filter(t => new Date(t.date) <= toDate);
+            const fechaFin = new Date(filters.dateTo);
+            fechaFin.setHours(23, 59, 59, 999);
+            resultado = resultado.filter(t => new Date(t.date) <= fechaFin);
         }
 
+        // Aplicar búsqueda
         if (filters.search) {
-            const searchTerm = filters.search.toLowerCase();
-            result = result.filter(t =>
-                t.description.toLowerCase().includes(searchTerm) ||
-                (t.category && t.category.name.toLowerCase().includes(searchTerm)) ||
-                t.amount.toString().includes(searchTerm)
+            const terminoBusqueda = filters.search.toLowerCase();
+            resultado = resultado.filter(t =>
+                t.description.toLowerCase().includes(terminoBusqueda) ||
+                (t.category && t.category.name.toLowerCase().includes(terminoBusqueda)) ||
+                t.amount.toString().includes(terminoBusqueda)
             );
         }
 
         // Aplicar ordenación
-        result.sort((a, b) => {
-            let comparison = 0;
+        resultado.sort((a, b) => {
+            let comparacion = 0;
 
             switch (filters.sortBy) {
                 case 'date':
-                    comparison = new Date(a.date).getTime() - new Date(b.date).getTime();
+                    comparacion = new Date(a.date).getTime() - new Date(b.date).getTime();
                     break;
 
                 case 'description':
-                    comparison = a.description.localeCompare(b.description);
+                    comparacion = a.description.localeCompare(b.description);
                     break;
 
                 case 'category':
-                    comparison = (a.category?.name || '').localeCompare(b.category?.name || '');
+                    comparacion = (a.category?.name || '').localeCompare(b.category?.name || '');
                     break;
 
                 case 'kind':
-                    comparison = a.kind.localeCompare(b.kind);
+                    comparacion = a.kind.localeCompare(b.kind);
                     break;
 
                 case 'amount':
@@ -72,44 +79,48 @@ export const useTransactionFilters = (transactions = []) => {
                         if (a.amount >= 0 && b.amount < 0) return 1;
                         return a.amount - b.amount;
                     } else {
+                        // Orden descendente: positivos primero, luego negativos
                         if (a.amount > 0 && b.amount <= 0) return -1;
                         if (a.amount <= 0 && b.amount > 0) return 1;
                         return b.amount - a.amount;
                     }
 
                 default:
-                    comparison = 0;
+                    comparacion = 0;
             }
 
-            return filters.sortOrder === 'asc' ? comparison : -comparison;
+            return filters.sortOrder === 'asc' ? comparacion : -comparacion;
         });
 
-        return result;
+        return resultado;
     }, [transactions, filters]);
 
+    // Manejar cambios en los filtros
     const handleFilterChange = (e) => {
         const { name, value } = e.target;
         setFilters(prev => ({ ...prev, [name]: value }));
     };
 
-    const handleSort = (column) => {
+    // Manejar ordenación por columna
+    const handleSort = (columna) => {
         setFilters(prev => {
-            // Si ya estamos ordenando por esta columna, invertimos el orden
-            if (prev.sortBy === column) {
+            // Si ya está ordenado por esta columna, invertir el orden
+            if (prev.sortBy === columna) {
                 return {
                     ...prev,
                     sortOrder: prev.sortOrder === 'asc' ? 'desc' : 'asc'
                 };
             }
-            // Si es una nueva columna, ordenamos ascendentemente por defecto
+            // Si es una nueva columna, orden ascendente por defecto
             return {
                 ...prev,
-                sortBy: column,
+                sortBy: columna,
                 sortOrder: 'asc'
             };
         });
     };
 
+    // Reiniciar todos los filtros
     const resetFilters = () => {
         setFilters({
             kind: '',
@@ -123,10 +134,10 @@ export const useTransactionFilters = (transactions = []) => {
     };
 
     return {
-        filters,
-        filteredTransactions,
-        handleFilterChange,
-        handleSort,
-        resetFilters
+        filters,                   // Estado actual de los filtros
+        filteredTransactions,      // Transacciones filtradas/ordenadas
+        handleFilterChange,        // Función para cambiar filtros
+        handleSort,                // Función para ordenar
+        resetFilters               // Función para reiniciar filtros
     };
 };
