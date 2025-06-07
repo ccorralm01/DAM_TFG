@@ -9,6 +9,7 @@ from contextlib import contextmanager
 class CategoryController:
     def __init__(self, app):
         self.app = app
+        self.MAX_NAME_LENGTH = 15
         self._register_routes()
     
     def _register_routes(self):
@@ -61,6 +62,9 @@ class CategoryController:
             category_type = CategoryType(data['type'])
         except ValueError:
             return jsonify({'msg': 'Tipo de categoría inválido'}), 400
+        
+        if len(data['name']) > self.MAX_NAME_LENGTH:
+            return jsonify({'msg': f'La categoría no puede exceder los {self.MAX_NAME_LENGTH} caracteres ({len(data['name'])})'}), 400
         
         try:
             with self._session_scope():
@@ -120,6 +124,8 @@ class CategoryController:
                     return jsonify({'msg': 'Categoría no encontrada'}), 404
                 
                 if 'name' in data:
+                    if len(data['name']) > self.MAX_NAME_LENGTH:
+                        return jsonify({'msg': f'La categoría no puede exceder los {self.MAX_NAME_LENGTH} caracteres ({len(data['name'])})'}), 400
                     category.name = data['name']
                 if 'color' in data:
                     category.color = data['color']

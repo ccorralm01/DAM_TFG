@@ -12,6 +12,7 @@ from models import session, User, UserSettings
 class AuthController:
     def __init__(self, app):
         self.app = app
+        self.MAX_USERNAME_LENGTH = 15
         self._register_routes()
     
     def _register_routes(self):
@@ -45,6 +46,9 @@ class AuthController:
             email = data.get('email')
             password = data.get('password')
 
+            if len(username) > self.MAX_USERNAME_LENGTH:
+                return jsonify({'msg': f'El nombre de usuario no puede exceder los {self.MAX_USERNAME_LENGTH} caracteres ({len(username)})'}), 400
+            
             # Validación de campos requeridos
             if not username or not email or not password:
                 return jsonify({"msg": "Todos los campos son requeridos"}), 400

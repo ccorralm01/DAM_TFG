@@ -8,6 +8,7 @@ import bcrypt
 class UserSettingsController:
     def __init__(self, app):
         self.app = app
+        self.MAX_USERNAME_LENGTH = 15
         self._register_routes()
     
     def _register_routes(self):
@@ -113,6 +114,8 @@ class UserSettingsController:
                     return jsonify({'msg': 'Usuario no encontrado'}), 404
                 
                 updated_fields = {}
+                if len(data['username']) > self.MAX_USERNAME_LENGTH:
+                    return jsonify({'msg': f'El nombre de usuario no puede exceder los {self.MAX_USERNAME_LENGTH} caracteres ({len(data['username'])})'}), 400
                 
                 if 'username' in data and data['username']:
                     user.username = data['username']
