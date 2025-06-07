@@ -2,6 +2,10 @@ import pandas as pd
 import random
 from datetime import datetime, timedelta
 
+
+"""Esto es un script para generar un excel con transacciones aleatorias"""
+
+
 # Configuraciones
 start_date = datetime.today() - timedelta(days=730)  # 2 años atrás
 end_date = datetime.today()
