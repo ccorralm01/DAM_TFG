@@ -54,6 +54,23 @@ const Settings = () => {
     });
     const [exchangeRates, setExchangeRates] = useState(null);
 
+    
+    const [showOldPassword, setShowOldPassword] = useState(false);
+    const [showPassword, setShowPassword] = useState(false);
+    const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
+    const toggleShowOldPassword = () =>{
+        setShowOldPassword(!showOldPassword)
+    }
+
+    const toggleShowPassword = () => {
+        setShowPassword(!showPassword);
+    };
+
+    const toggleShowConfirmPassword = () => {
+        setShowConfirmPassword(!showConfirmPassword);
+    };
+
     // Efecto para validar la nueva contraseña en tiempo real
     useEffect(() => {
         if (passwordData.new_password) {
@@ -367,32 +384,52 @@ const Settings = () => {
 
                                             <motion.div className="mb-3 mt-2" variants={textVariants}>
                                                 <label htmlFor="currentPassword" className="form-label">Contraseña actual</label>
-                                                <input
-                                                    id="currentPassword"
-                                                    type="password"
-                                                    className="form-control fs-6"
-                                                    placeholder="Ingresa tu contraseña actual"
-                                                    value={passwordData.current_password}
-                                                    onChange={(e) => setPasswordData({
-                                                        ...passwordData,
-                                                        current_password: e.target.value
-                                                    })}
-                                                />
+                                                <div className="input-group">
+                                                    <input
+                                                        id="currentPassword"
+                                                        type={showOldPassword ? "text" : "password"}
+                                                        className="form-control fs-6"
+                                                        placeholder="Ingresa tu contraseña actual"
+                                                        value={passwordData.current_password}
+                                                        onChange={(e) => setPasswordData({
+                                                            ...passwordData,
+                                                            current_password: e.target.value
+                                                        })}
+                                                    />
+                                                    <button
+                                                        className="btn btn-outline-secondary"
+                                                        type="button"
+                                                        onClick={toggleShowOldPassword}
+                                                        aria-label={showPassword ? "Ocultar contraseña" : "Mostrar contraseña"}
+                                                    >
+                                                        <i className={`bi ${showPassword ? "bi-eye-slash" : "bi-eye"}`}></i>
+                                                    </button>
+                                                </div>
                                             </motion.div>
 
                                             <motion.div className="mb-3" variants={textVariants}>
                                                 <label htmlFor="newPassword" className="form-label">Nueva contraseña</label>
-                                                <input
-                                                    id="newPassword"
-                                                    type="password"
-                                                    className="form-control fs-6"
-                                                    placeholder="Ingresa tu nueva contraseña"
-                                                    value={passwordData.new_password}
-                                                    onChange={(e) => setPasswordData({
-                                                        ...passwordData,
-                                                        new_password: e.target.value
-                                                    })}
-                                                />
+                                                <div className="input-group">
+                                                    <input
+                                                        id="newPassword"
+                                                        type={showPassword ? "text" : "password"}
+                                                        className="form-control fs-6"
+                                                        placeholder="Ingresa tu nueva contraseña"
+                                                        value={passwordData.new_password}
+                                                        onChange={(e) => setPasswordData({
+                                                            ...passwordData,
+                                                            new_password: e.target.value
+                                                        })}
+                                                    />
+                                                    <button
+                                                        className="btn btn-outline-secondary"
+                                                        type="button"
+                                                        onClick={toggleShowPassword}
+                                                        aria-label={showPassword ? "Ocultar contraseña" : "Mostrar contraseña"}
+                                                    >
+                                                        <i className={`bi ${showPassword ? "bi-eye-slash" : "bi-eye"}`}></i>
+                                                    </button>
+                                                </div>
                                                 {passwordData.new_password && (
                                                     <div className="password-feedback mt-2">
                                                         <small>La contraseña debe contener:</small>
@@ -416,22 +453,33 @@ const Settings = () => {
 
                                             <motion.div className="mb-3" variants={textVariants}>
                                                 <label htmlFor="confirmPassword" className="form-label">Confirmar nueva contraseña</label>
-                                                <input
-                                                    id="confirmPassword"
-                                                    type="password"
-                                                    className={`form-control fs-6 ${passwordData.confirm_password && passwordData.new_password !== passwordData.confirm_password ? 'is-invalid' : passwordData.confirm_password && passwordData.new_password === passwordData.confirm_password ? 'is-valid' : ''}`}
-                                                    placeholder="Confirma tu nueva contraseña"
-                                                    value={passwordData.confirm_password}
-                                                    onChange={(e) => setPasswordData({
-                                                        ...passwordData,
-                                                        confirm_password: e.target.value
-                                                    })}
-                                                />
-                                                {passwordData.confirm_password && (
-                                                    <div className={`mt-1 small ${passwordData.new_password === passwordData.confirm_password ? 'text-success' : 'text-danger'}`}>
-                                                        {passwordData.new_password === passwordData.confirm_password ? 'Las contraseñas coinciden' : 'Las contraseñas no coinciden'}
+                                                <div className="input-group">
+                                                    <input
+                                                        id="confirmPassword"
+                                                        type={showConfirmPassword ? "text" : "password"}
+                                                        className={`form-control fs-6 ${passwordData.confirm_password && passwordData.new_password !== passwordData.confirm_password ? 'is-invalid' : passwordData.confirm_password && passwordData.new_password === passwordData.confirm_password ? 'is-valid' : ''}`}
+                                                        placeholder="Confirma tu nueva contraseña"
+                                                        value={passwordData.confirm_password}
+                                                        onChange={(e) => setPasswordData({
+                                                            ...passwordData,
+                                                            confirm_password: e.target.value
+                                                        })}
+                                                    />
+                                                    <button
+                                                        className="btn btn-outline-secondary"
+                                                        type="button"
+                                                        onClick={toggleShowConfirmPassword}
+                                                        aria-label={showPassword ? "Ocultar contraseña" : "Mostrar contraseña"}
+                                                    >
+                                                        <i className={`bi ${showPassword ? "bi-eye-slash" : "bi-eye"}`}></i>
+                                                    </button>
                                                     </div>
-                                                )}
+                                                    {passwordData.confirm_password && (
+                                                        <div className={`mt-1 small ${passwordData.new_password === passwordData.confirm_password ? 'text-success' : 'text-danger'}`}>
+                                                            {passwordData.new_password === passwordData.confirm_password ? 'Las contraseñas coinciden' : 'Las contraseñas no coinciden'}
+                                                        </div>
+                                                    )}
+                                                
                                             </motion.div>
                                         </div>
                                     </>

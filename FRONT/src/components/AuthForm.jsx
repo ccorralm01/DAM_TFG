@@ -48,12 +48,22 @@ const AuthForm = ({ authMode, onToggleAuthMode }) => {
             specialChar: false
         }
     });
+    const [showPassword, setShowPassword] = useState(false);
+    const [showConfirmPassword, setShowConfirmPassword] = useState(false);
     const [error, setError] = useState(null);
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
 
     const toggleAuthMode = () => {
         navigate(isLogin ? '/signup' : '/');
+    };
+
+    const toggleShowPassword = () => {
+        setShowPassword(!showPassword);
+    };
+
+    const toggleShowConfirmPassword = () => {
+        setShowConfirmPassword(!showConfirmPassword);
     };
 
     // Efecto para validar la contraseña en tiempo real
@@ -235,15 +245,25 @@ const AuthForm = ({ authMode, onToggleAuthMode }) => {
 
                                 <motion.div className="mb-3" variants={itemVariants}>
                                     <label htmlFor="password" className="form-label">Contraseña</label>
-                                    <input
-                                        type="password"
-                                        className="form-control"
-                                        id="password"
-                                        placeholder="••••••••"
-                                        required
-                                        value={formData.password}
-                                        onChange={handleChange}
-                                    />
+                                    <div className="input-group">
+                                        <input
+                                            type={showPassword ? "text" : "password"}
+                                            className="form-control"
+                                            id="password"
+                                            placeholder="••••••••"
+                                            required
+                                            value={formData.password}
+                                            onChange={handleChange}
+                                        />
+                                        <button
+                                            className="btn btn-outline-secondary"
+                                            type="button"
+                                            onClick={toggleShowPassword}
+                                            aria-label={showPassword ? "Ocultar contraseña" : "Mostrar contraseña"}
+                                        >
+                                            <i className={`bi ${showPassword ? "bi-eye-slash" : "bi-eye"}`}></i>
+                                        </button>
+                                    </div>
                                     {!isLogin && formData.password && (
                                         <div className="password-feedback mt-2">
                                             <small>La contraseña debe contener:</small>
@@ -268,15 +288,25 @@ const AuthForm = ({ authMode, onToggleAuthMode }) => {
                                 {!isLogin && (
                                     <motion.div className="mb-3" variants={itemVariants}>
                                         <label htmlFor="confirmPassword" className="form-label">Confirmar Contraseña</label>
-                                        <input
-                                            type="password"
-                                            className={`form-control ${formData.confirmPassword && formData.password !== formData.confirmPassword ? 'is-invalid' : formData.confirmPassword && formData.password === formData.confirmPassword ? 'is-valid' : ''}`}
-                                            id="confirmPassword"
-                                            placeholder="••••••••"
-                                            required
-                                            value={formData.confirmPassword}
-                                            onChange={handleChange}
-                                        />
+                                        <div className="input-group">
+                                            <input
+                                                type={showConfirmPassword ? "text" : "password"}
+                                                className={`form-control ${formData.confirmPassword && formData.password !== formData.confirmPassword ? 'is-invalid' : formData.confirmPassword && formData.password === formData.confirmPassword ? 'is-valid' : ''}`}
+                                                id="confirmPassword"
+                                                placeholder="••••••••"
+                                                required
+                                                value={formData.confirmPassword}
+                                                onChange={handleChange}
+                                            />
+                                            <button
+                                                className="btn btn-outline-secondary"
+                                                type="button"
+                                                onClick={toggleShowConfirmPassword}
+                                                aria-label={showConfirmPassword ? "Ocultar contraseña" : "Mostrar contraseña"}
+                                            >
+                                                <i className={`bi ${showConfirmPassword ? "bi-eye-slash" : "bi-eye"}`}></i>
+                                            </button>
+                                        </div>
                                         {formData.confirmPassword && (
                                             <div className={`mt-1 small ${formData.password === formData.confirmPassword ? 'text-success' : 'text-danger'}`}>
                                                 {formData.password === formData.confirmPassword ? 'Las contraseñas coinciden' : 'Las contraseñas no coinciden'}
